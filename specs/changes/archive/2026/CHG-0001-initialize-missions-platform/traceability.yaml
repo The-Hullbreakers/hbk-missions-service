@@ -1,0 +1,89 @@
+change_id: CHG-0001
+status: planned
+updated: 2026-08-26
+stories:
+  - id: US-MB-001
+    requirements: [REQ-MB-001, REQ-MB-002, REQ-MB-003, REQ-MB-004, REQ-MB-005, REQ-MB-006, REQ-MB-007, REQ-MB-008]
+  - id: US-MCF-001
+    requirements: [REQ-MCF-001, REQ-MCF-002, REQ-MCF-003, REQ-MCF-004, REQ-MCF-005]
+  - id: US-SCC-001
+    requirements: [REQ-SCC-001, REQ-SCC-002, REQ-SCC-003, REQ-SCC-004, REQ-SCC-006]
+  - id: US-SCC-002
+    requirements: [REQ-SCC-005]
+requirements:
+  - id: REQ-MB-001
+    scenarios: [SCN-MB-POOL]
+    tasks: [T-001, T-004]
+    tests: [TEST-MB-001, TEST-APP-001]
+  - id: REQ-MB-002
+    scenarios: [SCN-MB-DISCOVERY]
+    tasks: [T-004, T-005]
+    tests: [TEST-APP-001, TEST-HTTP-001]
+  - id: REQ-MB-003
+    scenarios: [SCN-MB-001, SCN-MB-002]
+    tasks: [T-001, T-004, T-005]
+    tests: [TEST-MB-001, TEST-APP-001, TEST-HTTP-001]
+  - id: REQ-MB-004
+    scenarios: [SCN-MB-CONCURRENT-ACCEPTANCE]
+    tasks: [T-001, T-006]
+    tests: [TEST-MB-001, TEST-INFRA-001]
+  - id: REQ-MB-005
+    scenarios: [SCN-MB-VERSION-SNAPSHOT]
+    tasks: [T-001, T-004]
+    tests: [TEST-MB-001, TEST-APP-001]
+  - id: REQ-MB-006
+    scenarios: [SCN-MB-ROTATION]
+    tasks: [T-001, T-004, T-006]
+    tests: [TEST-MB-001, TEST-APP-001, TEST-INFRA-001]
+  - id: REQ-MB-007
+    scenarios: [SCN-MB-PUBLICATION-MODE]
+    tasks: [T-001, T-004, T-006]
+    tests: [TEST-MB-001, TEST-APP-001, TEST-INFRA-001]
+  - id: REQ-MB-008
+    scenarios: [SCN-MB-ACTIVE-TEMPLATE, SCN-MB-TEMPLATE-RELEASED]
+    tasks: [T-001, T-004, T-005, T-006]
+    tests: [TEST-MB-001, TEST-APP-001, TEST-HTTP-001, TEST-INFRA-001]
+  - id: REQ-MCF-001
+    scenarios: [SCN-MCF-TEAM]
+    tasks: [T-002, T-004]
+    tests: [TEST-MCF-001, TEST-APP-001]
+  - id: REQ-MCF-002
+    scenarios: [SCN-MCF-OBJECTIVES]
+    tasks: [T-002]
+    tests: [TEST-MCF-001]
+  - id: REQ-MCF-003
+    scenarios: [SCN-MCF-001]
+    tasks: [T-002, T-004, T-005]
+    tests: [TEST-MCF-001, TEST-APP-001, TEST-E2E-001]
+  - id: REQ-MCF-004
+    scenarios: [SCN-MCF-DUPLICATE]
+    tasks: [T-002, T-006]
+    tests: [TEST-MCF-001, TEST-INFRA-001]
+  - id: REQ-MCF-005
+    scenarios: [SCN-MCF-TERMINAL]
+    tasks: [T-002]
+    tests: [TEST-MCF-001]
+  - id: REQ-SCC-001
+    scenarios: [SCN-SCC-CATEGORY-CREDIT]
+    tasks: [T-003, T-004]
+    tests: [TEST-SCC-001, TEST-APP-001]
+  - id: REQ-SCC-002
+    scenarios: [SCN-SCC-SEPARATE-TRACKS]
+    tasks: [T-003, T-005]
+    tests: [TEST-SCC-001, TEST-E2E-001]
+  - id: REQ-SCC-003
+    scenarios: [SCN-SCC-CORRECTION]
+    tasks: [T-004, T-006]
+    tests: [TEST-APP-001, TEST-INFRA-001]
+  - id: REQ-SCC-004
+    scenarios: [SCN-SCC-FREEZE]
+    tasks: [T-003, T-005]
+    tests: [TEST-SCC-001, TEST-E2E-001]
+  - id: REQ-SCC-005
+    scenarios: [SCN-SCC-AWARD]
+    tasks: [T-004, T-006]
+    tests: [TEST-APP-001, TEST-E2E-001]
+  - id: REQ-SCC-006
+    scenarios: [SCN-SCC-001, SCN-SCC-TIE]
+    tasks: [T-003, T-005]
+    tests: [TEST-SCC-001, TEST-E2E-001]

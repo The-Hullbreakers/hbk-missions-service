@@ -1,0 +1,99 @@
+change_id: CHG-0002
+status: planned
+updated: 2026-08-27
+stories:
+  - id: US-MCF-001
+    requirements:
+      - REQ-MCF-002
+      - REQ-MCF-003
+      - REQ-MCF-004
+      - REQ-MCF-005
+      - REQ-SCC-001
+      - REQ-SCC-002
+      - REQ-SCC-004
+requirements:
+  - id: REQ-MCF-002
+    scenarios:
+      - SCN-MCF-OBJECTIVES
+    tasks:
+      - T-001
+    tests:
+      - TEST-MCF-001
+    production_files:
+      - internal/missions/domain/objective.go
+  - id: REQ-MCF-003
+    scenarios:
+      - SCN-MCF-001
+    tasks:
+      - T-001
+      - T-003
+      - T-004
+    tests:
+      - TEST-MCF-001
+      - TEST-APP-001
+      - TEST-HTTP-001
+    production_files:
+      - internal/missions/domain/confirmation.go
+      - internal/missions/domain/merit_credit.go
+      - internal/missions/application/confirm_objective.go
+  - id: REQ-MCF-004
+    scenarios:
+      - SCN-MCF-DUPLICATE
+    tasks:
+      - T-001
+      - T-002
+    tests:
+      - TEST-MCF-001
+      - TEST-SCC-001
+    production_files:
+      - internal/missions/domain/confirmation.go
+      - internal/missions/domain/merit_credit.go
+  - id: REQ-MCF-005
+    scenarios:
+      - SCN-MCF-TERMINAL
+    tasks:
+      - T-001
+    tests:
+      - TEST-MCF-001
+    production_files:
+      - internal/missions/domain/contract.go
+  - id: REQ-SCC-001
+    scenarios:
+      - SCN-SCC-CATEGORY-CREDIT
+    tasks:
+      - T-001
+      - T-002
+      - T-003
+    tests:
+      - TEST-MCF-001
+      - TEST-SCC-001
+      - TEST-APP-001
+    production_files:
+      - internal/missions/domain/merit_credit.go
+      - internal/missions/domain/merit_ledger.go
+  - id: REQ-SCC-002
+    scenarios:
+      - SCN-SCC-SEPARATE-TRACKS
+    tasks:
+      - T-002
+      - T-003
+    tests:
+      - TEST-SCC-001
+      - TEST-APP-001
+    production_files:
+      - internal/missions/domain/merit_credit.go
+      - internal/missions/domain/merit_ledger.go
+  - id: REQ-SCC-004
+    scenarios:
+      - SCN-SCC-FREEZE
+    tasks:
+      - T-001
+      - T-002
+      - T-003
+    tests:
+      - TEST-MCF-001
+      - TEST-SCC-001
+      - TEST-APP-001
+    production_files:
+      - internal/missions/domain/season.go
+      - internal/missions/domain/merit_credit.go

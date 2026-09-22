@@ -1,0 +1,85 @@
+change_id: CHG-0013
+artifact: traceability
+requirements:
+  - id: REQ-SCC-009
+    title: Create a scheduled season with active and off weeks
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SCC-SCHEDULE-CREATE-001
+      - SCN-SCC-SCHEDULE-CREATE-REJECT-001
+    tasks:
+      - T-002
+      - T-003
+      - T-004
+      - T-005
+      - T-006
+      - T-007
+      - T-008
+    tests:
+      - tests/unit/missions/domain/season_schedule_test.go
+      - tests/unit/missions/domain/season_schedule_transitions_test.go
+      - tests/unit/missions/application/create_scheduled_season_test.go
+      - tests/integration/composition/create_scheduled_season_test.go
+    production:
+      - internal/missions/domain/season.go
+      - internal/missions/domain/season_schedule.go
+      - internal/missions/application/create_scheduled_season.go
+      - internal/missions/interface/http/create_season.go
+      - internal/missions/infrastructure/dynamodb/season_store.go
+  - id: REQ-SCC-010
+    title: Auto-freeze, finalize, and start the next season
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SCC-SCHEDULE-AUTO-FREEZE-001
+      - SCN-SCC-SCHEDULE-AUTO-FINALIZE-001
+    tasks:
+      - T-002
+      - T-003
+      - T-004
+      - T-005
+      - T-006
+      - T-007
+      - T-008
+    tests:
+      - tests/unit/missions/domain/season_schedule_transitions_test.go
+      - tests/unit/missions/application/season_scheduler_test.go
+      - tests/integration/composition/season_scheduler_test.go
+    production:
+      - internal/missions/domain/season.go
+      - internal/missions/domain/season_schedule.go
+      - internal/missions/application/season_scheduler.go
+      - internal/missions/application/freeze_season.go
+      - internal/missions/application/finalize_season.go
+      - internal/missions/application/create_scheduled_season.go
+      - internal/missions/composition/server.go
+  - id: REQ-SCC-011
+    title: Preserve in-progress credit grace during off-season
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-SCC-SCHEDULE-IN-PROGRESS-GRACE-001
+    tasks:
+      - T-007
+      - T-008
+    tests:
+      - tests/integration/composition/confirm_objective_test.go
+    production:
+      - internal/missions/domain/season.go
+      - internal/missions/application/confirm_objective.go
+      - internal/missions/infrastructure/dynamodb/season_store.go
+  - id: REQ-SCC-012
+    title: Do not auto-transition manual seasons
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SCC-SCHEDULE-MANUAL-UNAFFECTED-001
+    tasks:
+      - T-002
+      - T-003
+      - T-005
+      - T-006
+    tests:
+      - tests/unit/missions/domain/season_schedule_transitions_test.go
+      - tests/unit/missions/application/season_scheduler_test.go
+    production:
+      - internal/missions/domain/season.go
+      - internal/missions/domain/season_schedule.go
+      - internal/missions/application/season_scheduler.go

@@ -1,0 +1,72 @@
+change_id: CHG-0003
+status: planned
+updated: 2026-08-29
+stories:
+  - id: US-MCF-PROD-001
+    requirements:
+      - REQ-MCF-PROD-001
+      - REQ-MCF-PROD-002
+  - id: US-MCF-PROD-002
+    requirements:
+      - REQ-MCF-PROD-003
+  - id: US-MCF-PROD-003
+    requirements:
+      - REQ-MCF-PROD-002
+      - REQ-OPS-001
+  - id: US-MCF-PROD-004
+    requirements:
+      - REQ-MCF-PROD-004
+requirements:
+  - id: REQ-MCF-PROD-001
+    scenarios:
+      - SCN-MCF-PERSIST-001
+    tasks:
+      - T-002
+    tests:
+      - TEST-PERSIST-001
+    production_files:
+      - internal/missions/infrastructure/persistence/contract_store.go
+      - internal/missions/infrastructure/persistence/season_store.go
+      - internal/missions/infrastructure/persistence/objective_store.go
+      - internal/missions/infrastructure/persistence/merit_ledger_store.go
+  - id: REQ-MCF-PROD-002
+    scenarios:
+      - SCN-MCF-COMPOSITION-001
+      - SCN-OPS-HEALTH
+    tasks:
+      - T-003
+    tests:
+      - TEST-COMP-001
+    production_files:
+      - cmd/hbk-missions-service/main.go
+      - internal/missions/composition/server.go
+  - id: REQ-MCF-PROD-003
+    scenarios:
+      - SCN-MCF-AUTH-001
+      - SCN-MCF-AUTH-002
+    tasks:
+      - T-001
+    tests:
+      - TEST-AUTH-001
+    production_files:
+      - internal/missions/interface/http/middleware.go
+      - internal/missions/interface/http/handler.go
+  - id: REQ-MCF-PROD-004
+    scenarios:
+      - SCN-MCF-ERROR-CODE-001
+    tasks:
+      - T-001
+    tests:
+      - TEST-ERROR-001
+    production_files:
+      - internal/missions/interface/http/errors.go
+      - internal/missions/interface/http/handler.go
+  - id: REQ-OPS-001
+    scenarios:
+      - SCN-OPS-HEALTH
+    tasks:
+      - T-003
+    tests:
+      - TEST-COMP-001
+    production_files:
+      - internal/missions/composition/server.go

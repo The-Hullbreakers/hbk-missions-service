@@ -1,0 +1,11 @@
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: hbk-missions-dynamodb-test
+    ports:
+      - "${DYNAMODB_TEST_PORT:-18000}:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"

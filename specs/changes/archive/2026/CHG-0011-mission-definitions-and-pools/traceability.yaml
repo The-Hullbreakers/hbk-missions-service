@@ -1,0 +1,76 @@
+change_id: CHG-0011
+artifact: traceability
+requirements:
+  - id: REQ-MB-011
+    title: Create a reusable mission definition
+    capability: mission-board
+    scenarios:
+      - SCN-MB-DEFINITION-CREATE-001
+    tests:
+      - tests/unit/missions/domain/mission_definition_test.go
+      - tests/integration/http/definition_create_test.go
+    production:
+      - internal/missions/domain/mission_definition.go
+      - internal/missions/application/create_mission_definition.go
+      - internal/missions/interface/http/create_mission_definition.go
+  - id: REQ-MB-012
+    title: Publish a definition version
+    capability: mission-board
+    scenarios:
+      - SCN-MB-DEFINITION-PUBLISH-001
+    tests:
+      - tests/unit/missions/domain/mission_definition_publish_test.go
+      - tests/integration/http/definition_publish_test.go
+    production:
+      - internal/missions/domain/mission_definition.go
+      - internal/missions/application/publish_mission_definition.go
+      - internal/missions/interface/http/publish_mission_definition.go
+  - id: REQ-MB-013
+    title: Create a season mission pool
+    capability: mission-board
+    scenarios:
+      - SCN-MB-POOL-CREATE-001
+    tests:
+      - tests/unit/missions/domain/mission_pool_test.go
+      - tests/integration/http/mission_pool_create_test.go
+    production:
+      - internal/missions/domain/mission_pool.go
+      - internal/missions/application/create_mission_pool.go
+      - internal/missions/interface/http/create_mission_pool.go
+  - id: REQ-MB-014
+    title: Manually publish an offer from a pool
+    capability: mission-board
+    scenarios:
+      - SCN-MB-POOL-PUBLISH-001
+      - SCN-MB-POOL-PUBLISH-NO-ACTIVE-001
+      - SCN-MB-DEFINITION-NOT-PUBLISHED-001
+    tests:
+      - tests/unit/missions/application/publish_mission_from_pool_test.go
+      - tests/integration/composition/publish_mission_test.go
+      - tests/integration/http/publish_mission_test.go
+    production:
+      - internal/missions/domain/offer_publication.go
+      - internal/missions/application/publish_mission_from_pool.go
+      - internal/missions/interface/http/publish_mission.go
+  - id: REQ-MB-015
+    title: Active template exclusion by definition
+    capability: mission-board
+    scenarios:
+      - SCN-MB-ACTIVE-TEMPLATE-EXCLUDE-001
+    tests:
+      - tests/unit/missions/domain/decide_acceptance_test.go
+      - tests/integration/composition/accept_mission_test.go
+    production:
+      - internal/missions/domain/acceptance.go
+      - internal/missions/application/accept_mission.go
+  - id: REQ-MCF-011
+    title: Contract preserves accepted definition version
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-CONTRACT-SNAPSHOT-001
+    tests:
+      - tests/unit/missions/domain/mission_contract_test.go
+      - tests/integration/infrastructure/dynamodb/contract_store_test.go
+    production:
+      - internal/missions/domain/mission_contract.go
+      - internal/missions/infrastructure/dynamodb/contract_store.go
