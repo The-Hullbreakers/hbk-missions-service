@@ -1,0 +1,175 @@
+{
+  "environments": [
+    "staging"
+  ],
+  "missions": [
+    {
+      "DefinitionCode": "mining-live-first-strike",
+      "Title": "Primera veta",
+      "Description": "Extrae gemas de 3 depósitos distintos con una multiherramienta.",
+      "Category": "MINING",
+      "Mode": "SOLO",
+      "CompletionReward": 20,
+      "State": "PUBLISHED",
+      "Version": "1",
+      "Objectives": [
+        {
+          "ObjectiveID": "depositos-verificados",
+          "Name": "Depósitos verificados",
+          "Description": "Cada depósito cuenta cuando el mismo clip muestra su fractura y la recogida de gemas.",
+          "Category": "MINING",
+          "MeritPerUnit": 60,
+          "Bonus": 0,
+          "UnitLimit": 3
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; no cuentan PTU, EPTU ni Arena Commander.",
+        "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+        "El video debe identificar al jugador y mostrar la versión LIVE.",
+        "No cuentan gemas compradas, saqueadas ni transferidas.",
+        "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "mining-live-ore-sampler",
+      "Title": "Catador de vetas",
+      "Description": "Extrae 3 tipos distintos de mineral con una nave minera.",
+      "Category": "MINING",
+      "Mode": "SOLO",
+      "CompletionReward": 30,
+      "State": "PUBLISHED",
+      "Version": "1",
+      "Objectives": [
+        {
+          "ObjectiveID": "minerales-verificados",
+          "Name": "Minerales verificados",
+          "Description": "Cada tipo cuenta cuando el mismo clip muestra el escaneo que lo identifica y la extracción del fragmento.",
+          "Category": "MINING",
+          "MeritPerUnit": 90,
+          "Bonus": 0,
+          "UnitLimit": 3
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; no cuentan PTU, EPTU ni Arena Commander.",
+        "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+        "El video debe identificar al jugador y mostrar la versión LIVE.",
+        "Cada tipo de mineral cuenta una sola vez; no cuentan compras ni transferencias.",
+        "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "arena-live-pirate-swarm",
+      "Title": "Ala de patrulla",
+      "Description": "Gana 3 partidas online de Pirate Swarm.",
+      "Category": "ARENA_COMMANDER",
+      "Mode": "SOLO",
+      "CompletionReward": 50,
+      "State": "PUBLISHED",
+      "Version": "1",
+      "Objectives": [
+        {
+          "ObjectiveID": "victorias-verificadas",
+          "Name": "Victorias verificadas",
+          "Description": "Cada partida cuenta si la pantalla final muestra la victoria y tu nombre de jugador.",
+          "Category": "ARENA_COMMANDER",
+          "MeritPerUnit": 150,
+          "Bonus": 0,
+          "UnitLimit": 3
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en Arena Commander online de LIVE; no cuentan PTU, EPTU, PU ni partidas offline.",
+        "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+        "El video debe identificar al jugador y mostrar la versión LIVE.",
+        "Se acredita una unidad por partida, no por oleada.",
+        "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "arena-live-duel",
+      "Title": "As del simulador",
+      "Description": "Gana 3 duelos contra pilotos distintos en Arena Commander.",
+      "Category": "ARENA_COMMANDER",
+      "Mode": "SOLO",
+      "CompletionReward": 40,
+      "State": "PUBLISHED",
+      "Version": "1",
+      "Objectives": [
+        {
+          "ObjectiveID": "duelos-verificados",
+          "Name": "Duelos verificados",
+          "Description": "Cada duelo cuenta si se ve el resultado final y los nombres de ambos pilotos.",
+          "Category": "ARENA_COMMANDER",
+          "MeritPerUnit": 120,
+          "Bonus": 0,
+          "UnitLimit": 3
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en Arena Commander online de LIVE; no cuentan PTU, EPTU, PU ni partidas offline.",
+        "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+        "El video debe identificar al jugador y mostrar la versión LIVE.",
+        "No cuentan rivales repetidos ni victorias pactadas.",
+        "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "salvage-live-hull-to-hull",
+      "Title": "Casco a casco",
+      "Description": "Recupera material de 3 pecios distintos mediante raspado de casco.",
+      "Category": "SALVAGE",
+      "Mode": "SOLO",
+      "CompletionReward": 30,
+      "State": "PUBLISHED",
+      "Version": "1",
+      "Objectives": [
+        {
+          "ObjectiveID": "pecios-verificados",
+          "Name": "Pecios verificados",
+          "Description": "Cada pecio cuenta si el mismo clip muestra el raspado de casco y el aumento del material recuperado.",
+          "Category": "SALVAGE",
+          "MeritPerUnit": 90,
+          "Bonus": 0,
+          "UnitLimit": 3
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; no cuentan PTU, EPTU ni Arena Commander.",
+        "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+        "El video debe identificar al jugador y mostrar la versión LIVE.",
+        "No cuentan cajas compradas ni transferidas.",
+        "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "hauling-live-service-route",
+      "Title": "Ruta de servicio",
+      "Description": "Completa 3 contratos de carga con destinos de entrega distintos.",
+      "Category": "HAULING",
+      "Mode": "SOLO",
+      "CompletionReward": 30,
+      "State": "PUBLISHED",
+      "Version": "1",
+      "Objectives": [
+        {
+          "ObjectiveID": "entregas-verificadas",
+          "Name": "Entregas verificadas",
+          "Description": "Cada entrega cuenta si se ve el destino y la confirmación de contrato completado.",
+          "Category": "HAULING",
+          "MeritPerUnit": 90,
+          "Bonus": 0,
+          "UnitLimit": 3
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; no cuentan PTU, EPTU ni Arena Commander.",
+        "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+        "El video debe identificar al jugador y mostrar la versión LIVE.",
+        "Las entregas parciales no cuentan.",
+        "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+      ]
+    }
+  ]
+}

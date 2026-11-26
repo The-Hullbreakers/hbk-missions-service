@@ -146,3 +146,23 @@ AWS_ACCESS_KEY_ID=dummy AWS_SECRET_ACCESS_KEY=dummy \
 La integración crea y elimina una tabla temporal `hbk-seed-test-<uuid>` y solo
 admite endpoints loopback. Comprueba redeploy, versiones inmutables,
 cambios de temporada, cancelación atómica y preservación de contratos.
+
+## Catálogo competitivo LIVE
+
+`competitive-missions.json` contiene seis misiones SOLO con restricciones
+explícitas por entorno de juego LIVE: `mining-live-first-strike`,
+`mining-live-ore-sampler`, `arena-live-pirate-swarm`, `arena-live-duel`,
+`salvage-live-hull-to-hull` y `hauling-live-service-route`, en cuatro categorías
+(MINING, ARENA_COMMANDER, SALVAGE, HAULING). Las de PU/LIVE excluyen PTU, EPTU y
+Arena Commander; las de Arena Commander excluyen PTU, EPTU, PU y partidas
+offline. La atribución de unidades, el video identificable y el cobro único por
+plantilla/temporada son reglas de moderación manual, no restricciones
+implementadas por el servicio.
+
+```sh
+python3 -B scripts/seed_missions.py --catalog seeds/competitive-missions.json \
+  --environment staging --season-id local-training --render
+```
+
+El selector `staging` solo habilita el renderizado/carga local mediante el
+catálogo explícito; nunca entra en el seed predeterminado ni se despliega.

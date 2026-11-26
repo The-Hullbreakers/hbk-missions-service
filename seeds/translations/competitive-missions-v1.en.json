@@ -1,0 +1,172 @@
+{
+  "translations": [
+    {
+      "DefinitionCode": "mining-live-first-strike",
+      "DefinitionVersion": "1",
+      "SourceSpanish": {
+        "Title": "Primera veta",
+        "Description": "Extrae gemas de 3 depósitos distintos con una multiherramienta.",
+        "Rules": [
+          "Exclusivamente en el universo persistente PU/LIVE; no cuentan PTU, EPTU ni Arena Commander.",
+          "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+          "El video debe identificar al jugador y mostrar la versión LIVE.",
+          "No cuentan gemas compradas, saqueadas ni transferidas.",
+          "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "depositos-verificados", "Name": "Depósitos verificados", "Description": "Cada depósito cuenta cuando el mismo clip muestra su fractura y la recogida de gemas."}]
+      },
+      "English": {
+        "Title": "First Strike",
+        "Description": "Extract gemstones from 3 different deposits using a multitool.",
+        "Rules": [
+          "LIVE Persistent Universe only; PTU, EPTU, and Arena Commander do not count.",
+          "Results must be earned after accepting the contract and during the active season.",
+          "Video must identify the player and show the LIVE version.",
+          "Purchased, looted, or transferred gems do not count.",
+          "Each result counts toward one unit and one mission only; one claim per template per season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "depositos-verificados", "Name": "Verified deposits", "Description": "Each deposit counts when the same clip shows it being fractured and its gems being collected."}]
+      }
+    },
+    {
+      "DefinitionCode": "mining-live-ore-sampler",
+      "DefinitionVersion": "1",
+      "SourceSpanish": {
+        "Title": "Catador de vetas",
+        "Description": "Extrae 3 tipos distintos de mineral con una nave minera.",
+        "Rules": [
+          "Exclusivamente en el universo persistente PU/LIVE; no cuentan PTU, EPTU ni Arena Commander.",
+          "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+          "El video debe identificar al jugador y mostrar la versión LIVE.",
+          "Cada tipo de mineral cuenta una sola vez; no cuentan compras ni transferencias.",
+          "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "minerales-verificados", "Name": "Minerales verificados", "Description": "Cada tipo cuenta cuando el mismo clip muestra el escaneo que lo identifica y la extracción del fragmento."}]
+      },
+      "English": {
+        "Title": "Ore Sampler",
+        "Description": "Extract 3 different ore types using a mining ship.",
+        "Rules": [
+          "LIVE Persistent Universe only; PTU, EPTU, and Arena Commander do not count.",
+          "Results must be earned after accepting the contract and during the active season.",
+          "Video must identify the player and show the LIVE version.",
+          "Each ore type counts once; purchases and transfers do not count.",
+          "Each result counts toward one unit and one mission only; one claim per template per season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "minerales-verificados", "Name": "Verified ore types", "Description": "Each ore type counts when the same clip shows the scan identifying it and the extraction of that fragment."}]
+      }
+    },
+    {
+      "DefinitionCode": "arena-live-pirate-swarm",
+      "DefinitionVersion": "1",
+      "SourceSpanish": {
+        "Title": "Ala de patrulla",
+        "Description": "Gana 3 partidas online de Pirate Swarm.",
+        "Rules": [
+          "Exclusivamente en Arena Commander online de LIVE; no cuentan PTU, EPTU, PU ni partidas offline.",
+          "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+          "El video debe identificar al jugador y mostrar la versión LIVE.",
+          "Se acredita una unidad por partida, no por oleada.",
+          "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Victorias verificadas", "Description": "Cada partida cuenta si la pantalla final muestra la victoria y tu nombre de jugador."}]
+      },
+      "English": {
+        "Title": "Patrol Wing",
+        "Description": "Win 3 online Pirate Swarm matches.",
+        "Rules": [
+          "Online Arena Commander on LIVE only; PTU, EPTU, the Persistent Universe, and offline matches do not count.",
+          "Results must be earned after accepting the contract and during the active season.",
+          "Video must identify the player and show the LIVE version.",
+          "Each match counts once, not each wave.",
+          "Each result counts toward one unit and one mission only; one claim per template per season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Verified wins", "Description": "Each match counts if the final screen shows the win and your player name."}]
+      }
+    },
+    {
+      "DefinitionCode": "arena-live-duel",
+      "DefinitionVersion": "1",
+      "SourceSpanish": {
+        "Title": "As del simulador",
+        "Description": "Gana 3 duelos contra pilotos distintos en Arena Commander.",
+        "Rules": [
+          "Exclusivamente en Arena Commander online de LIVE; no cuentan PTU, EPTU, PU ni partidas offline.",
+          "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+          "El video debe identificar al jugador y mostrar la versión LIVE.",
+          "No cuentan rivales repetidos ni victorias pactadas.",
+          "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "duelos-verificados", "Name": "Duelos verificados", "Description": "Cada duelo cuenta si se ve el resultado final y los nombres de ambos pilotos."}]
+      },
+      "English": {
+        "Title": "Simulator Ace",
+        "Description": "Win 3 Arena Commander duels against different pilots.",
+        "Rules": [
+          "Online Arena Commander on LIVE only; PTU, EPTU, the Persistent Universe, and offline matches do not count.",
+          "Results must be earned after accepting the contract and during the active season.",
+          "Video must identify the player and show the LIVE version.",
+          "Repeat opponents and arranged wins do not count.",
+          "Each result counts toward one unit and one mission only; one claim per template per season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "duelos-verificados", "Name": "Verified duels", "Description": "Each duel counts if the final result and both pilot names are visible."}]
+      }
+    },
+    {
+      "DefinitionCode": "salvage-live-hull-to-hull",
+      "DefinitionVersion": "1",
+      "SourceSpanish": {
+        "Title": "Casco a casco",
+        "Description": "Recupera material de 3 pecios distintos mediante raspado de casco.",
+        "Rules": [
+          "Exclusivamente en el universo persistente PU/LIVE; no cuentan PTU, EPTU ni Arena Commander.",
+          "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+          "El video debe identificar al jugador y mostrar la versión LIVE.",
+          "No cuentan cajas compradas ni transferidas.",
+          "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "pecios-verificados", "Name": "Pecios verificados", "Description": "Cada pecio cuenta si el mismo clip muestra el raspado de casco y el aumento del material recuperado."}]
+      },
+      "English": {
+        "Title": "Hull to Hull",
+        "Description": "Recover material from 3 different wrecks by hull scraping.",
+        "Rules": [
+          "LIVE Persistent Universe only; PTU, EPTU, and Arena Commander do not count.",
+          "Results must be earned after accepting the contract and during the active season.",
+          "Video must identify the player and show the LIVE version.",
+          "Purchased or transferred crates do not count.",
+          "Each result counts toward one unit and one mission only; one claim per template per season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "pecios-verificados", "Name": "Verified wrecks", "Description": "Each wreck counts if the same clip shows hull scraping and the recovered material increasing."}]
+      }
+    },
+    {
+      "DefinitionCode": "hauling-live-service-route",
+      "DefinitionVersion": "1",
+      "SourceSpanish": {
+        "Title": "Ruta de servicio",
+        "Description": "Completa 3 contratos de carga con destinos de entrega distintos.",
+        "Rules": [
+          "Exclusivamente en el universo persistente PU/LIVE; no cuentan PTU, EPTU ni Arena Commander.",
+          "Solo cuentan resultados obtenidos después de aceptar el contrato y durante la temporada activa.",
+          "El video debe identificar al jugador y mostrar la versión LIVE.",
+          "Las entregas parciales no cuentan.",
+          "Cada resultado acredita una sola unidad y una sola misión; un cobro por plantilla y temporada, con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "entregas-verificadas", "Name": "Entregas verificadas", "Description": "Cada entrega cuenta si se ve el destino y la confirmación de contrato completado."}]
+      },
+      "English": {
+        "Title": "Service Route",
+        "Description": "Complete 3 hauling contracts with different delivery destinations.",
+        "Rules": [
+          "LIVE Persistent Universe only; PTU, EPTU, and Arena Commander do not count.",
+          "Results must be earned after accepting the contract and during the active season.",
+          "Video must identify the player and show the LIVE version.",
+          "Partial deliveries do not count.",
+          "Each result counts toward one unit and one mission only; one claim per template per season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "entregas-verificadas", "Name": "Verified deliveries", "Description": "Each delivery counts if the destination and the contract completion confirmation are visible."}]
+      }
+    }
+  ]
+}
