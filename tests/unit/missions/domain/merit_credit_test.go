@@ -11,7 +11,7 @@ func confirmBountyTargets(t *testing.T, contract *domain.MissionContract, object
 	t.Helper()
 	var credits []domain.MeritCredit
 	for _, target := range targets {
-		credit, err := domain.ConfirmObjective(contract, objective, target, season, tenantID)
+		credit, err := domain.ConfirmObjective(contract, objective.ObjectiveID, target, season)
 		if err != nil {
 			t.Fatalf("unexpected error confirming %s: %v", target, err)
 		}
@@ -23,11 +23,12 @@ func confirmBountyTargets(t *testing.T, contract *domain.MissionContract, object
 func TestMeritCredit_FourBountyTargets(t *testing.T) {
 	// Arrange
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
+	startContract(t, contract)
 
-	objective := domain.NewObjective("objective-1", "BOUNTY_HUNTING", 100)
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 0)
+	freezeTerms(t, contract, objective)
 	targets := []string{"target-1", "target-2", "target-3", "target-4"}
 
 	// Act

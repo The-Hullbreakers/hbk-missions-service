@@ -12,7 +12,7 @@ func TestConfirmationID_New(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
-	if id.String() != "contract-1:objective-1:unit-1:player-1" {
+	if id.String() != "contract-1~objective-1~unit-1~player-1" {
 		t.Fatalf("unexpected string form: %s", id.String())
 	}
 	if id.ContractID() != "contract-1" || id.ObjectiveID() != "objective-1" || id.UnitID() != "unit-1" || id.RecipientID() != "player-1" {
@@ -28,7 +28,7 @@ func TestConfirmationID_NewRejectsEmptyPart(t *testing.T) {
 }
 
 func TestConfirmationID_Parse(t *testing.T) {
-	id, err := domain.ParseConfirmationID("contract-1:objective-1:unit-1:player-1")
+	id, err := domain.ParseConfirmationID("contract-1~objective-1~unit-1~player-1")
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -38,7 +38,7 @@ func TestConfirmationID_Parse(t *testing.T) {
 }
 
 func TestConfirmationID_ParseRejectsMalformed(t *testing.T) {
-	_, err := domain.ParseConfirmationID("c:1")
+	_, err := domain.ParseConfirmationID("c~1")
 	if !errors.Is(err, domain.ErrInvalidConfirmationID) {
 		t.Fatalf("expected ErrInvalidConfirmationID, got %v", err)
 	}

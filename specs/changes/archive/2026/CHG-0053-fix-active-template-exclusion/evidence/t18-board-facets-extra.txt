@@ -1,0 +1,19 @@
+=== targeted ===
+=== RUN   TestListOfferFacetsHandler_ExplicitSeasonFilters
+--- PASS: TestListOfferFacetsHandler_ExplicitSeasonFilters (0.00s)
+=== RUN   TestListOfferFacetsHandler_MultipleActiveSeasonsRejects
+--- PASS: TestListOfferFacetsHandler_MultipleActiveSeasonsRejects (0.00s)
+=== RUN   TestListOfferFacetsHandler_SeasonReaderErrorIsInternal
+--- PASS: TestListOfferFacetsHandler_SeasonReaderErrorIsInternal (0.00s)
+=== RUN   TestListOfferFacetsHandler_ExposesDistinctFacets
+--- PASS: TestListOfferFacetsHandler_ExposesDistinctFacets (0.00s)
+=== RUN   TestListOfferFacetsHandler_InvalidStatusRejects
+--- PASS: TestListOfferFacetsHandler_InvalidStatusRejects (0.00s)
+=== RUN   TestListOfferFacetsHandler_NoActiveSeasonRejects
+--- PASS: TestListOfferFacetsHandler_NoActiveSeasonRejects (0.00s)
+=== RUN   TestListOfferFacetsHandler_ReaderErrorIsInternal
+--- PASS: TestListOfferFacetsHandler_ReaderErrorIsInternal (0.00s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/interface/http	0.398s
+=== package ===
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/interface/http	0.249s

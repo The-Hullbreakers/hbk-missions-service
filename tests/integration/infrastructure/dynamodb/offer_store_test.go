@@ -20,23 +20,24 @@ func TestOfferStore_RoundTrip(t *testing.T) {
 	}
 
 	store := missiondynamo.NewOfferStore(client, "hbk-missions")
-	definition, _ := domain.NewMissionDefinition("bounty-template", "BOUNTY_HUNTING", 10, domain.MissionModeSolo)
+	definition, _ := domain.NewMissionDefinition("bounty-template", "T", "D", "BOUNTY_HUNTING", domain.MissionModeSolo, 0, nil, nil)
+	definition = englishize(definition)
 	_ = definition.Publish("v1")
-	offer, _ := domain.NewMissionOfferFromDefinition("offer-1", "season-1", definition, 0)
+	offer, _ := domain.NewMissionOfferFromDefinition("offer-1", "season-1", definition)
 
 	if err := store.Save(offer); err != nil {
 		t.Fatalf("could not save offer: %v", err)
 	}
 
-	loaded, err := store.Get("tenant-1", "offer-1")
+	loaded, err := store.Get("offer-1")
 	if err != nil {
 		t.Fatalf("could not get offer: %v", err)
 	}
-	if loaded.OfferID != "offer-1" || loaded.DefinitionID != "bounty-template" || loaded.DefinitionVersion != "v1" {
+	if loaded.OfferID != "offer-1" || loaded.DefinitionCode != "bounty-template" || loaded.DefinitionVersion != "v1" {
 		t.Fatalf("unexpected offer: %+v", loaded)
 	}
 
-	_, err = store.Get("tenant-1", "missing")
+	_, err = store.Get("missing")
 	if err == nil {
 		t.Fatalf("expected an error for missing offer")
 	}

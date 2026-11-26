@@ -1,0 +1,27 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run 'TestCommitAcceptance_|TestContractStore_(TerminalSaveReleasesOnlyActiveMembers|StaleReleaseKeepsNewerReservation|PendingValidationKeepsReservation|SaveDepartureReleasesDepartedGuards)'
+=== RUN   TestCommitAcceptance_ConcurrentLimitRace
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1756396488
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2597991568
+--- PASS: TestCommitAcceptance_ConcurrentLimitRace (0.03s)
+=== RUN   TestContractStore_SaveDepartureReleasesDepartedGuards
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- PASS: TestContractStore_SaveDepartureReleasesDepartedGuards (0.02s)
+=== RUN   TestContractStore_TerminalSaveReleasesOnlyActiveMembers
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- PASS: TestContractStore_TerminalSaveReleasesOnlyActiveMembers (0.02s)
+=== RUN   TestContractStore_StaleReleaseKeepsNewerReservation
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2597991568
+--- PASS: TestContractStore_StaleReleaseKeepsNewerReservation (0.02s)
+=== RUN   TestContractStore_PendingValidationKeepsReservation
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- PASS: TestContractStore_PendingValidationKeepsReservation (0.01s)
+=== RUN   TestCommitAcceptance_ConcurrentSameDefinitionSerializes
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2801172217
+--- PASS: TestCommitAcceptance_ConcurrentSameDefinitionSerializes (0.02s)
+=== RUN   TestCommitAcceptance_DifferentPlayersSameDefinitionBothCommit
+SDK 2026/10/26 09:00:49 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- PASS: TestCommitAcceptance_DifferentPlayersSameDefinitionBothCommit (0.01s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.396s

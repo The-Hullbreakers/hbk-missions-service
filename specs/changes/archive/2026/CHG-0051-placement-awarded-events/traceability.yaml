@@ -1,0 +1,133 @@
+change_id: CHG-0051
+artifact: traceability
+status: proposed
+updated: 2026-10-28
+
+requirements:
+  - req_id: REQ-SCC-018
+    title: Publish adjudicated placements on official finalization
+    tasks: [T-1, T-2, T-3, T-4, T-5, T-6, T-9, T-10, T-11, T-12, T-13]
+    tests:
+      - TEST-DOM-ADJ-001
+      - TEST-DOM-ADJ-002
+      - TEST-DOM-ADJ-003
+      - TEST-APP-FIN-001
+      - TEST-APP-FIN-002
+      - TEST-APP-FIN-004
+      - TEST-APP-PUB-001
+      - TEST-APP-MCF-002
+      - TEST-INF-OUT-001
+      - TEST-INF-ADJ-001
+      - TEST-INF-FACT-001
+      - TEST-INF-FACT-002
+      - TEST-INF-MAN-001
+      - TEST-INF-MAN-002
+      - TEST-INF-SNAP-001
+      - TEST-E2E-AWD-001
+      - TEST-E2E-AWD-002
+    production_files:
+      - internal/missions/domain/placement_fact.go
+      - internal/missions/domain/adjudication.go
+      - internal/missions/application/finalize_season.go
+      - internal/missions/application/publish_placement_facts.go
+      - internal/missions/application/adjudication_ports.go
+      - internal/missions/application/season_scheduler.go
+      - internal/missions/infrastructure/dynamodb/season_store_lock.go
+      - internal/missions/infrastructure/dynamodb/season_store_facts.go
+      - internal/missions/infrastructure/dynamodb/season_store_finalize.go
+      - internal/missions/infrastructure/dynamodb/season_store_outbox.go
+      - internal/missions/infrastructure/dynamodb/season_store_manifest_read.go
+      - internal/missions/infrastructure/dynamodb/season_store_manifest_progress.go
+      - internal/missions/infrastructure/dynamodb/season_store_fact_verify.go
+      - internal/missions/infrastructure/dynamodb/season_store_manifest_commit.go
+      - internal/missions/infrastructure/dynamodb/contract_store_credited.go
+      - internal/missions/infrastructure/dynamodb/contract_store_roster.go
+      - internal/missions/infrastructure/sns/publisher.go
+      - internal/missions/infrastructure/sns/sns_client.go
+      - internal/missions/composition/server.go
+      - internal/missions/composition/config.go
+  - req_id: REQ-SCC-004
+    title: Freeze and finalize (lock + two-phase commit, extended by REQ-SCC-018)
+    tasks: [T-1, T-4, T-6, T-9, T-10, T-11, T-12, T-13, T-14]
+    tests:
+      - TEST-APP-FIN-001
+      - TEST-APP-FIN-003
+      - TEST-INF-OUT-001
+      - TEST-INF-ADJ-001
+      - TEST-INF-FENCE-001
+      - TEST-INF-SNAP-001
+      - TEST-APP-SWP-001
+      - TEST-INF-SWP-001
+      - TEST-E2E-AWD-002
+      - TEST-HTTP-ADJ-001
+    production_files:
+      - internal/missions/application/finalize_season.go
+      - internal/missions/application/confirm_objective.go
+      - internal/missions/application/review_contract.go
+      - internal/missions/infrastructure/dynamodb/season_store_lock.go
+      - internal/missions/infrastructure/dynamodb/merit_ledger_save.go
+      - internal/missions/infrastructure/dynamodb/contract_store_review.go
+      - internal/missions/infrastructure/dynamodb/contract_store_accept.go
+      - internal/missions/application/season_scheduler_sweep.go
+      - internal/missions/composition/orphan_reporter.go
+      - internal/missions/interface/http/errors.go
+  - req_id: REQ-MCF-010
+    title: Commit adjudication and credits atomically (adjudication-lock fence)
+    tasks: [T-9, T-12, T-13]
+    tests:
+      - TEST-APP-MCF-001
+      - TEST-APP-MCF-002
+      - TEST-DOM-ADJ-004
+      - TEST-INF-FENCE-001
+      - TEST-INF-MCF-001
+    production_files:
+      - internal/missions/domain/errors.go
+      - internal/missions/application/confirm_objective.go
+      - internal/missions/application/review_contract.go
+      - internal/missions/infrastructure/dynamodb/contract_store.go
+      - internal/missions/infrastructure/dynamodb/contract_store_adjudication_fence.go
+      - internal/missions/infrastructure/dynamodb/merit_ledger_save.go
+      - internal/missions/infrastructure/dynamodb/contract_store_review.go
+  - req_id: REQ-MCF-012
+    title: Completion grants the frozen reward (fenced as positive credit)
+    tasks: [T-9, T-12, T-13]
+    tests:
+      - TEST-INF-MCF-001
+    production_files:
+      - internal/missions/application/review_contract.go
+      - internal/missions/infrastructure/dynamodb/contract_store_review.go
+      - internal/missions/infrastructure/dynamodb/merit_ledger_save.go
+  - req_id: REQ-MCF-020
+    title: Adjudicate a pending contract (approve fenced; reject unfenced)
+    tasks: [T-9, T-12, T-13]
+    tests:
+      - TEST-APP-MCF-001
+      - TEST-INF-FENCE-001
+      - TEST-INF-MCF-001
+    production_files:
+      - internal/missions/application/review_contract.go
+      - internal/missions/infrastructure/dynamodb/contract_store_review.go
+      - internal/missions/infrastructure/dynamodb/contract_store_accept.go
+
+# TEST ids
+# TEST-APP-FIN-003  adjudication start acquires lock+cutoff (retry keeps
+#                   values); FREEZING pre-lock still credits; fence on credit port
+# TEST-APP-FIN-004  stage->verify->commit; crash/retry resumes same attempt;
+#                   zero-ranked -> empty manifest
+# TEST-APP-PUB-001  manifest publisher: stable event_id, progress marks, mid-drain retry
+# TEST-DOM-ADJ-002  credited-contract roster rule (uncredited frozen member excluded)
+# TEST-DOM-ADJ-003  attempt identity + staged-set count/hash verification
+# TEST-INF-ADJ-001  Acquire persists a stable lock identity and cutoff
+#                   while the public season remains FREEZING
+# TEST-INF-FACT-001 conditional PutItem staging (attribute_not_exists);
+#                   identical-digest replay no-op; deterministic manifest
+#                   key; bounded parallelism; 2-item commit tx
+# TEST-INF-FACT-002 divergent staged digest -> ErrStagedFactConflict,
+#                   never overwritten
+# TEST-INF-FENCE-001 credit/contract mutation rejected under lock in same write
+# TEST-APP-MCF-001  pre-lock approve/confirm credits; post-lock
+#                   ErrSeasonAdjudicating, no writes, no false success
+# TEST-INF-MCF-001  raced approval all-or-nothing; post-lock approve ->
+#                   contract pending + ledger unchanged; reject unfenced
+# TEST-INF-SNAP-001 strong-consistent standings + credited-contract snapshot
+# TEST-E2E-AWD-002  200 ranked entries finalize -> manifest -> 200 facts (critical E2E)

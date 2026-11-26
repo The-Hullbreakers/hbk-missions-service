@@ -19,13 +19,13 @@ func TestCompositionServer_CreateScheduledSeason(t *testing.T) {
 		t.Fatalf("could not create client: %v", err)
 	}
 
-	if err := client.CreateMissionsTable(ctx, "hbk-missions"); err != nil {
+	if err := client.CreateMissionsTable(ctx, "hbk-missions-composition"); err != nil {
 		t.Fatalf("could not create table: %v", err)
 	}
-	clearMissionsTable(t, ctx, client, "hbk-missions")
+	clearMissionsTable(t, ctx, client, "hbk-missions-composition")
 
 	server, err := missioncomposition.NewServer(missioncomposition.Config{
-		TableName:   "hbk-missions",
+		TableName:   "hbk-missions-composition",
 		DynamoDB:    client,
 		UserSession: fakeUserSession{},
 	})

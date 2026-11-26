@@ -1,0 +1,324 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: HBK Missions Service - missions, contracts, seasons, and leaderboards API
+
+Parameters:
+  Environment:
+    Type: String
+    Default: stg
+    AllowedValues: [stg, prod, local]
+  DynamoDBTableName:
+    Type: String
+    Default: "hbk-missions-stg"
+  SeedDeploymentRoleName:
+    Type: String
+    Default: ''
+    Description: Existing GitHub deployment role to grant catalog synchronization permissions
+  IdentityIssuer:
+    Type: String
+    Default: "https://identity-stg.thehullbreakers.com"
+  IdentityClientID:
+    Type: String
+    Default: "app-stg.thehullbreakers.com"
+  OIDCAllowedAudiences:
+    Type: String
+    Default: "app-stg.thehullbreakers.com"
+  OIDCAllowedOrigins:
+    Type: String
+    Default: "https://app-stg.thehullbreakers.com"
+  EvidenceBucketName:
+    Type: String
+    Default: "hbk-missions-evidence-stg"
+  EvidenceMaxBytes:
+    Type: Number
+    Default: 268435456
+    Description: Max declared size for evidence media upload grants (256 MB)
+  EvidenceCorsOrigins:
+    Type: CommaDelimitedList
+    Default: "https://app-stg.thehullbreakers.com,http://localhost:3000"
+    Description: Browser origins allowed to PUT/GET evidence via presigned URLs
+  SharedEventsTopicArn:
+    Type: String
+    Default: ''
+    Description: Shared SNS Topic ARN for domain events from hbk-shared-infrastructure
+
+Conditions:
+  HasSeedDeploymentRole: !Not [!Equals [!Ref SeedDeploymentRoleName, '']]
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Runtime: provided.al2023
+    Architectures: [x86_64]
+    Environment:
+      Variables:
+        ENVIRONMENT: !Ref Environment
+        OIDC_ISSUER: !Ref IdentityIssuer
+        OIDC_CLIENT_ID: !Ref IdentityClientID
+        OIDC_ALLOWED_AUDIENCES: !Ref OIDCAllowedAudiences
+        OIDC_ALLOWED_ORIGINS: !Ref OIDCAllowedOrigins
+
+Resources:
+  MissionCatalogDeploymentPolicy:
+    Type: AWS::IAM::Policy
+    Condition: HasSeedDeploymentRole
+    Properties:
+      PolicyName: !Sub 'hbk-missions-catalog-${Environment}'
+      Roles:
+        - !Ref SeedDeploymentRoleName
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:Query
+              - dynamodb:ConditionCheckItem
+            Resource: !GetAtt MissionsTable.Arn
+            Condition:
+              ForAllValues:StringEquals:
+                dynamodb:LeadingKeys: [DEFINITION, SEASON]
+          - Effect: Allow
+            Action:
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+            Resource: !GetAtt MissionsTable.Arn
+            Condition:
+              ForAllValues:StringEquals:
+                dynamodb:LeadingKeys: [DEFINITION, OFFER]
+          - Effect: Allow
+            Action:
+              - dynamodb:GetItem
+            Resource: !GetAtt MissionsTable.Arn
+            Condition:
+              ForAllValues:StringEquals:
+                dynamodb:LeadingKeys: [OFFER]
+
+  MissionsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Ref DynamoDBTableName
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - {AttributeName: PK, AttributeType: S}
+        - {AttributeName: SK, AttributeType: S}
+        - {AttributeName: GSI1PK, AttributeType: S}
+        - {AttributeName: GSI1SK, AttributeType: S}
+        - {AttributeName: GSI2PK, AttributeType: S}
+        - {AttributeName: GSI2SK, AttributeType: S}
+      KeySchema:
+        - {AttributeName: PK, KeyType: HASH}
+        - {AttributeName: SK, KeyType: RANGE}
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - {AttributeName: GSI1PK, KeyType: HASH}
+            - {AttributeName: GSI1SK, KeyType: RANGE}
+          Projection: {ProjectionType: ALL}
+        - IndexName: GSI2
+          KeySchema:
+            - {AttributeName: GSI2PK, KeyType: HASH}
+            - {AttributeName: GSI2SK, KeyType: RANGE}
+          Projection: {ProjectionType: ALL}
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  MissionsEvidenceBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Ref EvidenceBucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      CorsConfiguration:
+        CorsRules:
+          - Id: evidence-presigned-access
+            AllowedMethods: [PUT, GET, HEAD]
+            AllowedOrigins: !Ref EvidenceCorsOrigins
+            AllowedHeaders: ["*"]
+            ExposedHeaders: [ETag]
+            MaxAge: 3000
+      LifecycleConfiguration:
+        Rules:
+          - Id: expire-incomplete-uploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+          - Id: expire-evidence
+            Status: Enabled
+            Prefix: evidence/
+            ExpirationInDays: 365
+
+  MissionsAPIFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: bootstrap
+      CodeUri: ./
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_NAME: !Ref DynamoDBTableName
+          EVIDENCE_BUCKET_NAME: !Ref EvidenceBucketName
+          EVIDENCE_MAX_BYTES: !Ref EvidenceMaxBytes
+          SNS_TOPIC_ARN: !Ref SharedEventsTopicArn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MissionsTable
+        - Statement:
+            - Sid: EvidenceObjectAccess
+              Effect: Allow
+              Action: ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"]
+              Resource: !Sub "arn:aws:s3:::${EvidenceBucketName}/evidence/*"
+            - Sid: SNSPublishPolicy
+              Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: !Ref SharedEventsTopicArn
+
+  MissionsAPIFunctionApiPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref MissionsAPIFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub:
+          - "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayId}/*"
+          - ApiGatewayId: &ApiId
+              Fn::ImportValue: !Sub "hbk-shared-infrastructure-${Environment}-ApiGatewayId"
+
+  MissionsAPIIntegrationV2:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: *ApiId
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt MissionsAPIFunction.Arn
+
+  MissionsHealthRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties: &RouteProps
+      ApiId: *ApiId
+      Target:
+        Fn::Join:
+          - "/"
+          - - "integrations"
+            - Ref: MissionsAPIIntegrationV2
+      RouteKey: GET /api/v1/missions/healthz
+
+  MissionsConfirmEvidenceRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/missions/contracts/{contract_id}/evidence
+
+  MissionsEvidenceUploadRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/missions/contracts/{contract_id}/evidence/upload-url
+
+  MissionsEvidenceReadRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/missions/contracts/{contract_id}/evidence/media-url
+
+  MissionsCreateDefinitionRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/missions/definitions
+
+  MissionsPublishDefinitionRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/missions/definitions/{definition_code}/publish
+
+  MissionsListDefinitionsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: GET /api/v1/missions/definitions
+
+  MissionsPublishOfferRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/missions/offers
+
+  MissionsAcceptOfferRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/missions/offers/{offer_id}/accept
+
+  MissionsListOffersRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: GET /api/v1/missions/offers
+
+  MissionsListContractsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: GET /api/v1/missions/contracts
+
+  MissionsListSeasonsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: GET /api/v1/seasons
+
+  MissionsCreateSeasonRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/seasons
+
+  MissionsLeaderboardRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: GET /api/v1/missions/seasons/{season_id}/leaderboards/{category}
+
+  MissionsOverallStandingsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: GET /api/v1/missions/seasons/{season_id}/standings/overall
+
+  MissionsFreezeSeasonRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/missions/seasons/{id}/freeze
+
+  MissionsFinalizeSeasonRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: POST /api/v1/missions/seasons/{id}/finalize
+
+Outputs:
+  MissionsAPIFunctionArn:
+    Value: !GetAtt MissionsAPIFunction.Arn
+  MissionsTableName:
+    Value: !Ref MissionsTable

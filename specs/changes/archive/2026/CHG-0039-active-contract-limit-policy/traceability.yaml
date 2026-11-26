@@ -1,0 +1,14 @@
+change_id: CHG-0039
+artifact: traceability
+requirements:
+  - id: REQ-MCF-023
+    title: Manage active-contract limit (added)
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-POLICY-UPDATE
+      - SCN-MCF-POLICY-DENIED
+    tasks:
+      - T-039-001
+      - T-039-002
+      - T-039-003
+      - T-039-004

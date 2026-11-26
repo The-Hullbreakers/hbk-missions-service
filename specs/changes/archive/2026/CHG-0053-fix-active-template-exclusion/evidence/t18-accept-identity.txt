@@ -1,0 +1,7 @@
+=== targeted ===
+=== RUN   TestAcceptMissionHandler_MissingCallerIdentityReturns401
+--- PASS: TestAcceptMissionHandler_MissingCallerIdentityReturns401 (0.00s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/interface/http	0.308s
+=== package ===
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/interface/http	0.594s

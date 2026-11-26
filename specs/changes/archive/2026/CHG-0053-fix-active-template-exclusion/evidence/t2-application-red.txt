@@ -1,0 +1,13 @@
+--- FAIL: TestAcceptMissionHandler_RejectsTeammateWithSameDefinitionActive (0.00s)
+    accept_mission_team_test.go:106: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/unit/missions/application/accept_mission_team_test.go:106
+        	Error:      	Expected error with "mission definition already active" in chain but got nil.
+        	Test:       	TestAcceptMissionHandler_RejectsTeammateWithSameDefinitionActive
+--- FAIL: TestAcceptMissionHandler_RejectsTeammatePendingValidation (0.00s)
+    accept_mission_team_test.go:128: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/unit/missions/application/accept_mission_team_test.go:128
+        	Error:      	Expected error with "mission definition already active" in chain but got nil.
+        	Test:       	TestAcceptMissionHandler_RejectsTeammatePendingValidation
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.236s
+FAIL

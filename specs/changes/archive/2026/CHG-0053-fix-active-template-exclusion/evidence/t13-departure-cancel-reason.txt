@@ -1,0 +1,9 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_SaveDeparture(RejectsMissingDepartedWithPriorCount|RejectsSameCountDifferentDepartedSet|AcceptsLegacyMissingDeparted)\$
+=== RUN   TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount
+--- PASS: TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount (0.04s)
+=== RUN   TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet
+--- PASS: TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet (0.01s)
+=== RUN   TestContractStore_SaveDepartureAcceptsLegacyMissingDeparted
+--- PASS: TestContractStore_SaveDepartureAcceptsLegacyMissingDeparted (0.01s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.501s

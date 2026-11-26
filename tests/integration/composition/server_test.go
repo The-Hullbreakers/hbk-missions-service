@@ -69,17 +69,22 @@ func TestCompositionServer_HealthAndConfirm(t *testing.T) {
 		t.Fatalf("could not create client: %v", err)
 	}
 
-	if err := client.CreateMissionsTable(ctx, "hbk-missions"); err != nil {
+	if err := client.CreateMissionsTable(ctx, "hbk-missions-composition"); err != nil {
 		t.Fatalf("could not create table: %v", err)
 	}
 
-	contractStore := missiondynamo.NewContractStore(client, "hbk-missions")
-	seasonStore := missiondynamo.NewSeasonStore(client, "hbk-missions")
-	objectiveStore := missiondynamo.NewObjectiveStore(client, "hbk-missions")
+	contractStore := missiondynamo.NewContractStore(client, "hbk-missions-composition")
+	seasonStore := missiondynamo.NewSeasonStore(client, "hbk-missions-composition")
 
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
+	terms, _ := domain.NewContractTerms([]domain.Objective{
+		domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 0),
+	})
+	contract.Terms = terms
+	member, _ := domain.NewCallerIdentity("player-1", nil, nil)
+
+	contract.Start(member)
 	if err := contractStore.Save(contract); err != nil {
 		t.Fatalf("could not seed contract: %v", err)
 	}
@@ -88,12 +93,8 @@ func TestCompositionServer_HealthAndConfirm(t *testing.T) {
 		t.Fatalf("could not seed season: %v", err)
 	}
 
-	if err := objectiveStore.Save(domain.NewObjective("objective-1", "BOUNTY_HUNTING", 100)); err != nil {
-		t.Fatalf("could not seed objective: %v", err)
-	}
-
 	server, err := missioncomposition.NewServer(missioncomposition.Config{
-		TableName:   "hbk-missions",
+		TableName:   "hbk-missions-composition",
 		DynamoDB:    client,
 		UserSession: fakeUserSession{},
 	})

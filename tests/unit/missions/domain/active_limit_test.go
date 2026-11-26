@@ -12,8 +12,8 @@ func defaultLimitPolicy(limit int) domain.ActiveLimitPolicy {
 	return domain.NewActiveLimitPolicy(limit, nil)
 }
 
-func aBountyOffer(capacity int) domain.MissionOffer {
-	return domain.NewMissionOffer(testOfferID, "BOUNTY_HUNTING", capacity, "season-1")
+func aBountyOffer() domain.MissionOffer {
+	return domain.NewMissionOffer(testOfferID, "BOUNTY_HUNTING", "season-1")
 }
 
 func activeContracts(category string, states ...domain.ContractState) []domain.ActiveContractSummary {
@@ -27,16 +27,16 @@ func activeContracts(category string, states ...domain.ContractState) []domain.A
 func TestActiveMissionLimit_RejectsWhenDefaultLimitReached(t *testing.T) {
 	// Arrange
 	policy := defaultLimitPolicy(3)
-	offer := aBountyOffer(10)
+	offer := aBountyOffer()
 	contracts := activeContracts(
 		"BOUNTY_HUNTING",
 		domain.ContractAccepted,
 		domain.ContractInProgress,
-		domain.ContractPendingValidation,
+		domain.ContractAccepted,
 	)
 
 	// Act
-	decision := domain.DecideAcceptance(offer, contracts, policy)
+	decision := domain.DecideAcceptance(offer, domain.SeasonStateActive, contracts, policy)
 
 	// Assert
 	if decision.Accepted {
@@ -44,24 +44,6 @@ func TestActiveMissionLimit_RejectsWhenDefaultLimitReached(t *testing.T) {
 	}
 	if decision.Reason != domain.ReasonActiveMissionLimitReached {
 		t.Fatalf("expected reason ACTIVE_MISSION_LIMIT_REACHED, got %q", decision.Reason)
-	}
-}
-
-func TestActiveMissionLimit_RejectsWhenOfferCapacityExhausted(t *testing.T) {
-	// Arrange
-	policy := defaultLimitPolicy(3)
-	offer := aBountyOffer(1)
-	contracts := activeContracts("BOUNTY_HUNTING", domain.ContractAccepted)
-
-	// Act
-	decision := domain.DecideAcceptance(offer, contracts, policy)
-
-	// Assert
-	if decision.Accepted {
-		t.Fatalf("expected rejection when offer capacity %d is exhausted", offer.Capacity)
-	}
-	if decision.Reason != domain.ReasonOfferCapacityExhausted {
-		t.Fatalf("expected reason OFFER_CAPACITY_EXHAUSTED, got %q", decision.Reason)
 	}
 }
 

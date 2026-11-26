@@ -19,26 +19,27 @@ func TestCompositionServer_PublishMissionOffer(t *testing.T) {
 		t.Fatalf("could not create client: %v", err)
 	}
 
-	if err := client.CreateMissionsTable(ctx, "hbk-missions"); err != nil {
+	if err := client.CreateMissionsTable(ctx, "hbk-missions-composition"); err != nil {
 		t.Fatalf("could not create table: %v", err)
 	}
-	clearMissionsTable(t, ctx, client, "hbk-missions")
+	clearMissionsTable(t, ctx, client, "hbk-missions-composition")
 
-	seasonStore := missiondynamo.NewSeasonStore(client, "hbk-missions")
-	definitionStore := missiondynamo.NewDefinitionStore(client, "hbk-missions")
+	seasonStore := missiondynamo.NewSeasonStore(client, "hbk-missions-composition")
+	definitionStore := missiondynamo.NewDefinitionStore(client, "hbk-missions-composition")
 
 	if err := seasonStore.Save(domain.NewSeason("season-2026-q4", domain.SeasonStateActive)); err != nil {
 		t.Fatalf("could not seed season: %v", err)
 	}
 
-	definition, _ := domain.NewMissionDefinition("bounty-template", "BOUNTY_HUNTING", 10, domain.MissionModeTeam)
+	definition, _ := domain.NewMissionDefinition("bounty-template", "T", "D", "BOUNTY_HUNTING", domain.MissionModeTeam, 0, nil, nil)
+	definition = englishize(definition)
 	_ = definition.Publish("v1")
 	if err := definitionStore.Save(definition); err != nil {
 		t.Fatalf("could not seed definition: %v", err)
 	}
 
 	server, err := missioncomposition.NewServer(missioncomposition.Config{
-		TableName:   "hbk-missions",
+		TableName:   "hbk-missions-composition",
 		DynamoDB:    client,
 		UserSession: fakeUserSession{},
 	})
@@ -49,7 +50,7 @@ func TestCompositionServer_PublishMissionOffer(t *testing.T) {
 	ts := httptest.NewServer(server)
 	defer ts.Close()
 
-	body := `{"tenant_id":"tenant-1","offer_id":"offer-1","definition_id":"bounty-template","definition_version":"v1","capacity":10}`
+	body := `{"offer_id":"offer-1","definition_code":"bounty-template","definition_version":"v1"}`
 	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/v1/missions/offers", bytes.NewReader([]byte(body)))
 	if err != nil {
 		t.Fatalf("could not create request: %v", err)
@@ -71,7 +72,7 @@ func TestCompositionServer_PublishMissionOffer(t *testing.T) {
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		t.Fatalf("could not decode response: %v", err)
 	}
-	if result["OfferID"] != "offer-1" || result["Mode"] != "TEAM" || result["DefinitionID"] != "bounty-template" {
+	if result["OfferID"] != "offer-1" || result["Mode"] != "TEAM" || result["DefinitionCode"] != "bounty-template" {
 		t.Fatalf("unexpected offer in response: %+v", result)
 	}
 }

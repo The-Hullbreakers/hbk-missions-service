@@ -60,7 +60,7 @@ func TestCreateScheduledSeasonHandler_RejectsZeroActiveWeeks(t *testing.T) {
 
 func TestCreateScheduledSeasonHandler_RejectsWhenActiveSeasonExists(t *testing.T) {
 	store := &recordingSeasonStore{
-		active: []domain.Season{
+		existing: []domain.Season{
 			domain.NewSeason("season-active", domain.SeasonStateActive),
 		},
 	}

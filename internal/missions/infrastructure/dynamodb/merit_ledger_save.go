@@ -23,10 +23,8 @@ func NewMeritLedgerStore(client *DynamoDBClient, tableName string) *MeritLedgerS
 	return &MeritLedgerStore{client: client, tableName: tableName}
 }
 
-// Save records a credit in the ledger.
-func (s *MeritLedgerStore) Save(credit domain.MeritCredit) error {
-	ctx := context.Background()
-
+// creditItem builds the DynamoDB item for a merit credit.
+func creditItem(credit domain.MeritCredit) map[string]types.AttributeValue {
 	item := map[string]types.AttributeValue{
 		"PK":             &types.AttributeValueMemberS{Value: "MERIT_CREDIT"},
 		"SK":             &types.AttributeValueMemberS{Value: credit.ConfirmationID},
@@ -34,7 +32,6 @@ func (s *MeritLedgerStore) Save(credit domain.MeritCredit) error {
 		"GSI1SK":         &types.AttributeValueMemberS{Value: credit.ConfirmationID},
 		"GSI2PK":         &types.AttributeValueMemberS{Value: leaderboardBucketKey(credit)},
 		"GSI2SK":         &types.AttributeValueMemberS{Value: leaderboardSortKey(credit)},
-		"TenantID":       &types.AttributeValueMemberS{Value: credit.TenantID},
 		"SeasonID":       &types.AttributeValueMemberS{Value: credit.SeasonID},
 		"Category":       &types.AttributeValueMemberS{Value: credit.Category},
 		"Track":          &types.AttributeValueMemberS{Value: string(credit.Track)},
@@ -45,11 +42,25 @@ func (s *MeritLedgerStore) Save(credit domain.MeritCredit) error {
 		"UnitID":         &types.AttributeValueMemberS{Value: credit.UnitID},
 		"ConfirmationID": &types.AttributeValueMemberS{Value: credit.ConfirmationID},
 	}
+	if credit.MediaURI != "" {
+		item["MediaURI"] = &types.AttributeValueMemberS{Value: string(credit.MediaURI)}
+	}
+	return item
+}
 
-	_, err := s.client.Client().PutItem(ctx, &dynamodb.PutItemInput{
-		TableName: aws.String(s.tableName),
-		Item:      item,
+// Save records a credit in the ledger.
+func (s *MeritLedgerStore) Save(credit domain.MeritCredit) error {
+	ctx := context.Background()
+
+	_, err := s.client.Client().TransactWriteItems(ctx, &dynamodb.TransactWriteItemsInput{
+		TransactItems: []types.TransactWriteItem{
+			seasonUnlockedCheck(s.tableName, credit.SeasonID),
+			{Put: &types.Put{TableName: aws.String(s.tableName), Item: creditItem(credit)}},
+		},
 	})
+	if seasonLockCheckFailed(err) {
+		return adjudicationFenceError(ctx, s.client, s.tableName, credit.SeasonID, true)
+	}
 	if err != nil {
 		return fmt.Errorf("failed to save merit credit: %w", err)
 	}

@@ -6,7 +6,7 @@ import (
 
 // LeaderboardReader loads standings for a leaderboard bucket.
 type LeaderboardReader interface {
-	ListStandings(tenantID, seasonID, category string, track domain.Track, minMerits int) ([]domain.Standing, error)
+	ListStandings(seasonID, category string, track domain.Track, minMerits int) ([]domain.Standing, error)
 }
 
 // ListLeaderboardHandler orchestrates the leaderboard query.
@@ -24,7 +24,7 @@ func NewListLeaderboardHandler(seasons SeasonReader, leaderboards LeaderboardRea
 }
 
 // Handle returns a paginated leaderboard for the given bucket.
-func (h *ListLeaderboardHandler) Handle(tenantID, seasonID, category, track string, limit, minMerits int, cursor string) (domain.Leaderboard, error) {
+func (h *ListLeaderboardHandler) Handle(seasonID, category, track string, limit, minMerits int, cursor string) (domain.Leaderboard, error) {
 	parsedTrack, err := domain.ParseTrack(track)
 	if err != nil {
 		return domain.Leaderboard{}, domain.ErrInvalidTrack
@@ -34,7 +34,7 @@ func (h *ListLeaderboardHandler) Handle(tenantID, seasonID, category, track stri
 		return domain.Leaderboard{}, err
 	}
 
-	standings, err := h.leaderboards.ListStandings(tenantID, seasonID, category, parsedTrack, minMerits)
+	standings, err := h.leaderboards.ListStandings(seasonID, category, parsedTrack, minMerits)
 	if err != nil {
 		return domain.Leaderboard{}, err
 	}

@@ -8,43 +8,48 @@ import (
 
 // CreateScheduledSeasonCommand carries the parameters for a scheduled season.
 type CreateScheduledSeasonCommand struct {
-	TenantID     string
 	SeriesPrefix string
 	Iteration    int
 	StartsAt     time.Time
 	ActiveWeeks  int
 	OffWeeks     int
+	ActiveDays   int
+	OffDays      int
 	Official     bool
 }
 
 // CreateScheduledSeasonHandler creates a new scheduled season.
 type CreateScheduledSeasonHandler struct {
-	activeSeasons ActiveSeasonsReader
-	seasons       SeasonWriter
+	reader  SeasonListReader
+	creator SeasonCreator
 }
 
 // NewCreateScheduledSeasonHandler creates a handler with the required ports.
-func NewCreateScheduledSeasonHandler(activeSeasons ActiveSeasonsReader, seasons SeasonWriter) *CreateScheduledSeasonHandler {
-	return &CreateScheduledSeasonHandler{activeSeasons: activeSeasons, seasons: seasons}
+func NewCreateScheduledSeasonHandler(reader SeasonListReader, creator SeasonCreator) *CreateScheduledSeasonHandler {
+	return &CreateScheduledSeasonHandler{reader: reader, creator: creator}
 }
 
 // Handle validates and persists a new scheduled season.
 func (h *CreateScheduledSeasonHandler) Handle(cmd CreateScheduledSeasonCommand) (domain.Season, error) {
-	active, err := h.activeSeasons.ListActive()
+	var season domain.Season
+	var err error
+	if cmd.ActiveDays > 0 || cmd.OffDays > 0 {
+		season, err = domain.NewScheduledSeasonDays(cmd.SeriesPrefix, cmd.Iteration, cmd.StartsAt, cmd.ActiveDays, cmd.OffDays, cmd.Official)
+	} else {
+		season, err = domain.NewScheduledSeason(cmd.SeriesPrefix, cmd.Iteration, cmd.StartsAt, cmd.ActiveWeeks, cmd.OffWeeks, cmd.Official)
+	}
 	if err != nil {
 		return domain.Season{}, err
 	}
-	if err := domain.ValidateCanCreateSeason(active); err != nil {
-		return domain.Season{}, err
-	}
-
-	season, err := domain.NewScheduledSeason(cmd.SeriesPrefix, cmd.Iteration, cmd.StartsAt, cmd.ActiveWeeks, cmd.OffWeeks, cmd.Official)
+	all, err := h.reader.List(domain.SeasonStatusFilterAll)
 	if err != nil {
 		return domain.Season{}, err
 	}
-	if err := h.seasons.Save(season); err != nil {
+	if err := domain.ValidateCanCreateSeason(season.SeasonID, all); err != nil {
 		return domain.Season{}, err
 	}
-
+	if err := h.creator.Create(season); err != nil {
+		return domain.Season{}, err
+	}
 	return season, nil
 }

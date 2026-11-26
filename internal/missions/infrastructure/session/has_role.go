@@ -14,14 +14,6 @@ func (s *JWTUserSession) HasRole(claims map[string]any, role string) bool {
 		return true
 	}
 
-	if tenantRoles, ok := claims["tenant_roles"].([]interface{}); ok {
-		for _, r := range tenantRoles {
-			if roleStr, ok := r.(string); ok && roleStr == role {
-				return true
-			}
-		}
-	}
-
 	if realmAccess, ok := claims["realm_access"].(map[string]interface{}); ok {
 		if roles, ok := realmAccess["roles"].([]interface{}); ok {
 			for _, r := range roles {

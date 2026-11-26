@@ -1,0 +1,7 @@
+$ go test -count=1 -v ./tests/integration/composition -run ^(TestConcurrentAcceptance_SameDefinitionSerializes|TestTeamLeaveJourney_DepartedMemberRetakes)\$
+# github.com/hbk/hbk-missions-service/internal/missions/composition
+internal/missions/composition/server.go:52:65: not enough arguments in call to application.NewLeaveContractHandler
+	have (*"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb".ContractStore, *"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb".ContractStore)
+	want (application.ContractReader, application.ContractWriter, application.DepartureWriter)
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/composition [build failed]
+FAIL

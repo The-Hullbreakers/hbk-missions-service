@@ -21,11 +21,15 @@ func TestContractStore_RoundTrip(t *testing.T) {
 	clearMissionsTable(t, ctx, client, "hbk-missions")
 
 	store := missiondynamo.NewContractStore(client, "hbk-missions")
-	definition, _ := domain.NewMissionDefinition("bounty-template", "BOUNTY_HUNTING", 10, domain.MissionModeSolo)
+	seedActiveSeason(t, client, "hbk-missions", "season-1")
+	definition, _ := domain.NewMissionDefinition("bounty-template", "T", "D", "BOUNTY_HUNTING", domain.MissionModeSolo, 0, nil, nil)
+	definition = englishize(definition)
 	_ = definition.Publish("v1")
-	offer, _ := domain.NewMissionOfferFromDefinition("offer-1", "season-1", definition, 0)
+	offer, _ := domain.NewMissionOfferFromDefinition("offer-1", "season-1", definition)
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
+	member, _ := domain.NewCallerIdentity("player-1", nil, nil)
+
+	contract.Start(member)
 
 	if err := store.Save(contract); err != nil {
 		t.Fatalf("could not save contract: %v", err)
@@ -42,7 +46,7 @@ func TestContractStore_RoundTrip(t *testing.T) {
 	if loaded.State != domain.ContractInProgress {
 		t.Fatalf("expected IN_PROGRESS, got %s", loaded.State)
 	}
-	if loaded.Offer.OfferID != "offer-1" || loaded.Offer.DefinitionID != "bounty-template" {
+	if loaded.Offer.OfferID != "offer-1" || loaded.Offer.DefinitionCode != "bounty-template" {
 		t.Fatalf("unexpected offer in contract: %+v", loaded.Offer)
 	}
 	roster := loaded.Roster()
@@ -50,7 +54,7 @@ func TestContractStore_RoundTrip(t *testing.T) {
 		t.Fatalf("expected roster [player-1], got %v", roster)
 	}
 
-	active, err := store.ListActiveByPlayer("tenant-1", "player-1", "BOUNTY_HUNTING")
+	active, err := store.ListActiveByPlayer("player-1")
 	if err != nil {
 		t.Fatalf("could not list active contracts: %v", err)
 	}
@@ -59,14 +63,14 @@ func TestContractStore_RoundTrip(t *testing.T) {
 	}
 
 	// A contract for a different player or category should not be active for player-1.
-	other, _ := domain.NewMissionOfferFromDefinition("offer-2", "season-1", definition, 0)
+	other, _ := domain.NewMissionOfferFromDefinition("offer-2", "season-1", definition)
 	otherContract := domain.NewMissionContract("contract-2", other, []string{"player-2"})
-	otherContract.Start()
+	otherContract.Start(member)
 	if err := store.Save(otherContract); err != nil {
 		t.Fatalf("could not seed second contract: %v", err)
 	}
 
-	active2, err := store.ListActiveByPlayer("tenant-1", "player-1", "BOUNTY_HUNTING")
+	active2, err := store.ListActiveByPlayer("player-1")
 	if err != nil {
 		t.Fatalf("could not list active contracts: %v", err)
 	}

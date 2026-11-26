@@ -1,0 +1,10 @@
+=== RUN   TestContractStore_StaleSaveApprovedDoesNotRestoreOrCredit
+SDK 2026/10/26 10:39:22 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+    contract_store_stale_approval_test.go:50: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_stale_approval_test.go:50
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestContractStore_StaleSaveApprovedDoesNotRestoreOrCredit
+--- FAIL: TestContractStore_StaleSaveApprovedDoesNotRestoreOrCredit (0.04s)
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.496s
+FAIL

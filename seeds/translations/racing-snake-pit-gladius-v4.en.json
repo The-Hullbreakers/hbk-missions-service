@@ -1,0 +1,122 @@
+{"translations": [
+  {
+    "DefinitionCode": "racing-snake-pit-gladius-cadete",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Colmillos de Clio — Gladius — Cadete",
+      "Description": "Completa cinco vueltas lanzadas consecutivas en Snake Pit con Gladius, cada una en menos de 68.000 segundos.",
+      "Rules": [
+        "Arena Commander, trazado normal y sentido oficial; se excluye la vuelta de salida o calentamiento.",
+        "Mantener piloto, nave y configuración durante toda la tanda, sin pausas, reparaciones ni reabastecimiento.",
+        "Una vuelta igual o superior al límite, con checkpoint omitido, respawn o reinicio no acredita su unidad.",
+        "Video continuo con identidad, nave, versión del juego y los cinco tiempos visibles.",
+        "Una tanda acredita una sola misión; un cobro por circuito, nave y dificultad durante la temporada; validación manual por moderación.",
+        "Umbral provisional pendiente de calibración en el parche actual."
+      ],
+      "Objectives": [{"ObjectiveID": "vueltas-verificadas", "Name": "Vueltas lanzadas verificadas", "Description": "Cada una de las cinco vueltas lanzadas de la tanda, verificada en video."}]
+    },
+    "English": {
+      "Title": "Fangs of Clio — Gladius — Cadet",
+      "Description": "Complete five consecutive flying laps on Snake Pit in a Gladius, each in under 68.000 seconds.",
+      "Rules": [
+        "Arena Commander, standard layout and official direction; the out-lap or warm-up lap is excluded.",
+        "Keep the same pilot, ship, and loadout for the entire run, without breaks, repairs, or refueling.",
+        "A lap at or above the time limit, with a missed checkpoint, respawn, or restart does not earn its unit.",
+        "Continuous video showing your identity, ship, game version, and all five lap times.",
+        "One run counts for only one mission; one payout per track, ship, and difficulty during the season; subject to manual moderator review.",
+        "Provisional time threshold pending calibration for the current game patch."
+      ],
+      "Objectives": [{"ObjectiveID": "vueltas-verificadas", "Name": "Verified Flying Laps", "Description": "Each of the five flying laps in the run, verified by video."}]
+    }
+  },
+  {
+    "DefinitionCode": "racing-snake-pit-gladius-piloto",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Colmillos de Clio — Gladius — Piloto",
+      "Description": "Completa cinco vueltas lanzadas consecutivas en Snake Pit con Gladius, cada una en menos de 57.000 segundos.",
+      "Rules": [
+        "Arena Commander, trazado normal y sentido oficial; se excluye la vuelta de salida o calentamiento.",
+        "Mantener piloto, nave y configuración durante toda la tanda, sin pausas, reparaciones ni reabastecimiento.",
+        "Una vuelta igual o superior al límite, con checkpoint omitido, respawn o reinicio no acredita su unidad.",
+        "Video continuo con identidad, nave, versión del juego y los cinco tiempos visibles.",
+        "Una tanda acredita una sola misión; un cobro por circuito, nave y dificultad durante la temporada; validación manual por moderación.",
+        "Umbral provisional pendiente de calibración en el parche actual."
+      ],
+      "Objectives": [{"ObjectiveID": "vueltas-verificadas", "Name": "Vueltas lanzadas verificadas", "Description": "Cada una de las cinco vueltas lanzadas de la tanda, verificada en video."}]
+    },
+    "English": {
+      "Title": "Fangs of Clio — Gladius — Pilot",
+      "Description": "Complete five consecutive flying laps on Snake Pit in a Gladius, each in under 57.000 seconds.",
+      "Rules": [
+        "Arena Commander, standard layout and official direction; the out-lap or warm-up lap is excluded.",
+        "Keep the same pilot, ship, and loadout for the entire run, without breaks, repairs, or refueling.",
+        "A lap at or above the time limit, with a missed checkpoint, respawn, or restart does not earn its unit.",
+        "Continuous video showing your identity, ship, game version, and all five lap times.",
+        "One run counts for only one mission; one payout per track, ship, and difficulty during the season; subject to manual moderator review.",
+        "Provisional time threshold pending calibration for the current game patch."
+      ],
+      "Objectives": [{"ObjectiveID": "vueltas-verificadas", "Name": "Verified Flying Laps", "Description": "Each of the five flying laps in the run, verified by video."}]
+    }
+  },
+  {
+    "DefinitionCode": "racing-snake-pit-gladius-veterano",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Colmillos de Clio — Gladius — Veterano",
+      "Description": "Completa cinco vueltas lanzadas consecutivas en Snake Pit con Gladius, cada una en menos de 51.000 segundos.",
+      "Rules": [
+        "Arena Commander, trazado normal y sentido oficial; se excluye la vuelta de salida o calentamiento.",
+        "Mantener piloto, nave y configuración durante toda la tanda, sin pausas, reparaciones ni reabastecimiento.",
+        "Una vuelta igual o superior al límite, con checkpoint omitido, respawn o reinicio no acredita su unidad.",
+        "Video continuo con identidad, nave, versión del juego y los cinco tiempos visibles.",
+        "Una tanda acredita una sola misión; un cobro por circuito, nave y dificultad durante la temporada; validación manual por moderación.",
+        "Umbral provisional pendiente de calibración en el parche actual."
+      ],
+      "Objectives": [{"ObjectiveID": "vueltas-verificadas", "Name": "Vueltas lanzadas verificadas", "Description": "Cada una de las cinco vueltas lanzadas de la tanda, verificada en video."}]
+    },
+    "English": {
+      "Title": "Fangs of Clio — Gladius — Veteran",
+      "Description": "Complete five consecutive flying laps on Snake Pit in a Gladius, each in under 51.000 seconds.",
+      "Rules": [
+        "Arena Commander, standard layout and official direction; the out-lap or warm-up lap is excluded.",
+        "Keep the same pilot, ship, and loadout for the entire run, without breaks, repairs, or refueling.",
+        "A lap at or above the time limit, with a missed checkpoint, respawn, or restart does not earn its unit.",
+        "Continuous video showing your identity, ship, game version, and all five lap times.",
+        "One run counts for only one mission; one payout per track, ship, and difficulty during the season; subject to manual moderator review.",
+        "Provisional time threshold pending calibration for the current game patch."
+      ],
+      "Objectives": [{"ObjectiveID": "vueltas-verificadas", "Name": "Verified Flying Laps", "Description": "Each of the five flying laps in the run, verified by video."}]
+    }
+  },
+  {
+    "DefinitionCode": "racing-snake-pit-gladius-as",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Colmillos de Clio — Gladius — As",
+      "Description": "Completa cinco vueltas lanzadas consecutivas en Snake Pit con Gladius, cada una en menos de 47.000 segundos.",
+      "Rules": [
+        "Arena Commander, trazado normal y sentido oficial; se excluye la vuelta de salida o calentamiento.",
+        "Mantener piloto, nave y configuración durante toda la tanda, sin pausas, reparaciones ni reabastecimiento.",
+        "Una vuelta igual o superior al límite, con checkpoint omitido, respawn o reinicio no acredita su unidad.",
+        "Video continuo con identidad, nave, versión del juego y los cinco tiempos visibles.",
+        "Una tanda acredita una sola misión; un cobro por circuito, nave y dificultad durante la temporada; validación manual por moderación.",
+        "Umbral provisional pendiente de calibración en el parche actual."
+      ],
+      "Objectives": [{"ObjectiveID": "vueltas-verificadas", "Name": "Vueltas lanzadas verificadas", "Description": "Cada una de las cinco vueltas lanzadas de la tanda, verificada en video."}]
+    },
+    "English": {
+      "Title": "Fangs of Clio — Gladius — Ace",
+      "Description": "Complete five consecutive flying laps on Snake Pit in a Gladius, each in under 47.000 seconds.",
+      "Rules": [
+        "Arena Commander, standard layout and official direction; the out-lap or warm-up lap is excluded.",
+        "Keep the same pilot, ship, and loadout for the entire run, without breaks, repairs, or refueling.",
+        "A lap at or above the time limit, with a missed checkpoint, respawn, or restart does not earn its unit.",
+        "Continuous video showing your identity, ship, game version, and all five lap times.",
+        "One run counts for only one mission; one payout per track, ship, and difficulty during the season; subject to manual moderator review.",
+        "Provisional time threshold pending calibration for the current game patch."
+      ],
+      "Objectives": [{"ObjectiveID": "vueltas-verificadas", "Name": "Verified Flying Laps", "Description": "Each of the five flying laps in the run, verified by video."}]
+    }
+  }
+]}

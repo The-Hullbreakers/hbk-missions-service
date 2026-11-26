@@ -1,0 +1,1 @@
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	5.883s

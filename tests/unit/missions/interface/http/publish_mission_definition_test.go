@@ -14,13 +14,15 @@ import (
 
 type fakeDefinitionStore struct{}
 
-func (fakeDefinitionStore) Get(_, _ string) (domain.MissionDefinition, error) {
-	def, _ := domain.NewMissionDefinition("bounty-template", "BOUNTY_HUNTING", 10, domain.MissionModeSolo)
+func (fakeDefinitionStore) Get(_ string) (domain.MissionDefinition, error) {
+	def, _ := domain.NewMissionDefinition("bounty-template", "T", "D", "BOUNTY_HUNTING", domain.MissionModeSolo, 0, nil, nil)
+	def.ContentEn = domain.LocalizedContent{Title: "T", Description: "D"}
 	return def, nil
 }
 
-func (fakeDefinitionStore) GetVersion(_, _, _ string) (domain.MissionDefinition, error) {
-	def, _ := domain.NewMissionDefinition("bounty-template", "BOUNTY_HUNTING", 10, domain.MissionModeSolo)
+func (fakeDefinitionStore) GetVersion(_, _ string) (domain.MissionDefinition, error) {
+	def, _ := domain.NewMissionDefinition("bounty-template", "T", "D", "BOUNTY_HUNTING", domain.MissionModeSolo, 0, nil, nil)
+	def.ContentEn = domain.LocalizedContent{Title: "T", Description: "D"}
 	_ = def.Publish("v1")
 	return def, nil
 }
@@ -29,10 +31,11 @@ func (fakeDefinitionStore) Save(definition domain.MissionDefinition) error { ret
 
 func TestPublishMissionDefinitionHandler_PublishesDefinition(t *testing.T) {
 	app := application.NewPublishMissionDefinitionHandler(fakeDefinitionStore{}, fakeDefinitionStore{})
-	handler := missionhttp.PublishMissionDefinitionHandler(app)
+	handler := missionhttp.NewAuthMiddleware(memberSession{}).Authenticate(missionhttp.PublishMissionDefinitionHandler(app))
 
 	body := `{"tenant_id":"tenant-1","version":"v1"}`
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/missions/definitions/bounty-template/publish", bytes.NewReader([]byte(body)))
+	req.Header.Set("Authorization", "Bearer valid-token")
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 

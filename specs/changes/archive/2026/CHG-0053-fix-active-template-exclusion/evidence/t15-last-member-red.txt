@@ -1,0 +1,6 @@
+# github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb_test [github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb.test]
+tests/integration/infrastructure/dynamodb/contract_store_last_member_test.go:29:51: too many arguments in call to store.SaveDeparture
+	have (*domain.MissionContract, string, domain.ContractState)
+	want (*domain.MissionContract, string)
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb [build failed]
+FAIL

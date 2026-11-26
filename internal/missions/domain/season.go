@@ -116,9 +116,15 @@ func (s Season) CanAcceptMerits(contract *MissionContract) bool {
 	return false
 }
 
-// ValidateCanCreateSeason checks that no existing season is currently ACTIVE.
-// It is a domain rule: at most one season may be active at a time.
-func ValidateCanCreateSeason(existing []Season) error {
+// ValidateCanCreateSeason enforces the season-creation invariants in a single
+// scope: an existing season_id is never overwritten, and at most one season
+// may be ACTIVE at a time.
+func ValidateCanCreateSeason(newID string, existing []Season) error {
+	for _, season := range existing {
+		if season.SeasonID == newID {
+			return ErrSeasonAlreadyExists
+		}
+	}
 	for _, season := range existing {
 		if season.State == SeasonStateActive {
 			return ErrActiveSeasonAlreadyExists

@@ -1,0 +1,14 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate\$
+=== RUN   TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate
+SDK 2026/10/26 09:04:51 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 09:04:51 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2597991568
+    contract_store_release_test.go:107: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_release_test.go:107
+        	Error:      	Target error should not be in err chain:
+        	            	found: "duplicate confirmation"
+        	            	in chain: "duplicate confirmation"
+        	Test:       	TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate
+--- FAIL: TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate (0.02s)
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.429s
+FAIL

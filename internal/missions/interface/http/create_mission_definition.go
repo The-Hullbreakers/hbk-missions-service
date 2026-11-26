@@ -8,12 +8,29 @@ import (
 	"github.com/hbk/hbk-missions-service/internal/missions/domain"
 )
 
+// createMissionDefinitionRequest carries business fields only; caller
+// identity is always derived from the authenticated session.
 type createMissionDefinitionRequest struct {
-	TenantID     string `json:"tenant_id"`
-	DefinitionID string `json:"definition_id"`
+	DefinitionCode   string                              `json:"definition_code"`
+	Title            string                              `json:"title"`
+	Description      string                              `json:"description"`
+	Category         string                              `json:"category"`
+	Mode             string                              `json:"mode"`
+	CompletionReward int                                 `json:"completion_reward"`
+	Objectives       []objectiveRuleRequest              `json:"objectives"`
+	Rules            []string                            `json:"rules"`
+	Translations     createMissionDefinitionTranslations `json:"translations"`
+}
+
+// objectiveRuleRequest is one objective rule inside a mission definition.
+type objectiveRuleRequest struct {
+	ObjectiveID  string `json:"objective_id"`
+	Name         string `json:"name"`
+	Description  string `json:"description"`
 	Category     string `json:"category"`
-	Capacity     int    `json:"capacity"`
-	Mode         string `json:"mode"`
+	MeritPerUnit int    `json:"merit_per_unit"`
+	Bonus        int    `json:"bonus"`
+	UnitLimit    int    `json:"unit_limit"`
 }
 
 // CreateMissionDefinitionHandler returns an HTTP handler for creating mission definitions.
@@ -32,7 +49,33 @@ func CreateMissionDefinitionHandler(app *application.CreateMissionDefinitionHand
 			mode = domain.MissionModeSolo
 		}
 
-		definition, err := app.Handle(req.TenantID, req.DefinitionID, req.Category, req.Capacity, mode)
+		_, idErr := CallerIdentityFromContext(r.Context())
+		if idErr != nil {
+			w.WriteHeader(nethttp.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{"code": "UNAUTHORIZED"})
+			return
+		}
+
+		objectives := make([]domain.Objective, 0, len(req.Objectives))
+		for _, o := range req.Objectives {
+			category := o.Category
+			if category == "" {
+				category = req.Category
+			}
+			objectives = append(objectives, domain.NewObjectiveNamed(o.ObjectiveID, o.Name, o.Description, category, o.MeritPerUnit, o.Bonus, o.UnitLimit))
+		}
+
+		definition, err := app.Handle(application.CreateMissionDefinitionRequest{
+			DefinitionCode:   req.DefinitionCode,
+			Title:            req.Title,
+			Description:      req.Description,
+			Category:         req.Category,
+			Mode:             mode,
+			CompletionReward: req.CompletionReward,
+			Objectives:       objectives,
+			Rules:            req.Rules,
+			ContentEn:        req.Translations.englishContent(),
+		})
 		if err != nil {
 			w.WriteHeader(nethttp.StatusUnprocessableEntity)
 			_ = json.NewEncoder(w).Encode(map[string]string{"code": PublicCode(err)})

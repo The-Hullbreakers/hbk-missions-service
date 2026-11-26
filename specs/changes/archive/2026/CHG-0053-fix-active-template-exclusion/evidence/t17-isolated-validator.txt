@@ -1,0 +1,38 @@
+=== gofmt ===
+tests/integration/http/season_statistics_test.go
+tests/unit/missions/domain/merit_ledger_test.go
+=== go vet ===
+=== unit tests ===
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.634s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/domain	0.366s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/infrastructure/dynamodb	1.131s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/infrastructure/session	0.861s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/interface/http	1.427s
+=== integration tests ===
+ok  	github.com/hbk/hbk-missions-service/tests/integration/composition	1.602s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/http	0.309s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure	0.254s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	9.114s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/membership	3.300s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/s3	0.629s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/session	0.334s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/sns	0.297s
+=== race detector ===
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/application	1.321s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/domain	1.314s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/infrastructure/dynamodb	1.329s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/infrastructure/session	1.316s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/interface/http	1.334s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/composition	2.380s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/http	1.361s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure	1.277s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	8.847s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/membership	5.954s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/s3	1.378s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/session	1.360s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/sns	1.323s
+=== coverage (domain, application, affected infrastructure) ===
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/domain	0.289s	coverage: 90.0% of statements in ./internal/missions/domain
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.286s	coverage: 90.9% of statements in ./internal/missions/application
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	8.919s	coverage: 93.4% of statements in ./internal/missions/infrastructure/dynamodb
+=== SDD validation passed ===

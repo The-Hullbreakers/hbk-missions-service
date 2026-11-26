@@ -1,0 +1,56 @@
+change_id: CHG-0022
+artifact: traceability
+requirements:
+  - id: REQ-MB-003
+    title: Limit active contracts (modified — total across categories)
+    capability: mission-board
+    scenarios:
+      - SCN-MB-ATOMIC-LIMIT
+      - SCN-MB-LIMIT-TOTAL
+    tasks:
+      - T-022-001
+      - T-022-002
+      - T-022-003
+    tests:
+      - tests/unit/missions/domain/acceptance_limit_test.go
+      - tests/integration/infrastructure/dynamodb/acceptance_concurrency_test.go
+      - tests/integration/http/accept_mission_concurrency_test.go
+    production:
+      - internal/missions/application/accept_mission.go
+      - internal/missions/infrastructure/dynamodb/contract_store.go
+  - id: REQ-MB-004
+    title: Consistent acceptance (modified — atomic decision+write)
+    capability: mission-board
+    scenarios:
+      - SCN-MB-ATOMIC-CAPACITY
+    tasks:
+      - T-022-001
+      - T-022-002
+      - T-022-003
+      - T-022-004
+    tests:
+      - tests/integration/infrastructure/dynamodb/acceptance_concurrency_test.go
+      - tests/integration/http/accept_mission_concurrency_test.go
+    production:
+      - internal/missions/application/accept_mission.go
+      - internal/missions/infrastructure/dynamodb/contract_store.go
+      - internal/missions/interface/http/errors.go
+  - id: REQ-MB-014
+    title: Accept only within a live season
+    capability: mission-board
+    scenarios:
+      - SCN-MB-SEASON-CLOSED
+    tasks:
+      - T-022-001
+      - T-022-002
+    tests:
+      - tests/unit/missions/domain/acceptance_season_test.go
+      - tests/unit/missions/application/accept_mission_season_test.go
+    production:
+      - internal/missions/application/accept_mission.go
+gates:
+  security: security-review.md
+  mutation: mandatory (concurrency conditions)
+  critical_e2e: concurrent acceptance journey
+  coverage: ">=90% project production scope"
+  reviewer_handoff: required before consolidation

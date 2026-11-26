@@ -18,10 +18,11 @@ func (fakeDefinitionWriter) Save(definition domain.MissionDefinition) error { re
 
 func TestCreateMissionDefinitionHandler_CreatesDefinition(t *testing.T) {
 	app := application.NewCreateMissionDefinitionHandler(fakeDefinitionWriter{})
-	handler := missionhttp.CreateMissionDefinitionHandler(app)
+	handler := missionhttp.NewAuthMiddleware(memberSession{}).Authenticate(missionhttp.CreateMissionDefinitionHandler(app))
 
-	body := `{"tenant_id":"tenant-1","definition_id":"bounty-template","category":"BOUNTY_HUNTING","capacity":10,"mode":"SOLO"}`
+	body := `{"definition_code":"bounty-template","title":"Bounty","description":"desc","category":"BOUNTY_HUNTING","mode":"SOLO","objectives":[{"objective_id":"obj-1","name":"obj-1","merit_per_unit":100,"unit_limit":1}]}`
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/missions/definitions", bytes.NewReader([]byte(body)))
+	req.Header.Set("Authorization", "Bearer valid-token")
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 
@@ -33,7 +34,7 @@ func TestCreateMissionDefinitionHandler_CreatesDefinition(t *testing.T) {
 	if err := json.NewDecoder(rec.Body).Decode(&result); err != nil {
 		t.Fatalf("could not decode response: %v", err)
 	}
-	if result["DefinitionID"] != "bounty-template" {
+	if result["DefinitionCode"] != "bounty-template" {
 		t.Fatalf("unexpected response: %+v", result)
 	}
 }

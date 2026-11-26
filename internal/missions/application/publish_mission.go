@@ -20,7 +20,7 @@ func NewPublishMissionHandler(offers OfferWriter, definitions DefinitionReader, 
 }
 
 // Handle creates and persists a mission offer bound to the active season from a published definition.
-func (h *PublishMissionHandler) Handle(tenantID, offerID, definitionID, version string, capacity int) (domain.MissionOffer, error) {
+func (h *PublishMissionHandler) Handle(offerID, definitionCode, version string) (domain.MissionOffer, error) {
 	active, err := h.activeSeasons.ListActive()
 	if err != nil {
 		return domain.MissionOffer{}, err
@@ -34,19 +34,18 @@ func (h *PublishMissionHandler) Handle(tenantID, offerID, definitionID, version 
 
 	var definition domain.MissionDefinition
 	if version != "" {
-		definition, err = h.definitions.GetVersion(tenantID, definitionID, version)
+		definition, err = h.definitions.GetVersion(definitionCode, version)
 	} else {
-		definition, err = h.definitions.Get(tenantID, definitionID)
+		definition, err = h.definitions.Get(definitionCode)
 	}
 	if err != nil {
 		return domain.MissionOffer{}, err
 	}
 
-	offer, err := domain.NewMissionOfferFromDefinition(offerID, active[0].SeasonID, definition, capacity)
+	offer, err := domain.NewMissionOfferFromDefinition(offerID, active[0].SeasonID, definition)
 	if err != nil {
 		return domain.MissionOffer{}, err
 	}
-
 	if err := h.offers.Save(offer); err != nil {
 		return domain.MissionOffer{}, err
 	}

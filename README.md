@@ -35,9 +35,11 @@ El cambio activo es [CHG-0001 — Initialize missions platform](specs/changes/ac
 
 ## Documentación
 
+- [Catálogo de carreras, seeds y sincronización en cada deploy](seeds/README.md)
 - [Índice de documentación](docs/INDEX.md)
 - [Especificación de producto](docs/PRODUCT-SPECIFICATION.md)
 - [Reglas de dominio](docs/DOMAIN-RULES.md)
 - [Arquitectura y límites](docs/ARCHITECTURE.md)
+- [Escenarios locales de temporada](docs/LOCAL-SEASON-PREVIEWS.md)
 - [Constitución SDD](specs/constitution.md)
 - [Índice SDD](specs/index.md)

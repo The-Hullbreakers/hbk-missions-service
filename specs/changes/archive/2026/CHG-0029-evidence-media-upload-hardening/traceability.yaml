@@ -1,0 +1,66 @@
+change_id: CHG-0029
+artifact: traceability
+updated: 2026-10-09
+
+requirements:
+  - id: REQ-MCF-017
+    title: Browser clients can execute the upload grant
+    user_stories: [US-0029-01]
+    scenarios:
+      - id: SCN-MCF-CORS-UPLOAD
+        tests:
+          - TEST-INFRA-S3-ROUNDTRIP
+      - id: SCN-MCF-CORS-UNKNOWN-ORIGIN
+        tests:
+          - TEST-IAC-CORS-ALLOWLIST
+  - id: REQ-MCF-018
+    title: Evidence store adapter verified against an emulator
+    user_stories: [US-0029-03]
+    scenarios:
+      - id: SCN-MCF-ADAPTER-ROUNDTRIP
+        tests:
+          - TEST-INFRA-S3-ROUNDTRIP
+          - TEST-INFRA-S3-PHANTOM
+  - id: REQ-MCF-014
+    title: Upload grant bound becomes a deployment parameter
+    user_stories: [US-0029-02]
+    scenarios:
+      - id: SCN-MCF-UPLOAD-TYPE-REJECTED
+        tests:
+          - TEST-APP-UPLOAD-OVERSIZE
+          - TEST-HTTP-UPLOAD-400
+
+tasks:
+  - id: T-01
+    wave: 1
+    layer: interface
+    requirements: [REQ-MCF-017]
+    production:
+      - template.yaml
+  - id: T-02
+    wave: 1
+    layer: composition
+    requirements: [REQ-MCF-014]
+    production:
+      - template.yaml
+  - id: T-03
+    wave: 1
+    layer: infrastructure
+    requirements: [REQ-MCF-018]
+    production:
+      - docker-compose.test.yml
+  - id: T-04
+    wave: 2
+    layer: infrastructure
+    requirements: [REQ-MCF-017, REQ-MCF-018]
+    tests: [TEST-INFRA-S3-ROUNDTRIP, TEST-INFRA-S3-PHANTOM]
+    production:
+      - internal/missions/infrastructure/s3/evidence_store.go
+
+gates:
+  - id: GATE-SECURITY
+    applies_to: bucket CORS trust boundary
+  - id: GATE-VALIDATE
+    command: tools/validate-sdd-change.sh
+  - id: GATE-CRITICAL-E2E
+    applies_to: TEST-E2E-EVIDENCE-MEDIA-JOURNEY regression

@@ -1,0 +1,52 @@
+=== RUN   TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1139970490
+--- PASS: TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount (0.04s)
+=== RUN   TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1139970490
+--- PASS: TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet (0.01s)
+=== RUN   TestContractStore_SaveDepartureAcceptsLegacyMissingDeparted
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- PASS: TestContractStore_SaveDepartureAcceptsLegacyMissingDeparted (0.01s)
+=== RUN   TestContractStore_LastMemberSaveDepartureReleasesGuards
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- PASS: TestContractStore_LastMemberSaveDepartureReleasesGuards (0.01s)
+=== RUN   TestContractStore_SaveDepartureReleasesDepartedGuards
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- PASS: TestContractStore_SaveDepartureReleasesDepartedGuards (0.01s)
+=== RUN   TestContractStore_ConcurrentDeparturesDoNotRestoreFormerMember
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1139970490
+--- PASS: TestContractStore_ConcurrentDeparturesDoNotRestoreFormerMember (0.02s)
+=== RUN   TestContractStore_TerminalSaveReleasesActiveSlot
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1756396488
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2597991568
+--- PASS: TestContractStore_TerminalSaveReleasesActiveSlot (0.02s)
+=== RUN   TestContractStore_TerminalSaveReleasesOnlyActiveMembers
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- PASS: TestContractStore_TerminalSaveReleasesOnlyActiveMembers (0.01s)
+=== RUN   TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1186653093
+--- PASS: TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate (0.01s)
+=== RUN   TestContractStore_SaveApprovedCommitsContractAndCredits
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1756396488
+--- PASS: TestContractStore_SaveApprovedCommitsContractAndCredits (0.01s)
+=== RUN   TestContractStore_SaveApprovedWithVerdictDropsRejectedUnit
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1756396488
+--- PASS: TestContractStore_SaveApprovedWithVerdictDropsRejectedUnit (0.01s)
+=== RUN   TestContractStore_SaveApprovedRejectsDuplicateRetry
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1756396488
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1981094421
+--- PASS: TestContractStore_SaveApprovedRejectsDuplicateRetry (0.01s)
+=== RUN   TestContractStore_StaleSaveDoesNotRestoreDepartedMember
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 837963753
+--- PASS: TestContractStore_StaleSaveDoesNotRestoreDepartedMember (0.01s)
+=== RUN   TestContractStore_StaleSaveApprovedDoesNotRestoreOrCredit
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 10:55:36 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 486531941
+--- PASS: TestContractStore_StaleSaveApprovedDoesNotRestoreOrCredit (0.01s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.620s

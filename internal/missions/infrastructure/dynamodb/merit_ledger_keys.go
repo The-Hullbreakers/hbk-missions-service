@@ -7,7 +7,7 @@ import (
 )
 
 func creditBucketKey(credit domain.MeritCredit) string {
-	return bucketKey(credit.TenantID, credit.SeasonID, credit.Category, credit.Track, credit.RecipientID)
+	return bucketKey(credit.SeasonID, credit.Category, credit.Track, credit.RecipientID)
 }
 
 type standingBuilder struct {
@@ -24,17 +24,17 @@ func newStandingBuilder() *standingBuilder {
 }
 
 func leaderboardBucketKey(credit domain.MeritCredit) string {
-	return leaderboardBucketKeyFromParts(credit.TenantID, credit.SeasonID, credit.Category, credit.Track)
+	return leaderboardBucketKeyFromParts(credit.SeasonID, credit.Category, credit.Track)
 }
 
-func leaderboardBucketKeyFromParts(tenantID, seasonID, category string, track domain.Track) string {
-	return fmt.Sprintf("CREDIT#%s#%s#%s#%s", tenantID, seasonID, category, track)
+func leaderboardBucketKeyFromParts(seasonID, category string, track domain.Track) string {
+	return fmt.Sprintf("CREDIT#%s#%s#%s", seasonID, category, track)
 }
 
 func leaderboardSortKey(credit domain.MeritCredit) string {
 	return fmt.Sprintf("RECIPIENT#%s#%s", credit.RecipientID, credit.ConfirmationID)
 }
 
-func bucketKey(tenantID, seasonID, category string, track domain.Track, recipientID string) string {
-	return fmt.Sprintf("CREDIT#%s#%s#%s#%s#%s", tenantID, seasonID, category, track, recipientID)
+func bucketKey(seasonID, category string, track domain.Track, recipientID string) string {
+	return fmt.Sprintf("CREDIT#%s#%s#%s#%s", seasonID, category, track, recipientID)
 }

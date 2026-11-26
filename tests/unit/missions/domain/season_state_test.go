@@ -61,9 +61,9 @@ func TestSeason_FinalizeRejectsNonFreezing(t *testing.T) {
 
 func TestSeason_CanAcceptMeritsDuringFreezing(t *testing.T) {
 	season := domain.NewSeason("season-1", domain.SeasonStateFreezing)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
+	startContract(t, contract)
 
 	accepted := season.CanAcceptMerits(contract)
 
@@ -74,7 +74,7 @@ func TestSeason_CanAcceptMeritsDuringFreezing(t *testing.T) {
 
 func TestSeason_CanAcceptMeritsRejectsNotStartedDuringFreezing(t *testing.T) {
 	season := domain.NewSeason("season-1", domain.SeasonStateFreezing)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
 
 	accepted := season.CanAcceptMerits(contract)
@@ -86,9 +86,9 @@ func TestSeason_CanAcceptMeritsRejectsNotStartedDuringFreezing(t *testing.T) {
 
 func TestSeason_CanAcceptMeritsRejectsFinalized(t *testing.T) {
 	season := domain.NewSeason("season-1", domain.SeasonStateFinalized)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
+	startContract(t, contract)
 
 	accepted := season.CanAcceptMerits(contract)
 

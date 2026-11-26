@@ -1,0 +1,13 @@
+change_id: CHG-0038
+artifact: traceability
+requirements:
+  - id: REQ-SCC-016
+    title: Read standings history (added)
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SCC-HISTORY
+      - SCN-SCC-HISTORY-ACTIVE
+    tasks:
+      - T-038-001
+      - T-038-002
+      - T-038-003

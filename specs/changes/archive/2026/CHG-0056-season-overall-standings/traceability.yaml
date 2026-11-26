@@ -1,0 +1,46 @@
+change_id: CHG-0056-season-overall-standings
+change_title: Add season-wide individual standings
+user_stories:
+  - user_story_id: US-0056-001
+    user_story_title: Compare my season-wide progress
+    requirements:
+      - requirement_id: REQ-0056-001
+        requirement_title: Rank competitors within one season
+        scenarios:
+          - scenario_id: SCN-0056-001
+            scenario_title: Reward progress across categories
+          - scenario_id: SCN-0056-002
+            scenario_title: Keep tracks and seasons separate
+          - scenario_id: SCN-0056-003
+            scenario_title: Resolve ties predictably
+        tasks: [T-0056-002, T-0056-003, T-0056-004, T-0056-005, T-0056-006, T-0056-007]
+        tests: [TEST-0056-001, TEST-0056-002, TEST-0056-003, TEST-0056-004, TEST-0056-005, TEST-0056-006]
+        production: [internal/missions/domain/overall_standings.go, internal/missions/application/get_overall_standings.go, internal/missions/infrastructure/dynamodb/overall_credit_facts.go, internal/missions/interface/http/overall_standings.go, internal/missions/composition/server.go, template.yaml]
+      - requirement_id: REQ-0056-002
+        requirement_title: Show my honest position
+        scenarios:
+          - scenario_id: SCN-0056-004
+            scenario_title: Show a position outside the top page
+          - scenario_id: SCN-0056-005
+            scenario_title: Do not invent a first position
+          - scenario_id: SCN-0056-006
+            scenario_title: Preserve safe access and navigation
+        tasks: [T-0056-002, T-0056-003, T-0056-004, T-0056-005, T-0056-006, T-0056-007]
+        tests: [TEST-0056-001, TEST-0056-002, TEST-0056-003, TEST-0056-004, TEST-0056-005, TEST-0056-006]
+        production: [internal/missions/domain/overall_standings.go, internal/missions/application/get_overall_standings.go, internal/missions/infrastructure/dynamodb/overall_credit_facts.go, internal/missions/interface/http/overall_standings.go, internal/missions/composition/server.go, template.yaml]
+test_titles:
+  TEST-0056-001: Return overall and caller rank from the Application query
+  TEST-0056-002: Aggregate unique global facts and order standings in Domain
+  TEST-0056-003: Enforce authenticated overall REST contract
+  TEST-0056-004: Read paginated credits and completed contracts from DynamoDB Local
+  TEST-0056-005: Keep category and history endpoints functional
+  TEST-0056-006: Show the mid-season HTTP journey without crossing data scopes
+task_titles:
+  T-0056-001: Specify overall scoring and compatibility
+  T-0056-002: Prove Application behavior fails without overall query
+  T-0056-003: Prove and implement Domain rank policy
+  T-0056-004: Complete Application query
+  T-0056-005: Prove HTTP and local projection before outer code
+  T-0056-006: Wire additive route and verify existing consumers
+  T-0056-007: Verify critical journey and quality
+  T-0056-008: Consolidate approved owner

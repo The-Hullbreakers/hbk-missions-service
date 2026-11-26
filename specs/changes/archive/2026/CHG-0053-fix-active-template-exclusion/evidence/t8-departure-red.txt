@@ -1,0 +1,5 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_SaveDepartureReleasesDepartedGuards\$
+# github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb_test [github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb.test]
+tests/integration/infrastructure/dynamodb/contract_store_leave_test.go:75:15: store.SaveDeparture undefined (type *"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb".ContractStore has no field or method SaveDeparture)
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb [build failed]
+FAIL

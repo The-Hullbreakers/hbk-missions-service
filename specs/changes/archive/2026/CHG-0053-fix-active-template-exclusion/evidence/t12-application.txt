@@ -1,0 +1,3 @@
+
+$ go test -count=1 ./tests/unit/missions/application
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.317s

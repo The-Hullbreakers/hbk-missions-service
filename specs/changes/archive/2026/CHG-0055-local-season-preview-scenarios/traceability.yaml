@@ -1,0 +1,48 @@
+change_id: CHG-0055-local-season-preview-scenarios
+change_title: Create local season preview scenarios
+user_stories:
+  - user_story_id: US-0055-001
+    user_story_title: Preview seasonal experiences
+    requirements:
+      - requirement_id: REQ-0055-001
+        requirement_title: Keep existing local data safe
+        scenarios:
+          - scenario_id: SCN-0055-001
+            scenario_title: Preserve the reviewer's existing work
+          - scenario_id: SCN-0055-002
+            scenario_title: Repeat without changing the picture
+          - scenario_id: SCN-0055-003
+            scenario_title: Reject unsafe selection
+        tasks: [T-0055-002, T-0055-003, T-0055-004, T-0055-005]
+        tests: [TEST-0055-001, TEST-0055-002, TEST-0055-004, TEST-0055-007]
+        production: [scripts/season_scenario_model.py, scripts/season_scenario_local.py, scripts/seed_season_scenarios.py]
+      - requirement_id: REQ-0055-002
+        requirement_title: Preview the phases of a season
+        scenarios:
+          - scenario_id: SCN-0055-004
+            scenario_title: Off-season is visibly quiet
+          - scenario_id: SCN-0055-005
+            scenario_title: Fresh start has opportunities without standings
+          - scenario_id: SCN-0055-006
+            scenario_title: Mid-season has believable progress
+        tasks: [T-0055-002, T-0055-003, T-0055-004, T-0055-005, T-0055-006]
+        tests: [TEST-0055-003, TEST-0055-005, TEST-0055-006]
+        production: [scripts/season_scenario_model.py, scripts/season_scenario_contracts.py, scripts/season_scenario_credits.py, scripts/season_scenario_local.py, scripts/seed_season_scenarios.py]
+test_titles:
+  TEST-0055-001: Reject remote or unapproved destinations
+  TEST-0055-002: Preserve identical rows and reject divergent data
+  TEST-0055-003: Generate distinct and referentially valid seasonal snapshots
+  TEST-0055-004: Leave local identity and existing mission tables unchanged
+  TEST-0055-005: Read seasonal previews through real mission adapters
+  TEST-0055-006: Display seasonal previews through the local service
+  TEST-0055-007: Ensure local preview transport uses paginated reads and conditional writes
+task_titles:
+  T-0055-001: Specify safe seasonal previews
+  T-0055-002: Prove preview generation and guards RED
+  T-0055-003: Generate safe deterministic scenarios
+  T-0055-004: Prove local adapter projection RED
+  T-0055-005: Populate all preview projections
+  T-0055-006: Verify real user journey and safety
+  T-0055-007: Document switching and validate quality
+  T-0055-008: Load mid-season locally and confirm
+  T-0055-009: Consolidate approved scenario contract

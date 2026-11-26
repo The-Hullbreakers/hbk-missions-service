@@ -1,0 +1,33 @@
+=== gofmt ===
+tests/integration/http/season_statistics_test.go
+tests/unit/missions/domain/merit_ledger_test.go
+=== go vet ===
+=== unit tests ===
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.270s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/domain	1.170s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/infrastructure/dynamodb	0.927s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/infrastructure/session	1.428s
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/interface/http	0.665s
+=== integration tests ===
+ok  	github.com/hbk/hbk-missions-service/tests/integration/composition	0.989s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/http	0.310s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure	0.259s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	6.006s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/membership	3.287s
+--- FAIL: TestEvidenceStore_RoundTrip (3.62s)
+    evidence_store_test.go:43: 
+        	Error Trace:	/tmp/chg0053-validate-BKzXuF/tests/integration/infrastructure/s3/evidence_store_test.go:35
+        	            				/tmp/chg0053-validate-BKzXuF/tests/integration/infrastructure/s3/evidence_store_test.go:43
+        	Error:      	Should be true
+        	Test:       	TestEvidenceStore_RoundTrip
+--- FAIL: TestEvidenceStore_ExistsPhantom (1.91s)
+    evidence_store_test.go:73: 
+        	Error Trace:	/tmp/chg0053-validate-BKzXuF/tests/integration/infrastructure/s3/evidence_store_test.go:35
+        	            				/tmp/chg0053-validate-BKzXuF/tests/integration/infrastructure/s3/evidence_store_test.go:73
+        	Error:      	Should be true
+        	Test:       	TestEvidenceStore_ExistsPhantom
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/s3	5.837s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/session	0.314s
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/sns	0.292s
+FAIL

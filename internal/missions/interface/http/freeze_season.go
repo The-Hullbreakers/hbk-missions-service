@@ -13,6 +13,12 @@ import (
 func FreezeSeasonHandler(app *application.FreezeSeasonHandler) nethttp.Handler {
 	mux := nethttp.NewServeMux()
 	mux.HandleFunc("POST /api/v1/missions/seasons/{id}/freeze", func(w nethttp.ResponseWriter, r *nethttp.Request) {
+		_, idErr := CallerIdentityFromContext(r.Context())
+		if idErr != nil {
+			w.WriteHeader(nethttp.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{"code": "UNAUTHORIZED"})
+			return
+		}
 		season, err := app.Handle(r.PathValue("id"))
 		if err != nil {
 			writeSeasonError(w, err)
@@ -26,9 +32,17 @@ func FreezeSeasonHandler(app *application.FreezeSeasonHandler) nethttp.Handler {
 }
 
 // FinalizeSeasonHandler returns an HTTP handler for finalizing a season.
-func FinalizeSeasonHandler(app *application.FinalizeSeasonHandler) nethttp.Handler {
+func FinalizeSeasonHandler(app interface {
+	Handle(string) (domain.Season, error)
+}) nethttp.Handler {
 	mux := nethttp.NewServeMux()
 	mux.HandleFunc("POST /api/v1/missions/seasons/{id}/finalize", func(w nethttp.ResponseWriter, r *nethttp.Request) {
+		_, idErr := CallerIdentityFromContext(r.Context())
+		if idErr != nil {
+			w.WriteHeader(nethttp.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{"code": "UNAUTHORIZED"})
+			return
+		}
 		season, err := app.Handle(r.PathValue("id"))
 		if err != nil {
 			writeSeasonError(w, err)

@@ -1,0 +1,348 @@
+{
+  "environments": [
+    "staging",
+    "production"
+  ],
+  "missions": [
+    {
+      "DefinitionCode": "pvp-live-fps-5",
+      "Title": "Contacto hostil — 5 bajas FPS",
+      "Description": "Consigue 5 bajas FPS confirmadas de jugadores distintos.",
+      "Category": "PVP_FPS",
+      "Mode": "SOLO",
+      "CompletionReward": 30,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "bajas-fps-verificadas",
+          "Name": "Bajas FPS verificadas",
+          "Description": "Cada baja FPS de un jugador distinto, verificada en video.",
+          "Category": "PVP_FPS",
+          "MeritPerUnit": 54,
+          "Bonus": 0,
+          "UnitLimit": 5
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Baja posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "Muerte confirmada e identificada en el video; una incapacitación no basta.",
+        "Víctima humana distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-fps-10",
+      "Title": "Línea de fuego — 10 bajas FPS",
+      "Description": "Consigue 10 bajas FPS confirmadas de jugadores distintos.",
+      "Category": "PVP_FPS",
+      "Mode": "SOLO",
+      "CompletionReward": 60,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "bajas-fps-verificadas",
+          "Name": "Bajas FPS verificadas",
+          "Description": "Cada baja FPS de un jugador distinto, verificada en video.",
+          "Category": "PVP_FPS",
+          "MeritPerUnit": 54,
+          "Bonus": 0,
+          "UnitLimit": 10
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Baja posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "Muerte confirmada e identificada en el video; una incapacitación no basta.",
+        "Víctima humana distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-fps-20",
+      "Title": "Veterano de asalto — 20 bajas FPS",
+      "Description": "Consigue 20 bajas FPS confirmadas de jugadores distintos.",
+      "Category": "PVP_FPS",
+      "Mode": "SOLO",
+      "CompletionReward": 120,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "bajas-fps-verificadas",
+          "Name": "Bajas FPS verificadas",
+          "Description": "Cada baja FPS de un jugador distinto, verificada en video.",
+          "Category": "PVP_FPS",
+          "MeritPerUnit": 54,
+          "Bonus": 0,
+          "UnitLimit": 20
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Baja posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "Muerte confirmada e identificada en el video; una incapacitación no basta.",
+        "Víctima humana distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-fps-50",
+      "Title": "Campaña de infantería — 50 bajas FPS",
+      "Description": "Consigue 50 bajas FPS confirmadas de jugadores distintos.",
+      "Category": "PVP_FPS",
+      "Mode": "SOLO",
+      "CompletionReward": 300,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "bajas-fps-verificadas",
+          "Name": "Bajas FPS verificadas",
+          "Description": "Cada baja FPS de un jugador distinto, verificada en video.",
+          "Category": "PVP_FPS",
+          "MeritPerUnit": 54,
+          "Bonus": 0,
+          "UnitLimit": 50
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Baja posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "Muerte confirmada e identificada en el video; una incapacitación no basta.",
+        "Víctima humana distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-air-5",
+      "Title": "Interceptor — 5 derribos PvP",
+      "Description": "Consigue 5 derribos de naves pilotadas por jugadores distintos.",
+      "Category": "PVP_AIR",
+      "Mode": "SOLO",
+      "CompletionReward": 50,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "derribos-verificados",
+          "Name": "Derribos verificados",
+          "Description": "Cada derribo de nave pilotada por un jugador, verificado en video.",
+          "Category": "PVP_AIR",
+          "MeritPerUnit": 90,
+          "Bonus": 0,
+          "UnitLimit": 5
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE. Cualquier nave vale en combate abierto.",
+        "Derribo posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "El objetivo es una nave pilotada por un jugador y operativa en vuelo; nombre del piloto legible por ping, escaneo o MFD.",
+        "Un derribo es una nave destruida o fuera de combate por tu intervención; no cuentan retiradas, desconexiones, naves vacías ni derribos no atribuibles.",
+        "Víctima distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-air-10",
+      "Title": "Cazador de escuadrones — 10 derribos PvP",
+      "Description": "Consigue 10 derribos de naves pilotadas por jugadores distintos.",
+      "Category": "PVP_AIR",
+      "Mode": "SOLO",
+      "CompletionReward": 100,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "derribos-verificados",
+          "Name": "Derribos verificados",
+          "Description": "Cada derribo de nave pilotada por un jugador, verificado en video.",
+          "Category": "PVP_AIR",
+          "MeritPerUnit": 90,
+          "Bonus": 0,
+          "UnitLimit": 10
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE. Cualquier nave vale en combate abierto.",
+        "Derribo posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "El objetivo es una nave pilotada por un jugador y operativa en vuelo; nombre del piloto legible por ping, escaneo o MFD.",
+        "Un derribo es una nave destruida o fuera de combate por tu intervención; no cuentan retiradas, desconexiones, naves vacías ni derribos no atribuibles.",
+        "Víctima distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-air-20",
+      "Title": "Superioridad espacial — 20 derribos PvP",
+      "Description": "Consigue 20 derribos de naves pilotadas por jugadores distintos.",
+      "Category": "PVP_AIR",
+      "Mode": "SOLO",
+      "CompletionReward": 200,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "derribos-verificados",
+          "Name": "Derribos verificados",
+          "Description": "Cada derribo de nave pilotada por un jugador, verificado en video.",
+          "Category": "PVP_AIR",
+          "MeritPerUnit": 90,
+          "Bonus": 0,
+          "UnitLimit": 20
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE. Cualquier nave vale en combate abierto.",
+        "Derribo posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "El objetivo es una nave pilotada por un jugador y operativa en vuelo; nombre del piloto legible por ping, escaneo o MFD.",
+        "Un derribo es una nave destruida o fuera de combate por tu intervención; no cuentan retiradas, desconexiones, naves vacías ni derribos no atribuibles.",
+        "Víctima distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-air-50",
+      "Title": "Campaña de superioridad — 50 derribos PvP",
+      "Description": "Consigue 50 derribos de naves pilotadas por jugadores distintos.",
+      "Category": "PVP_AIR",
+      "Mode": "SOLO",
+      "CompletionReward": 500,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "derribos-verificados",
+          "Name": "Derribos verificados",
+          "Description": "Cada derribo de nave pilotada por un jugador, verificado en video.",
+          "Category": "PVP_AIR",
+          "MeritPerUnit": 90,
+          "Bonus": 0,
+          "UnitLimit": 50
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE. Cualquier nave vale en combate abierto.",
+        "Derribo posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "El objetivo es una nave pilotada por un jugador y operativa en vuelo; nombre del piloto legible por ping, escaneo o MFD.",
+        "Un derribo es una nave destruida o fuera de combate por tu intervención; no cuentan retiradas, desconexiones, naves vacías ni derribos no atribuibles.",
+        "Víctima distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-duel-1",
+      "Title": "Primer duelo — 1 victorias",
+      "Description": "Gana 1 duelos contra al menos 1 oponentes distintos.",
+      "Category": "PVP_DUEL",
+      "Mode": "SOLO",
+      "CompletionReward": 20,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "victorias-verificadas",
+          "Name": "Victorias verificadas",
+          "Description": "Cada victoria en duelo verificada en video.",
+          "Category": "PVP_DUEL",
+          "MeritPerUnit": 180,
+          "Bonus": 0,
+          "UnitLimit": 1
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Duelo 1v1 con la misma nave y equipamiento equivalente acordado; solo cañones, sin misiles, embestidas deliberadas ni intervención de terceros.",
+        "Victoria posterior a aceptar el contrato y dentro de la temporada activa; video continuo del duelo con el nombre del rival legible por ping, escaneo o MFD.",
+        "Cuenta destrucción, inutilización confirmada o rendición explícita verificable; abandono o desconexión no bastan por sí solos.",
+        "El combate puede estar organizado pero el resultado no puede estar pactado; cada evidencia acredita una sola misión y una sola unidad."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-duel-3",
+      "Title": "Duelista — 3 victorias",
+      "Description": "Gana 3 duelos contra al menos 2 oponentes distintos.",
+      "Category": "PVP_DUEL",
+      "Mode": "SOLO",
+      "CompletionReward": 60,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "victorias-verificadas",
+          "Name": "Victorias verificadas",
+          "Description": "Cada victoria en duelo verificada en video.",
+          "Category": "PVP_DUEL",
+          "MeritPerUnit": 180,
+          "Bonus": 0,
+          "UnitLimit": 3
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Duelo 1v1 con la misma nave y equipamiento equivalente acordado; solo cañones, sin misiles, embestidas deliberadas ni intervención de terceros.",
+        "Victoria posterior a aceptar el contrato y dentro de la temporada activa; video continuo del duelo con el nombre del rival legible por ping, escaneo o MFD.",
+        "Cuenta destrucción, inutilización confirmada o rendición explícita verificable; abandono o desconexión no bastan por sí solos.",
+        "El combate puede estar organizado pero el resultado no puede estar pactado; cada evidencia acredita una sola misión y una sola unidad."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-duel-5",
+      "Title": "Dominio del caza — 5 victorias",
+      "Description": "Gana 5 duelos contra al menos 3 oponentes distintos.",
+      "Category": "PVP_DUEL",
+      "Mode": "SOLO",
+      "CompletionReward": 100,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "victorias-verificadas",
+          "Name": "Victorias verificadas",
+          "Description": "Cada victoria en duelo verificada en video.",
+          "Category": "PVP_DUEL",
+          "MeritPerUnit": 180,
+          "Bonus": 0,
+          "UnitLimit": 5
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Duelo 1v1 con la misma nave y equipamiento equivalente acordado; solo cañones, sin misiles, embestidas deliberadas ni intervención de terceros.",
+        "Victoria posterior a aceptar el contrato y dentro de la temporada activa; video continuo del duelo con el nombre del rival legible por ping, escaneo o MFD.",
+        "Cuenta destrucción, inutilización confirmada o rendición explícita verificable; abandono o desconexión no bastan por sí solos.",
+        "El combate puede estar organizado pero el resultado no puede estar pactado; cada evidencia acredita una sola misión y una sola unidad."
+      ]
+    },
+    {
+      "DefinitionCode": "pvp-live-duel-10",
+      "Title": "As de combate — 10 victorias",
+      "Description": "Gana 10 duelos contra al menos 5 oponentes distintos.",
+      "Category": "PVP_DUEL",
+      "Mode": "SOLO",
+      "CompletionReward": 200,
+      "State": "PUBLISHED",
+      "Version": "4",
+      "Objectives": [
+        {
+          "ObjectiveID": "victorias-verificadas",
+          "Name": "Victorias verificadas",
+          "Description": "Cada victoria en duelo verificada en video.",
+          "Category": "PVP_DUEL",
+          "MeritPerUnit": 180,
+          "Bonus": 0,
+          "UnitLimit": 10
+        }
+      ],
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Duelo 1v1 con la misma nave y equipamiento equivalente acordado; solo cañones, sin misiles, embestidas deliberadas ni intervención de terceros.",
+        "Victoria posterior a aceptar el contrato y dentro de la temporada activa; video continuo del duelo con el nombre del rival legible por ping, escaneo o MFD.",
+        "Cuenta destrucción, inutilización confirmada o rendición explícita verificable; abandono o desconexión no bastan por sí solos.",
+        "El combate puede estar organizado pero el resultado no puede estar pactado; cada evidencia acredita una sola misión y una sola unidad."
+      ]
+    }
+  ]
+}

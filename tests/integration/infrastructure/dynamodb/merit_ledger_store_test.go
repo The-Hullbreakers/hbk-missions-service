@@ -21,8 +21,8 @@ func TestMeritLedgerStore_PersistsCredit(t *testing.T) {
 	clearMissionsTable(t, ctx, client, "hbk-missions")
 
 	store := missiondynamo.NewMeritLedgerStore(client, "hbk-missions")
+	seedActiveSeason(t, client, "hbk-missions", "season-1")
 	credit := domain.MeritCredit{
-		TenantID:       "tenant-1",
 		SeasonID:       "season-1",
 		Category:       "BOUNTY_HUNTING",
 		Track:          domain.TrackIndividual,
@@ -38,7 +38,7 @@ func TestMeritLedgerStore_PersistsCredit(t *testing.T) {
 		t.Fatalf("could not save credit: %v", err)
 	}
 
-	total := store.TotalFor("tenant-1", "season-1", "BOUNTY_HUNTING", domain.TrackIndividual, "player-1")
+	total := store.TotalFor("season-1", "BOUNTY_HUNTING", domain.TrackIndividual, "player-1")
 	if total != 100 {
 		t.Fatalf("expected total 100, got %d", total)
 	}

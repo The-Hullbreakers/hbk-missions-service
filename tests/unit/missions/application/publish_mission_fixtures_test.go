@@ -39,16 +39,17 @@ type fixedDefinitionReader struct {
 	err        error
 }
 
-func (r fixedDefinitionReader) Get(_, _ string) (domain.MissionDefinition, error) {
+func (r fixedDefinitionReader) Get(_ string) (domain.MissionDefinition, error) {
 	return r.definition, r.err
 }
 
-func (r fixedDefinitionReader) GetVersion(_, _, _ string) (domain.MissionDefinition, error) {
+func (r fixedDefinitionReader) GetVersion(_, _ string) (domain.MissionDefinition, error) {
 	return r.definition, r.err
 }
 
 func aPublishedDefinition() domain.MissionDefinition {
-	def, _ := domain.NewMissionDefinition("bounty-template", "BOUNTY_HUNTING", 10, domain.MissionModeSolo)
+	def, _ := domain.NewMissionDefinition("bounty-template", "T", "D", "BOUNTY_HUNTING", domain.MissionModeSolo, 0, nil, nil)
+	def.ContentEn = domain.LocalizedContent{Title: "Bounty", Description: "Desc"}
 	_ = def.Publish("v1")
 	return def
 }

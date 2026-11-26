@@ -18,7 +18,7 @@ flowchart LR
 | Context | Owns |
 | --- | --- |
 | Missions | Offers, contracts, confirmations, season merits, standings and winning placements |
-| Identity | Users, memberships, tenant roles and tokens |
+| Identity | Users, memberships, roles and tokens |
 | Party Manager | Party lifecycle and live roster |
 | Achievements | Achievement definitions, unlock records and profile presentation |
 | Notification | Delivery preferences, inbox and channels |
@@ -58,7 +58,10 @@ The domain layer keeps business rules inside entities and value objects. Key val
 
 ## Consistency
 
-- Acceptance protects personal limit and offer capacity.
+- Acceptance protects the per-player active-mission limit.
+- Acceptance commits the contract, the per-member definition reservations and the active-slot guard in a single transaction.
+- Terminal writes and member departure release only the affected member's owned reservation.
+- Every member exit commits through the departure write (the last member's too, releasing their own guards); the write and all other contract writes (`Save`, `SaveApproved`) are conditional on the stored departed set matching the candidate's, so stale snapshots conflict atomically instead of resurrecting a leaver.
 - Confirmation and credit use an idempotent identity.
 - The ledger is the truth; standings are rebuildable.
 - Status and reliable publishing are coordinated without mandatory synchronous calls.
@@ -66,4 +69,4 @@ The domain layer keeps business rules inside entities and value objects. Key val
 
 ## Observability
 
-Measure available offers, rejections by limit, contracts by status, confirmations accepted/rejected, duplicates, merits by category, leaderboard delay, open disputes and pending awards. User/tenant IDs belong to traceable logs, not high cardinality dimensions.
+Measure available offers, rejections by limit, contracts by status, confirmations accepted/rejected, duplicates, merits by category, leaderboard delay, open disputes and pending awards. User IDs belong to traceable logs, not high cardinality dimensions.

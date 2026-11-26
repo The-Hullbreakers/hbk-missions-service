@@ -33,7 +33,7 @@ func TestValidateCanCreateSeason_RejectsWhenActiveExists(t *testing.T) {
 		domain.NewSeason("season-2026-q4", domain.SeasonStateActive),
 	}
 
-	err := domain.ValidateCanCreateSeason(active)
+	err := domain.ValidateCanCreateSeason("season-x", active)
 	if err != domain.ErrActiveSeasonAlreadyExists {
 		t.Fatalf("expected ErrActiveSeasonAlreadyExists, got %v", err)
 	}
@@ -66,7 +66,7 @@ func TestValidateCanCreateSeason_AllowsWhenNoActive(t *testing.T) {
 		domain.NewSeason("season-2026-q2", domain.SeasonStateArchived),
 	}
 
-	err := domain.ValidateCanCreateSeason(active)
+	err := domain.ValidateCanCreateSeason("season-x", active)
 	if err != nil {
 		t.Fatalf("expected nil, got %v", err)
 	}

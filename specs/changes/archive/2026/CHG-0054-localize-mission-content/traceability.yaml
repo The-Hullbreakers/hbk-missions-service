@@ -1,0 +1,265 @@
+change_id: CHG-0054
+artifact: traceability
+status: proposed
+updated: 2026-11-01
+
+user_stories:
+  - user_story_id: US-MB-LOCALIZE-001
+    user_story_title: Read the board in English
+    requirements: [REQ-MB-017, REQ-MB-013, REQ-MB-005, REQ-MB-015, REQ-MB-016]
+  - user_story_id: US-MCF-LOCALIZE-001
+    user_story_title: Read my contracts in English
+    requirements: [REQ-MCF-026, REQ-MCF-006, REQ-MCF-021, REQ-MCF-022]
+  - user_story_id: US-MB-CATALOG-002
+    user_story_title: Review and preserve the bilingual mission catalog
+    requirements: [REQ-MB-013, REQ-MB-005]
+
+requirements:
+  - req_id: REQ-MB-017
+    req_title: Select the language of mission content
+    change: added
+    tasks: [T-0054-001, T-0054-003, T-0054-004, T-0054-005, T-0054-006, T-0054-007, T-0054-008]
+    scenarios:
+      - scenario_id: SCN-MB-LANG-EN
+        scenario_title: Member reads a bilingual mission in English
+        tests: [TEST-APP-LANG-001, TEST-HTTP-LANG-001]
+      - scenario_id: SCN-MB-LANG-DEFAULT
+        scenario_title: Omitted language serves Spanish
+        tests: [TEST-APP-LANG-001, TEST-HTTP-LANG-001]
+      - scenario_id: SCN-MB-LANG-LEGACY
+        scenario_title: Spanish-only record falls back declared
+        tests: [TEST-APP-LANG-001, TEST-APP-LANG-003, TEST-HTTP-LANG-002, TEST-INF-LANG-001]
+      - scenario_id: SCN-MB-LANG-INVALID
+        scenario_title: Invalid language choice rejected
+        tests: [TEST-DOM-LANG-001, TEST-HTTP-LANG-001]
+      - scenario_id: SCN-MB-LANG-MIXED
+        scenario_title: Mixed collection declares per item
+        tests: [TEST-APP-LANG-003, TEST-HTTP-LANG-002]
+      - scenario_id: SCN-MB-LANG-HEADER
+        scenario_title: Homogeneous page declares one language
+        tests: [TEST-HTTP-LANG-002]
+      - scenario_id: SCN-MB-LANG-SEARCH
+        scenario_title: Search matches the effective language
+        tests: [TEST-APP-LANG-003, TEST-DOM-LANG-003, TEST-HTTP-LANG-003]
+    production_files:
+      - internal/missions/domain/language.go
+      - internal/missions/domain/offer_list.go
+      - internal/missions/application/list_definitions.go
+      - internal/missions/application/list_offers.go
+      - internal/missions/application/get_offer.go
+      - internal/missions/interface/http/list_definitions.go
+      - internal/missions/interface/http/list_offers.go
+      - internal/missions/interface/http/get_offer.go
+      - internal/missions/interface/http/errors.go
+  - req_id: REQ-MB-013
+    req_title: Publish definitions with mission content and reward rules
+    change: modified
+    tasks: [T-0054-002, T-0054-003, T-0054-004, T-0054-005, T-0054-006, T-0054-008, T-0054-013, T-0054-014, T-0054-015, T-0054-016, T-0054-017, T-0054-020, T-0054-021, T-0054-022]
+    scenarios:
+      - scenario_id: SCN-MB-CONTENT-DRAFT-EN
+        scenario_title: Draft may carry an English translation
+        tests: [TEST-APP-LANG-002, TEST-HTTP-LANG-003]
+      - scenario_id: SCN-MB-CONTENT-INCOMPLETE
+        scenario_title: Publish requires both locales complete
+        tests: [TEST-APP-LANG-002, TEST-DOM-LANG-002, TEST-HTTP-LANG-003]
+      - scenario_id: SCN-MB-CATALOG-TRANSLATED
+        scenario_title: Review complete bilingual missions
+        tests: [TEST-SEED-LANG-001]
+      - scenario_id: SCN-MB-CATALOG-NEW-VERSION
+        scenario_title: Require English on first publication
+        tests: [TEST-SEED-LANG-001, TEST-SEED-LANG-002]
+      - scenario_id: SCN-MB-CATALOG-LOCAL-PUBLISH
+        scenario_title: Add approved English to local history
+        tests: [TEST-SEED-LOCAL-001, TEST-SEED-LOCAL-002]
+    production_files:
+      - internal/missions/domain/mission_definition.go
+      - internal/missions/domain/objective.go
+      - internal/missions/domain/errors.go
+      - internal/missions/application/create_mission_definition.go
+      - internal/missions/application/publish_mission_definition.go
+      - internal/missions/interface/http/create_mission_definition.go
+      - internal/missions/interface/http/publish_mission_definition.go
+      - internal/missions/infrastructure/dynamodb/definition_store.go
+      - scripts/seed_missions.py
+      - scripts/seed_local_missions.py
+      - seeds/translations/
+      - internal/missions/infrastructure/dynamodb/reviewed_translation_manifest.go
+      - cmd/local-translation-backfill/
+  - req_id: REQ-MB-005
+    req_title: Freeze promised rules (bilingual snapshots)
+    change: modified
+    tasks: [T-0054-003, T-0054-004, T-0054-005, T-0054-007, T-0054-008, T-0054-009, T-0054-015, T-0054-016, T-0054-018, T-0054-019, T-0054-020, T-0054-021, T-0054-022]
+    scenarios:
+      - scenario_id: SCN-MB-SNAPSHOT-BILINGUAL
+        scenario_title: Offer freezes both locales
+        tests: [TEST-INF-LANG-001, TEST-INF-LANG-002, TEST-E2E-LANG-001]
+      - scenario_id: SCN-MB-VERSION-EDIT
+        scenario_title: A translation edit never rewrites history
+        tests: [TEST-INF-LANG-001, TEST-INF-LANG-002, TEST-E2E-LANG-001]
+      - scenario_id: SCN-MB-CATALOG-REDEPLOY
+        scenario_title: Preserve previously approved text
+        tests: [TEST-SEED-LANG-002, TEST-SEED-IAM-001]
+      - scenario_id: SCN-MB-CATALOG-LOCAL-CONFLICT
+        scenario_title: Report divergent local history
+        tests: [TEST-SEED-LOCAL-002, TEST-INF-LANG-002]
+    production_files:
+      - internal/missions/domain/mission_offer.go
+      - internal/missions/domain/contract_terms.go
+      - internal/missions/infrastructure/dynamodb/offer_store.go
+      - internal/missions/infrastructure/dynamodb/contract_item.go
+      - internal/missions/infrastructure/dynamodb/contract_store_mapping.go
+      - scripts/seed_missions.py
+      - template.yaml
+      - seeds/translations/
+      - internal/missions/infrastructure/dynamodb/translation_backfill.go
+      - cmd/local-translation-backfill/
+  - req_id: REQ-MB-015
+    req_title: Expose mission content on the board and catalog
+    change: modified
+    tasks: [T-0054-001, T-0054-005, T-0054-006, T-0054-008]
+    scenarios:
+      - scenario_id: SCN-MB-LANG-EN
+        scenario_title: Member reads a bilingual mission in English
+        tests: [TEST-HTTP-LANG-001]
+      - scenario_id: SCN-MB-LANG-LEGACY
+        scenario_title: Spanish-only record falls back declared
+        tests: [TEST-HTTP-LANG-002, TEST-INF-LANG-001]
+    production_files:
+      - internal/missions/interface/http/list_offers.go
+      - internal/missions/interface/http/list_definitions.go
+      - internal/missions/infrastructure/dynamodb/offer_store_query.go
+      - internal/missions/infrastructure/dynamodb/definition_store_queries.go
+  - req_id: REQ-MB-016
+    req_title: Read a single offer
+    change: modified
+    tasks: [T-0054-001, T-0054-005, T-0054-006, T-0054-008]
+    scenarios:
+      - scenario_id: SCN-MB-LANG-HEADER
+        scenario_title: Homogeneous page declares one language
+        tests: [TEST-HTTP-LANG-002]
+    production_files:
+      - internal/missions/application/get_offer.go
+      - internal/missions/interface/http/get_offer.go
+  - req_id: REQ-MCF-026
+    req_title: Select the language of contract content
+    change: added
+    tasks: [T-0054-001, T-0054-003, T-0054-004, T-0054-005, T-0054-006, T-0054-008, T-0054-009]
+    scenarios:
+      - scenario_id: SCN-MCF-LANG-EN
+        scenario_title: Member reads contracts in English
+        tests: [TEST-APP-LANG-001, TEST-HTTP-LANG-001, TEST-E2E-LANG-001]
+      - scenario_id: SCN-MCF-LANG-DETAIL
+        scenario_title: Contract detail renders the selected language
+        tests: [TEST-APP-LANG-001, TEST-HTTP-LANG-001, TEST-E2E-LANG-001]
+      - scenario_id: SCN-MCF-LANG-QUEUE
+        scenario_title: Reviewer queue titles localize without loosening access
+        tests: [TEST-APP-LANG-001, TEST-HTTP-LANG-001]
+      - scenario_id: SCN-MCF-LANG-LEGACY
+        scenario_title: Spanish-only snapshot falls back declared
+        tests: [TEST-APP-LANG-003, TEST-HTTP-LANG-002, TEST-INF-LANG-001, TEST-INF-LANG-002]
+    production_files:
+      - internal/missions/application/list_player_contracts.go
+      - internal/missions/application/get_contract.go
+      - internal/missions/application/list_pending_review.go
+      - internal/missions/interface/http/list_contracts.go
+      - internal/missions/interface/http/contract_detail.go
+      - internal/missions/interface/http/contract_detail_projection.go
+      - internal/missions/interface/http/contract_detail_member.go
+      - internal/missions/interface/http/review_queue.go
+  - req_id: REQ-MCF-006
+    req_title: List player contracts (localized embedded offer)
+    change: modified
+    tasks: [T-0054-001, T-0054-005, T-0054-006, T-0054-008]
+    scenarios:
+      - scenario_id: SCN-MCF-LANG-EN
+        scenario_title: Member reads contracts in English
+        tests: [TEST-HTTP-LANG-001]
+    production_files:
+      - internal/missions/application/list_player_contracts.go
+      - internal/missions/interface/http/list_contracts.go
+      - internal/missions/infrastructure/dynamodb/contract_store_list.go
+  - req_id: REQ-MCF-021
+    req_title: List the pending review queue (localized title)
+    change: modified
+    tasks: [T-0054-001, T-0054-005, T-0054-006, T-0054-008]
+    scenarios:
+      - scenario_id: SCN-MCF-LANG-QUEUE
+        scenario_title: Reviewer queue titles localize without loosening access
+        tests: [TEST-HTTP-LANG-001]
+    production_files:
+      - internal/missions/application/list_pending_review.go
+      - internal/missions/interface/http/review_queue.go
+  - req_id: REQ-MCF-022
+    req_title: Read own contract detail (localized frozen terms)
+    change: modified
+    tasks: [T-0054-001, T-0054-005, T-0054-006, T-0054-008]
+    scenarios:
+      - scenario_id: SCN-MCF-LANG-DETAIL
+        scenario_title: Contract detail renders the selected language
+        tests: [TEST-HTTP-LANG-001]
+    production_files:
+      - internal/missions/application/get_contract.go
+      - internal/missions/interface/http/contract_detail.go
+      - internal/missions/interface/http/contract_detail_projection.go
+      - internal/missions/interface/http/contract_detail_member.go
+
+shared_work:
+  - tasks: [T-0054-013, T-0054-014, T-0054-015, T-0054-016, T-0054-017]
+    tests: [TEST-SEED-LANG-001, TEST-SEED-LANG-002]
+    purpose: Version-bound English drafts for 24 racing and 12 PvP
+      definitions; exact source Spanish, ids and economics unchanged;
+      repeated seed preserves existing ContentEn, new versions require
+      complete English; dry-run, CLI render/local bootstrap, and
+      concurrent English changes fail closed. Human signoff and
+      non-local execution separate.
+  - tasks: [T-0054-018, T-0054-019]
+    tests: [TEST-SEED-IAM-001]
+    purpose: Constrain the existing seed role to GetItem for exact
+      OFFER keys on the same table; preserve current write scope,
+      do not grant OFFER Query/Scan or CONTRACT reads.
+  - tasks: [T-0054-009]
+    tests: [TEST-INF-LANG-002]
+    purpose: Backfill rehearsal — reviewed per-version en translations
+      carry their es source snapshot; reject frozen Spanish text drift
+      even when version, objective ids, and rule count match; report
+      unresolved records and prove es/economics untouched.
+  - tasks: [T-0054-011]
+    tests: [TEST-E2E-LANG-001]
+    purpose: L3 gates — security, coverage >=90%, mutation, critical
+      E2E, documentation, clean-up <150 lines, validate-sdd-change.sh.
+
+# TEST ids
+# TEST-DOM-LANG-001  Language/ParseLanguage: es default, en accepted,
+#                    unsupported/empty/conflicting rejected
+# TEST-DOM-LANG-002  publish completeness: both locales required,
+#                    stable objective ids/rule order, atomic version
+# TEST-DOM-LANG-003  q matches effective-language title+description
+#                    incl. es fallback
+# TEST-APP-LANG-001  read use cases resolve per-item effective language
+#                    + content_language for all six endpoints' sources
+# TEST-APP-LANG-002  draft accepts es-only / es+en atomically; publish
+#                    surfaces completeness rejection
+# TEST-APP-LANG-003  heterogeneous results report per-item language;
+#                    search q uses effective language
+# TEST-HTTP-LANG-001 ?lang= happy paths: en content, omitted->es,
+#                    400 INVALID_QUERY_PARAMETER, lowercase contract
+#                    detail, review-queue role gates preserved
+# TEST-HTTP-LANG-002 served-language labels + Content-Language header
+#                    only on homogeneous non-empty payloads; legacy fallback
+#                    labeled es
+# TEST-HTTP-LANG-003 bilingual draft POST compat + facets unaffected +
+#                    q search over effective language end-to-end
+# TEST-INF-LANG-001  bilingual item round-trip; legacy decode es-only;
+#                    offer/contract freeze copies both locales
+# TEST-INF-LANG-002  backfill rehearsal: en-only augmentation, version
+#                    and source-es snapshot match, divergent frozen es
+#                    unresolved, es/economics unchanged
+# TEST-SEED-LANG-001  36 source-bound English drafts; complete ordered
+#                     rules/objectives; unchanged identity and economics
+# TEST-SEED-LANG-002  repeat seed preserves ContentEn and es on same
+#                     version; offer/merit/race conflicts reject; new
+#                     version atomic en; render and local bootstrap en
+# TEST-SEED-IAM-001   existing seed role gets GetItem for OFFER keys
+#                     only; no wider read or write access
+# TEST-E2E-LANG-001  critical E2E: English offer read -> accept ->
+#                    contract keeps both locales across a v2 edit

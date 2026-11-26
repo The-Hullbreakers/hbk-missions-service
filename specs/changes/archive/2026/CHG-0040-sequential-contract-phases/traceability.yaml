@@ -1,0 +1,15 @@
+change_id: CHG-0040
+artifact: traceability
+requirements:
+  - id: REQ-MCF-002
+    title: Progress by phases and objectives (modified)
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-PHASE-UNLOCK
+      - SCN-MCF-PHASE-OPTIONAL
+      - SCN-MCF-PHASE-ORDER
+    tasks:
+      - T-040-001
+      - T-040-002
+      - T-040-003
+      - T-040-004

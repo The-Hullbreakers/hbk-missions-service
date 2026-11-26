@@ -1,0 +1,10 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_StaleSaveDoesNotRestoreDepartedMember$
+=== RUN   TestContractStore_StaleSaveDoesNotRestoreDepartedMember
+    contract_store_save_fence_test.go:33: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_save_fence_test.go:33
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestContractStore_StaleSaveDoesNotRestoreDepartedMember
+--- FAIL: TestContractStore_StaleSaveDoesNotRestoreDepartedMember (0.03s)
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.442s
+FAIL

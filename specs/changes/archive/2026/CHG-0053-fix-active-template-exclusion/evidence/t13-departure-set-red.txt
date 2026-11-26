@@ -1,0 +1,18 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_SaveDeparture(RejectsMissingDepartedWithPriorCount|RejectsSameCountDifferentDepartedSet|AcceptsLegacyMissingDeparted)\$
+=== RUN   TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount
+    contract_store_departure_fence_test.go:64: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_departure_fence_test.go:64
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount
+--- FAIL: TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount (0.03s)
+=== RUN   TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet
+    contract_store_departure_fence_test.go:92: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_departure_fence_test.go:92
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet
+--- FAIL: TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet (0.01s)
+=== RUN   TestContractStore_SaveDepartureAcceptsLegacyMissingDeparted
+--- PASS: TestContractStore_SaveDepartureAcceptsLegacyMissingDeparted (0.01s)
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.484s
+FAIL

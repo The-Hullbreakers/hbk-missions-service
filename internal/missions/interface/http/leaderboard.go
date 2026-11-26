@@ -14,10 +14,9 @@ import (
 func LeaderboardHandler(app *application.ListLeaderboardHandler) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/v1/missions/seasons/{season_id}/leaderboards/{category}", func(w http.ResponseWriter, r *http.Request) {
-		tenantID := tenantFromContext(r)
-		if tenantID == "" {
-			w.WriteHeader(http.StatusForbidden)
-			_ = json.NewEncoder(w).Encode(map[string]string{"code": "TENANT_BOUNDARY_DENIED"})
+		if _, idErr := CallerIdentityFromContext(r.Context()); idErr != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{"code": "UNAUTHORIZED"})
 			return
 		}
 
@@ -44,7 +43,7 @@ func LeaderboardHandler(app *application.ListLeaderboardHandler) http.Handler {
 
 		cursor := r.URL.Query().Get("cursor")
 
-		leaderboard, err := app.Handle(tenantID, seasonID, category, track, limit, minMerits, cursor)
+		leaderboard, err := app.Handle(seasonID, category, track, limit, minMerits, cursor)
 		if err != nil {
 			status := http.StatusInternalServerError
 			if errors.Is(err, domain.ErrInvalidTrack) || errors.Is(err, domain.ErrInvalidCursor) {
@@ -62,18 +61,6 @@ func LeaderboardHandler(app *application.ListLeaderboardHandler) http.Handler {
 		_ = json.NewEncoder(w).Encode(toLeaderboardResponse(leaderboard))
 	})
 	return mux
-}
-
-func tenantFromContext(r *http.Request) string {
-	claims, ok := r.Context().Value(claimsKey).(map[string]any)
-	if !ok {
-		return ""
-	}
-	tenantID, ok := claims["tenant_id"].(string)
-	if !ok {
-		return ""
-	}
-	return tenantID
 }
 
 type leaderboardResponse struct {

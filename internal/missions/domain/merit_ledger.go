@@ -16,19 +16,19 @@ func (l *MeritLedger) Record(credit MeritCredit) {
 }
 
 // TotalFor returns the sum of credits for the given bucket.
-func (l *MeritLedger) TotalFor(tenantID, seasonID, category string, track Track, recipientID string) int {
+func (l *MeritLedger) TotalFor(seasonID, category string, track Track, recipientID string) int {
 	total := 0
-	for _, c := range l.CreditsFor(tenantID, seasonID, category, track, recipientID) {
+	for _, c := range l.CreditsFor(seasonID, category, track, recipientID) {
 		total += c.Amount
 	}
 	return total
 }
 
 // CreditsFor returns the credits matching the given bucket.
-func (l *MeritLedger) CreditsFor(tenantID, seasonID, category string, track Track, recipientID string) []MeritCredit {
+func (l *MeritLedger) CreditsFor(seasonID, category string, track Track, recipientID string) []MeritCredit {
 	var matches []MeritCredit
 	for _, c := range l.credits {
-		if c.TenantID == tenantID && c.SeasonID == seasonID && c.Category == category && c.Track == track && c.RecipientID == recipientID {
+		if c.SeasonID == seasonID && c.Category == category && c.Track == track && c.RecipientID == recipientID {
 			matches = append(matches, c)
 		}
 	}

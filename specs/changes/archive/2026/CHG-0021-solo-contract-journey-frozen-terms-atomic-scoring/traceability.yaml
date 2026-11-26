@@ -1,0 +1,109 @@
+change_id: CHG-0021
+artifact: traceability
+requirements:
+  - id: REQ-MCF-008
+    title: Progress a contract through its lifecycle
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-START
+      - SCN-MCF-COMPLETE
+      - SCN-MCF-ABANDON
+    tasks:
+      - T-021-002
+      - T-021-005
+      - T-021-008
+      - T-021-010
+    tests:
+      - tests/unit/missions/domain/mission_contract_lifecycle_test.go
+      - tests/unit/missions/application/contract_lifecycle_test.go
+      - tests/integration/http/contract_lifecycle_test.go
+    production:
+      - internal/missions/domain/mission_contract.go
+      - internal/missions/application/start_contract.go
+      - internal/missions/application/complete_contract.go
+      - internal/missions/application/abandon_contract.go
+      - internal/missions/interface/http/
+      - internal/missions/composition/server.go
+  - id: REQ-MCF-009
+    title: Score against frozen contract terms
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-FROZEN
+      - SCN-MCF-WRONG-OBJECTIVE
+    tasks:
+      - T-021-001
+      - T-021-004
+      - T-021-006
+    tests:
+      - tests/unit/missions/domain/contract_terms_test.go
+      - tests/unit/missions/application/confirm_objective_snapshot_test.go
+    production:
+      - internal/missions/domain/contract_terms.go
+      - internal/missions/domain/mission_definition.go
+      - internal/missions/application/accept_mission.go
+      - internal/missions/application/confirm_objective.go
+  - id: REQ-MCF-010
+    title: Commit confirmation and credit atomically
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-ATOMIC-RETRY
+    tasks:
+      - T-021-006
+      - T-021-007
+    tests:
+      - tests/unit/missions/application/confirm_objective_atomic_test.go
+      - tests/integration/infrastructure/dynamodb/contract_credit_transaction_test.go
+    production:
+      - internal/missions/application/confirm_objective.go
+      - internal/missions/infrastructure/dynamodb/contract_store.go
+      - internal/missions/infrastructure/dynamodb/merit_ledger_readers.go
+  - id: REQ-MCF-011
+    title: Give every attempt its own identity
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-ATTEMPT
+    tasks:
+      - T-021-003
+      - T-021-004
+    tests:
+      - tests/unit/missions/application/accept_mission_attempt_test.go
+    production:
+      - internal/missions/domain/mission_contract.go
+      - internal/missions/application/accept_mission.go
+  - id: REQ-MB-013
+    title: Publish definitions with objectives and reward rules
+    capability: mission-board
+    scenarios:
+      - SCN-MCF-FROZEN
+    tasks:
+      - T-021-001
+      - T-021-007
+    tests:
+      - tests/unit/missions/domain/mission_definition_test.go
+      - tests/integration/infrastructure/dynamodb/objective_store_test.go
+    production:
+      - internal/missions/domain/mission_definition.go
+      - internal/missions/infrastructure/dynamodb/objective_store.go
+      - internal/missions/infrastructure/dynamodb/definition_store.go
+  - id: REQ-MCF-004
+    title: Prevent duplicates and basic farming (modified)
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-UNIT-LIMIT
+    tasks:
+      - T-021-003
+      - T-021-006
+      - T-021-007
+    tests:
+      - tests/unit/missions/domain/confirmation_id_test.go
+      - tests/unit/missions/application/confirm_objective_limit_test.go
+    production:
+      - internal/missions/domain/confirmation_id.go
+      - internal/missions/application/confirm_objective.go
+      - internal/missions/infrastructure/dynamodb/objective_store.go
+gates:
+  security: security-review.md
+  mutation: mandatory (state machine + atomic write)
+  critical_e2e: accept→start→confirm→complete journey
+  coverage: ">=90% project production scope"
+  reviewer_handoff: required before consolidation

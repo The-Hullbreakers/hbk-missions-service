@@ -1,0 +1,186 @@
+{
+  "version": 4,
+  "rules": [
+    "Arena Commander, trazado normal y sentido oficial; se excluye la vuelta de salida o calentamiento.",
+    "Mantener piloto, nave y configuración durante toda la tanda, sin pausas, reparaciones ni reabastecimiento.",
+    "Una vuelta igual o superior al límite, con checkpoint omitido, respawn o reinicio no acredita su unidad.",
+    "Video continuo con identidad, nave, versión del juego y los cinco tiempos visibles.",
+    "Una tanda acredita una sola misión; un cobro por circuito, nave y dificultad durante la temporada; validación manual por moderación."
+  ],
+  "levels": [
+    {
+      "code": "cadete",
+      "name": "Cadete",
+      "merits": 200
+    },
+    {
+      "code": "piloto",
+      "name": "Piloto",
+      "merits": 400
+    },
+    {
+      "code": "veterano",
+      "name": "Veterano",
+      "merits": 700
+    },
+    {
+      "code": "as",
+      "name": "As",
+      "merits": 1100
+    }
+  ],
+  "series": [
+    {
+      "code": "snake-pit",
+      "title": "Colmillos de Clio",
+      "track": "Snake Pit",
+      "ship": "Arrow",
+      "limits_seconds": [
+        75,
+        63,
+        56,
+        52
+      ],
+      "calibration": "current",
+      "environments": [
+        "staging",
+        "production"
+      ],
+      "reference": {
+        "time_ms": 46492,
+        "game_version": "4.8",
+        "scr_revision": 11,
+        "pilot": "Na0fel",
+        "video": "https://www.youtube.com/watch?v=IQK1IJmIc_8",
+        "leaderboard": "https://scr.gg/track/snake-pit",
+        "checked_at": "2026-10-18"
+      }
+    },
+    {
+      "code": "snake-pit",
+      "title": "Colmillos de Clio",
+      "track": "Snake Pit",
+      "ship": "Gladius",
+      "limits_seconds": [
+        68,
+        57,
+        51,
+        47
+      ],
+      "calibration": "historical",
+      "environments": [
+        "staging"
+      ],
+      "reference": {
+        "time_ms": 42142,
+        "game_version": "3.23.1",
+        "scr_revision": 6,
+        "pilot": "Lord_Utan",
+        "video": "https://youtu.be/Tfqfvf4clek",
+        "leaderboard": "https://scr.gg/track/snake-pit",
+        "checked_at": "2026-10-18"
+      }
+    },
+    {
+      "code": "yadar-valley",
+      "title": "Pulso de Daymar",
+      "track": "Yadar Valley",
+      "ship": "Arrow",
+      "limits_seconds": [
+        96,
+        81,
+        72,
+        66
+      ],
+      "calibration": "current",
+      "environments": [
+        "staging",
+        "production"
+      ],
+      "reference": {
+        "time_ms": 59699,
+        "game_version": "4.8.2",
+        "scr_revision": 10,
+        "pilot": "Hakyn",
+        "video": "https://youtu.be/DrmJj-i5hDk",
+        "leaderboard": "https://scr.gg/track/yadar-valley",
+        "checked_at": "2026-10-18"
+      }
+    },
+    {
+      "code": "yadar-valley",
+      "title": "Pulso de Daymar",
+      "track": "Yadar Valley",
+      "ship": "Gladius",
+      "limits_seconds": [
+        108,
+        91,
+        81,
+        74
+      ],
+      "calibration": "historical",
+      "environments": [
+        "staging"
+      ],
+      "reference": {
+        "time_ms": 67127,
+        "game_version": "4.4.0",
+        "scr_revision": 9,
+        "pilot": "Hakyn",
+        "video": "https://www.youtube.com/watch?v=173XMRYftEA",
+        "leaderboard": "https://scr.gg/track/yadar-valley",
+        "checked_at": "2026-10-18"
+      }
+    },
+    {
+      "code": "the-icebreaker",
+      "title": "Sangre Fría",
+      "track": "Icebreaker",
+      "ship": "Arrow",
+      "limits_seconds": [
+        101,
+        86,
+        76,
+        70
+      ],
+      "calibration": "historical",
+      "environments": [
+        "staging"
+      ],
+      "reference": {
+        "time_ms": 63030,
+        "game_version": "3.21",
+        "scr_revision": 4,
+        "pilot": "iKrash",
+        "video": "https://www.youtube.com/watch?v=OvnEZHWlkXM",
+        "leaderboard": "https://scr.gg/track/the-icebreaker",
+        "checked_at": "2026-10-18"
+      }
+    },
+    {
+      "code": "the-icebreaker",
+      "title": "Sangre Fría",
+      "track": "Icebreaker",
+      "ship": "Gladius",
+      "limits_seconds": [
+        120,
+        102,
+        90,
+        83
+      ],
+      "calibration": "historical",
+      "environments": [
+        "staging"
+      ],
+      "reference": {
+        "time_ms": 74970,
+        "game_version": "3.21",
+        "scr_revision": 4,
+        "pilot": "Splen",
+        "video": "https://youtu.be/RL9xoxJCDBs",
+        "leaderboard": "https://scr.gg/track/the-icebreaker",
+        "checked_at": "2026-10-18"
+      }
+    }
+  ]
+}

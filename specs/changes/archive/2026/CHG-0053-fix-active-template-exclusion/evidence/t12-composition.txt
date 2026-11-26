@@ -1,0 +1,2 @@
+$ go test -count=1 -p=1 ./tests/integration/composition
+ok  	github.com/hbk/hbk-missions-service/tests/integration/composition	1.243s

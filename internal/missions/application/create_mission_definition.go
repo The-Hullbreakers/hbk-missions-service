@@ -7,6 +7,21 @@ type DefinitionWriter interface {
 	Save(definition domain.MissionDefinition) error
 }
 
+// CreateMissionDefinitionRequest carries every field needed to author a
+// draft mission definition. ContentEn is optional: nil creates a
+// Spanish-only draft, non-nil freezes a deep copy of the English snapshot.
+type CreateMissionDefinitionRequest struct {
+	DefinitionCode   string
+	Title            string
+	Description      string
+	Category         string
+	Mode             domain.MissionMode
+	CompletionReward int
+	Objectives       []domain.Objective
+	Rules            []string
+	ContentEn        *domain.LocalizedContent
+}
+
 // CreateMissionDefinitionHandler creates a new mission definition in DRAFT.
 type CreateMissionDefinitionHandler struct {
 	definitions DefinitionWriter
@@ -17,12 +32,16 @@ func NewCreateMissionDefinitionHandler(definitions DefinitionWriter) *CreateMiss
 	return &CreateMissionDefinitionHandler{definitions: definitions}
 }
 
-// Handle validates and persists a new draft definition.
-func (h *CreateMissionDefinitionHandler) Handle(tenantID, definitionID, category string, capacity int, mode domain.MissionMode) (domain.MissionDefinition, error) {
-	_ = tenantID
-	definition, err := domain.NewMissionDefinition(definitionID, category, capacity, mode)
+// Handle validates and persists a new draft definition with its player-facing
+// content, completion reward, named objective rules, readable rules, and an
+// optional frozen English snapshot.
+func (h *CreateMissionDefinitionHandler) Handle(request CreateMissionDefinitionRequest) (domain.MissionDefinition, error) {
+	definition, err := domain.NewMissionDefinition(request.DefinitionCode, request.Title, request.Description, request.Category, request.Mode, request.CompletionReward, request.Objectives, request.Rules)
 	if err != nil {
 		return domain.MissionDefinition{}, err
+	}
+	if request.ContentEn != nil {
+		definition.ContentEn = request.ContentEn.Clone()
 	}
 	if err := h.definitions.Save(definition); err != nil {
 		return domain.MissionDefinition{}, err

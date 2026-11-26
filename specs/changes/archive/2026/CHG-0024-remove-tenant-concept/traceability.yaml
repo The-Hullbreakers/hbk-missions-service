@@ -1,0 +1,64 @@
+change_id: CHG-0024
+artifact: traceability
+status: proposed
+updated: 2026-10-08
+requirements:
+  - id: REQ-REM-TENANT-01
+    title: CallerIdentity carries no tenant
+    user_story: US-REM-TENANT-AUTH
+    tasks: [T-01]
+    tests:
+      - tests/unit/missions/domain/caller_identity_test.go
+    production:
+      - internal/missions/domain/caller_identity.go
+      - internal/missions/interface/http/middleware.go
+  - id: REQ-REM-TENANT-02
+    title: Domain value objects and policies are tenant-free
+    user_story: US-REM-TENANT-DATA
+    tasks: [T-02, T-03]
+    tests:
+      - tests/unit/missions/domain/
+    production:
+      - internal/missions/domain/
+  - id: REQ-REM-TENANT-03
+    title: Application handlers use single scope
+    user_story: US-REM-TENANT-DATA
+    tasks: [T-04]
+    tests:
+      - tests/unit/missions/application/
+    production:
+      - internal/missions/application/
+  - id: REQ-REM-TENANT-04
+    title: HTTP boundary ignores tenant_id claim and body field
+    user_story: US-REM-TENANT-AUTH
+    tasks: [T-05]
+    tests:
+      - tests/unit/missions/interface/http/
+      - tests/integration/http/
+    production:
+      - internal/missions/interface/http/
+  - id: REQ-REM-TENANT-05
+    title: DynamoDB keys carry no tenant segment
+    user_story: US-REM-TENANT-DATA
+    tasks: [T-06]
+    tests:
+      - tests/integration/infrastructure/dynamodb/
+    production:
+      - internal/missions/infrastructure/dynamodb/
+  - id: REQ-REM-TENANT-06
+    title: Public contract exposes no tenant fields
+    user_story: US-REM-TENANT-CONTRACT
+    tasks: [T-05, T-07, T-13]
+    tests:
+      - tests/integration/http/
+      - tests/integration/composition/
+      - tests/integration/e2e/
+    production:
+      - internal/missions/interface/http/
+      - docs/
+gates:
+  security: T-09
+  coverage: T-10
+  mutation: T-11
+  critical_e2e: T-12
+  validation: T-14
