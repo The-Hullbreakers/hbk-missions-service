@@ -1,0 +1,196 @@
+change_id: CHG-0031
+artifact: traceability
+updated: 2026-10-09
+
+requirements:
+  - id: REQ-MCF-019
+    title: Submit a contract for review
+    user_stories: [US-0031-01]
+    scenarios:
+      - id: SCN-MCF-SUBMIT
+        tests:
+          - TEST-DOMAIN-SUBMIT-TRANSITION
+          - TEST-APP-SUBMIT-MEMBER
+          - TEST-HTTP-SUBMIT-200
+      - id: SCN-MCF-SUBMIT-PARTIAL
+        tests:
+          - TEST-DOMAIN-SUBMIT-PARTIAL
+      - id: SCN-MCF-SUBMIT-OUTSIDER
+        tests:
+          - TEST-DOMAIN-SUBMIT-OUTSIDER
+          - TEST-HTTP-SUBMIT-403
+  - id: REQ-MCF-020
+    title: Adjudicate a pending contract
+    user_stories: [US-0031-02, US-0031-03]
+    scenarios:
+      - id: SCN-MCF-APPROVE-FULL
+        tests:
+          - TEST-DOMAIN-APPROVE-FULL
+          - TEST-APP-APPROVE-MODERATOR
+          - TEST-INFRA-APPROVE-ATOMIC-CREDITS
+          - TEST-HTTP-APPROVE-200
+      - id: SCN-MCF-APPROVE-PARTIAL
+        tests:
+          - TEST-DOMAIN-APPROVE-PARTIAL
+          - TEST-APP-APPROVE-PARTIAL
+      - id: SCN-MCF-REJECT
+        tests:
+          - TEST-DOMAIN-REJECT
+          - TEST-APP-REJECT-MODERATOR
+          - TEST-INFRA-REJECT-NO-CREDITS
+          - TEST-HTTP-REJECT-200
+      - id: SCN-MCF-REVIEW-MEMBER-DENIED
+        tests:
+          - TEST-DOMAIN-REVIEW-MEMBER-DENIED
+          - TEST-HTTP-APPROVE-403
+      - id: SCN-MCF-REVIEW-WRONG-STATE
+        tests:
+          - TEST-DOMAIN-REVIEW-WRONG-STATE
+          - TEST-HTTP-APPROVE-422
+      - id: SCN-MCF-REVIEW-IDEMPOTENT
+        tests:
+          - TEST-INFRA-APPROVE-IDEMPOTENT
+  - id: REQ-MCF-003
+    title: Confirm countable units (credit deferred to approval)
+    user_stories: [US-0031-03]
+    scenarios:
+      - id: SCN-MCF-PENDING-CLOSED
+        tests:
+          - TEST-DOMAIN-PENDING-REJECTS-CONFIRM
+          - TEST-HTTP-EVIDENCE-PENDING-422
+      - id: SCN-MCF-001
+        tests:
+          - TEST-DOMAIN-CONFIRM-STAGED
+          - TEST-APP-CONFIRM-STAGED
+  - id: REQ-MCF-012
+    title: Completion reward materializes at approval
+    user_stories: [US-0031-02]
+    scenarios:
+      - id: SCN-MCF-APPROVE-FULL
+        tests:
+          - TEST-DOMAIN-APPROVE-FULL
+          - TEST-E2E-REVIEW-JOURNEY
+  - id: REQ-MCF-008
+    title: Lifecycle gains the review hop
+    user_stories: [US-0031-01]
+    scenarios:
+      - id: SCN-MCF-PENDING-CLOSED
+        tests:
+          - TEST-DOMAIN-PENDING-REJECTS-UPLOAD-GRANT
+      - id: SCN-MCF-SUBMIT
+        tests:
+          - TEST-E2E-REVIEW-JOURNEY
+  - id: REQ-MB-003
+    title: Pending validation frees the active slot
+    user_stories: [US-0031-01]
+    scenarios:
+      - id: SCN-MB-PENDING-FREES-SLOT
+        tests:
+          - TEST-DOMAIN-PENDING-NOT-ACTIVE
+          - TEST-HTTP-ACCEPT-AFTER-SUBMIT
+  - id: REQ-MB-008
+    title: Pending validation still hides the template
+    user_stories: [US-0031-01]
+    scenarios:
+      - id: SCN-MB-PENDING-HIDES-TEMPLATE
+        tests:
+          - TEST-HTTP-BOARD-HIDES-PENDING
+
+tasks:
+  - id: T-031-001
+    wave: 1
+    layer: domain
+    requirements: [REQ-MCF-003, REQ-MB-003]
+    tests: [TEST-DOMAIN-CONFIRM-STAGED, TEST-DOMAIN-PENDING-NOT-ACTIVE]
+    production:
+      - internal/missions/domain/contract.go
+      - internal/missions/domain/mission_contract.go
+      - internal/missions/domain/mission_contract_confirm.go
+  - id: T-031-002
+    wave: 1
+    layer: domain
+    requirements: [REQ-MCF-008, REQ-MCF-012, REQ-MCF-019, REQ-MCF-020]
+    tests:
+      - TEST-DOMAIN-SUBMIT-TRANSITION
+      - TEST-DOMAIN-SUBMIT-PARTIAL
+      - TEST-DOMAIN-SUBMIT-OUTSIDER
+      - TEST-DOMAIN-APPROVE-FULL
+      - TEST-DOMAIN-APPROVE-PARTIAL
+      - TEST-DOMAIN-REJECT
+      - TEST-DOMAIN-REVIEW-MEMBER-DENIED
+      - TEST-DOMAIN-REVIEW-WRONG-STATE
+      - TEST-DOMAIN-PENDING-REJECTS-CONFIRM
+      - TEST-DOMAIN-PENDING-REJECTS-UPLOAD-GRANT
+    production:
+      - internal/missions/domain/mission_contract_lifecycle.go
+      - internal/missions/domain/errors.go
+  - id: T-031-003
+    wave: 2
+    layer: application
+    requirements: [REQ-MCF-019, REQ-MCF-020, REQ-MCF-003]
+    tests:
+      - TEST-APP-SUBMIT-MEMBER
+      - TEST-APP-APPROVE-MODERATOR
+      - TEST-APP-APPROVE-PARTIAL
+      - TEST-APP-REJECT-MODERATOR
+      - TEST-APP-CONFIRM-STAGED
+    production:
+      - internal/missions/application/submit_contract.go
+      - internal/missions/application/approve_contract.go
+      - internal/missions/application/reject_contract.go
+      - internal/missions/application/confirm_objective.go
+      - internal/missions/application/complete_contract.go
+  - id: T-031-004
+    wave: 3
+    layer: infrastructure
+    requirements: [REQ-MCF-020, REQ-MCF-003]
+    tests: [TEST-INFRA-APPROVE-ATOMIC-CREDITS, TEST-INFRA-REJECT-NO-CREDITS, TEST-INFRA-APPROVE-IDEMPOTENT]
+    production:
+      - internal/missions/infrastructure/dynamodb/
+  - id: T-031-005
+    wave: 4
+    layer: interface
+    requirements: [REQ-MCF-019, REQ-MCF-020, REQ-MB-003, REQ-MB-008]
+    tests:
+      - TEST-HTTP-SUBMIT-200
+      - TEST-HTTP-SUBMIT-403
+      - TEST-HTTP-APPROVE-200
+      - TEST-HTTP-APPROVE-403
+      - TEST-HTTP-APPROVE-422
+      - TEST-HTTP-REJECT-200
+      - TEST-HTTP-EVIDENCE-PENDING-422
+      - TEST-HTTP-ACCEPT-AFTER-SUBMIT
+      - TEST-HTTP-BOARD-HIDES-PENDING
+    production:
+      - internal/missions/interface/http/contract_lifecycle.go
+      - internal/missions/interface/http/handler.go
+      - internal/missions/interface/http/errors.go
+  - id: T-031-006
+    wave: 5
+    layer: composition
+    requirements: [REQ-MCF-019, REQ-MCF-020]
+    production:
+      - internal/missions/composition/server.go
+      - internal/missions/composition/config.go
+      - cmd/lambda/main.go
+      - cmd/hbk-missions-service/main.go
+  - id: T-031-007
+    wave: 6
+    layer: e2e
+    requirements: [REQ-MCF-008, REQ-MCF-012]
+    tests: [TEST-E2E-REVIEW-JOURNEY]
+    production: []
+
+gates:
+  - id: GATE-RED-ADJUDICATION
+    applies_to: [T-031-001, T-031-002, T-031-003, T-031-004, T-031-005]
+  - id: GATE-MUTATION
+    applies_to: [T-031-001, T-031-002, T-031-003]
+  - id: GATE-CRITICAL-E2E
+    applies_to: [TEST-E2E-REVIEW-JOURNEY]
+  - id: GATE-SECURITY
+    applies_to: reviewer adjudication trust boundary
+  - id: GATE-COVERAGE
+    applies_to: production >= 90%
+  - id: GATE-VALIDATE
+    command: tools/validate-sdd-change.sh

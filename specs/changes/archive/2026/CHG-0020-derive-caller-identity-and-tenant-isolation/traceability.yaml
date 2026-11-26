@@ -1,0 +1,77 @@
+change_id: CHG-0020
+artifact: traceability
+requirements:
+  - id: REQ-MB-011
+    title: Accept an offer only as the authenticated member
+    capability: mission-board
+    scenarios:
+      - SCN-SEC-ACCEPT-DERIVE
+      - SCN-SEC-ACCEPT-CROSS-TENANT
+    tasks:
+      - T-020-001
+      - T-020-002
+      - T-020-007
+      - T-020-009
+    tests:
+      - tests/unit/missions/domain/caller_identity_test.go
+      - tests/unit/missions/application/accept_mission_identity_test.go
+      - tests/integration/http/forged_identity_test.go
+    production:
+      - internal/missions/domain/caller_identity.go
+      - internal/missions/application/accept_mission.go
+      - internal/missions/interface/http/accept_mission.go
+      - internal/missions/interface/http/middleware.go
+  - id: REQ-MCF-007
+    title: Confirm evidence only within caller authority
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-SEC-EVIDENCE-ROSTER
+      - SCN-SEC-EVIDENCE-OUTSIDER
+    tasks:
+      - T-020-001
+      - T-020-003
+      - T-020-007
+      - T-020-009
+    tests:
+      - tests/unit/missions/domain/caller_identity_test.go
+      - tests/unit/missions/application/confirm_objective_identity_test.go
+      - tests/integration/http/outsider_evidence_test.go
+    production:
+      - internal/missions/domain/mission_contract.go
+      - internal/missions/application/confirm_objective.go
+      - internal/missions/interface/http/handler.go
+  - id: REQ-MB-012
+    title: Read catalog data only inside the caller tenant
+    capability: mission-board
+    scenarios:
+      - SCN-SEC-DEF-TENANT
+    tasks:
+      - T-020-005
+    tests:
+      - tests/integration/infrastructure/dynamodb/definition_store_tenant_test.go
+    production:
+      - internal/missions/infrastructure/dynamodb/definition_store.go
+  - id: REQ-SCC-013
+    title: Store and transition seasons per tenant
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SEC-SEASON-TENANT
+    tasks:
+      - T-020-004
+      - T-020-006
+      - T-020-008
+    tests:
+      - tests/unit/missions/application/season_tenant_scope_test.go
+      - tests/integration/infrastructure/dynamodb/season_store_tenant_test.go
+    production:
+      - internal/missions/infrastructure/dynamodb/season_store.go
+      - internal/missions/application/create_season.go
+      - internal/missions/application/freeze_season.go
+      - internal/missions/application/finalize_season.go
+      - internal/missions/application/season_scheduler.go
+gates:
+  security: security-review.md
+  mutation: mandatory (L3)
+  critical_e2e: cross-tenant accept/evidence/leaderboard journey
+  coverage: ">=90% project production scope"
+  reviewer_handoff: required before consolidation

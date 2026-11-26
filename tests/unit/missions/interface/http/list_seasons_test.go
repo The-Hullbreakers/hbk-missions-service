@@ -32,9 +32,10 @@ func TestListSeasonsHandler_ReturnsActiveByDefault(t *testing.T) {
 			domain.NewSeason("season-archived", domain.SeasonStateArchived),
 		},
 	})
-	handler := missionhttp.ListSeasonsHandler(app)
+	handler := missionhttp.NewAuthMiddleware(memberSession{}).Authenticate(missionhttp.ListSeasonsHandler(app))
 
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/seasons", nil)
+	req.Header.Set("Authorization", "Bearer valid-token")
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 
@@ -58,9 +59,10 @@ func TestListSeasonsHandler_ReturnsAllWhenRequested(t *testing.T) {
 			domain.NewSeason("season-archived", domain.SeasonStateArchived),
 		},
 	})
-	handler := missionhttp.ListSeasonsHandler(app)
+	handler := missionhttp.NewAuthMiddleware(memberSession{}).Authenticate(missionhttp.ListSeasonsHandler(app))
 
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/seasons?status=all", nil)
+	req.Header.Set("Authorization", "Bearer valid-token")
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 
@@ -79,9 +81,10 @@ func TestListSeasonsHandler_ReturnsAllWhenRequested(t *testing.T) {
 
 func TestListSeasonsHandler_RejectsUnknownStatus(t *testing.T) {
 	app := application.NewListSeasonsHandler(&fakeSeasonListReader{})
-	handler := missionhttp.ListSeasonsHandler(app)
+	handler := missionhttp.NewAuthMiddleware(memberSession{}).Authenticate(missionhttp.ListSeasonsHandler(app))
 
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/seasons?status=closed", nil)
+	req.Header.Set("Authorization", "Bearer valid-token")
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 

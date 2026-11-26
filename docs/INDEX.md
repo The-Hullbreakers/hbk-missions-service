@@ -12,7 +12,7 @@
 - [API Contract](API-CONTRACT.md)
 - [Event Catalog](EVENT-CATALOG.md)
 - [Data Model](DATA-MODEL.md)
-- [Authentication And Multi-Tenancy](AUTHENTICATION-AND-MULTITENANCY.md)
+- [Authentication And Authorization](AUTHENTICATION.md)
 
 ## Active SDD Evidence
 

@@ -20,23 +20,45 @@ func (realClock) Now() time.Time { return time.Now() }
 // NewRealClock returns a Clock backed by the system time.
 func NewRealClock() Clock { return realClock{} }
 
+// PendingIntentDrainer publishes pending outbox intents; a nil drainer keeps
+// the scheduler purely on season transitions.
+type PendingIntentDrainer interface {
+	PublishPending(ctx context.Context, limit int) error
+}
+
+// outboxDrainBatch bounds the intents a single tick publishes.
+const outboxDrainBatch = 100
+
+// FinalizerRunner is the narrow contract the scheduler needs from either
+// finalization implementation — the legacy one-phase handler or the
+// two-phase SeasonFinalizer.
+type FinalizerRunner interface {
+	Handle(seasonID string) (domain.Season, error)
+}
+
 // SeasonScheduler transitions scheduled seasons through their lifecycle.
 type SeasonScheduler struct {
 	reader   SeasonListReader
 	clock    Clock
 	freeze   *FreezeSeasonHandler
-	finalize *FinalizeSeasonHandler
+	finalize FinalizerRunner
 	create   *CreateScheduledSeasonHandler
+	outbox   PendingIntentDrainer
+
+	lockLister      AdjudicationLockLister
+	orphanReporter  OrphanedLockReporter
+	orphanThreshold time.Duration
 }
 
 // NewSeasonScheduler creates a scheduler with the required ports.
-func NewSeasonScheduler(reader SeasonListReader, clock Clock, freeze *FreezeSeasonHandler, finalize *FinalizeSeasonHandler, create *CreateScheduledSeasonHandler) *SeasonScheduler {
+func NewSeasonScheduler(reader SeasonListReader, clock Clock, freeze *FreezeSeasonHandler, finalize FinalizerRunner, create *CreateScheduledSeasonHandler, outbox PendingIntentDrainer) *SeasonScheduler {
 	return &SeasonScheduler{
 		reader:   reader,
 		clock:    clock,
 		freeze:   freeze,
 		finalize: finalize,
 		create:   create,
+		outbox:   outbox,
 	}
 }
 
@@ -62,14 +84,15 @@ func (s *SeasonScheduler) Tick() error {
 				if _, err := s.finalize.Handle(season.SeasonID); err != nil {
 					return err
 				}
-				if season.Schedule != nil {
-					next, err := season.NextScheduledSeason()
-					if err != nil {
-						return err
-					}
-					if _, err := s.create.Handle(scheduledCommandFromSeason(next)); err != nil {
-						return err
-					}
+				changed = true
+			}
+			if season.SuccessorPending(seasons) {
+				next, err := season.NextScheduledSeason()
+				if err != nil {
+					return err
+				}
+				if _, err := s.create.Handle(scheduledCommandFromSeason(next)); err != nil {
+					return err
 				}
 				changed = true
 			}
@@ -78,11 +101,18 @@ func (s *SeasonScheduler) Tick() error {
 			break
 		}
 	}
-	return nil
+	if s.outbox != nil {
+		if err := s.outbox.PublishPending(context.Background(), outboxDrainBatch); err != nil {
+			return err
+		}
+	}
+	return s.sweepOrphanedLocks(context.Background())
 }
 
-// Start runs the scheduler in a background goroutine.
-func (s *SeasonScheduler) Start(ctx context.Context, interval time.Duration) {
+// Start runs the scheduler in a background goroutine. Tick failures —
+// including outbox publish outages — are reported to onError instead of being
+// silently dropped; a nil onError keeps them unreported.
+func (s *SeasonScheduler) Start(ctx context.Context, interval time.Duration, onError func(error)) {
 	if interval <= 0 {
 		return
 	}
@@ -92,7 +122,9 @@ func (s *SeasonScheduler) Start(ctx context.Context, interval time.Duration) {
 		for {
 			select {
 			case <-ticker.C:
-				_ = s.Tick()
+				if err := s.Tick(); err != nil && onError != nil {
+					onError(err)
+				}
 			case <-ctx.Done():
 				return
 			}
@@ -107,6 +139,8 @@ func scheduledCommandFromSeason(season domain.Season) CreateScheduledSeasonComma
 		StartsAt:     season.StartsAt,
 		ActiveWeeks:  season.Schedule.ActiveWeeks,
 		OffWeeks:     season.Schedule.OffWeeks,
+		ActiveDays:   season.Schedule.ActiveDays,
+		OffDays:      season.Schedule.OffDays,
 		Official:     season.Official,
 	}
 }

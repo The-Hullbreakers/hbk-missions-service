@@ -58,17 +58,18 @@ func TestMeritLedgerStore_ListStandingsByBucket(t *testing.T) {
 	clearMissionsTable(t, ctx, client, "hbk-missions")
 
 	store := missiondynamo.NewMeritLedgerStore(client, "hbk-missions")
+	seedActiveSeason(t, client, "hbk-missions", "season-1")
 	for _, credit := range []domain.MeritCredit{
-		{TenantID: "tenant-1", SeasonID: "season-1", Category: "BOUNTY_HUNTING", Track: domain.TrackIndividual, RecipientID: "player-1", Amount: 100, ContractID: "contract-1", ObjectiveID: "objective-1", UnitID: "target-1", ConfirmationID: "c1"},
-		{TenantID: "tenant-1", SeasonID: "season-1", Category: "BOUNTY_HUNTING", Track: domain.TrackIndividual, RecipientID: "player-1", Amount: 50, ContractID: "contract-1", ObjectiveID: "objective-1", UnitID: "target-2", ConfirmationID: "c2"},
-		{TenantID: "tenant-1", SeasonID: "season-1", Category: "BOUNTY_HUNTING", Track: domain.TrackIndividual, RecipientID: "player-2", Amount: 80, ContractID: "contract-2", ObjectiveID: "objective-1", UnitID: "target-3", ConfirmationID: "c3"},
+		{SeasonID: "season-1", Category: "BOUNTY_HUNTING", Track: domain.TrackIndividual, RecipientID: "player-1", Amount: 100, ContractID: "contract-1", ObjectiveID: "objective-1", UnitID: "target-1", ConfirmationID: "c1"},
+		{SeasonID: "season-1", Category: "BOUNTY_HUNTING", Track: domain.TrackIndividual, RecipientID: "player-1", Amount: 50, ContractID: "contract-1", ObjectiveID: "objective-1", UnitID: "target-2", ConfirmationID: "c2"},
+		{SeasonID: "season-1", Category: "BOUNTY_HUNTING", Track: domain.TrackIndividual, RecipientID: "player-2", Amount: 80, ContractID: "contract-2", ObjectiveID: "objective-1", UnitID: "target-3", ConfirmationID: "c3"},
 	} {
 		if err := store.Save(credit); err != nil {
 			t.Fatalf("could not save credit: %v", err)
 		}
 	}
 
-	standings, err := store.ListStandings("tenant-1", "season-1", "BOUNTY_HUNTING", domain.TrackIndividual, 0)
+	standings, err := store.ListStandings("season-1", "BOUNTY_HUNTING", domain.TrackIndividual, 0)
 	if err != nil {
 		t.Fatalf("could not list standings: %v", err)
 	}

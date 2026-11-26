@@ -10,13 +10,14 @@ import (
 func TestObjective_BonusIsAddedToCredit(t *testing.T) {
 	// Arrange
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
-	objective := domain.NewObjectiveWithBonus("objective-1", "BOUNTY_HUNTING", 100, 25)
+	startContract(t, contract)
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 25, 0)
+	freezeTerms(t, contract, objective)
 
 	// Act
-	credit, err := domain.ConfirmObjective(contract, objective, "target-1", season, "tenant-1")
+	credit, err := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-1", season)
 
 	// Assert
 	if err != nil {
@@ -30,15 +31,16 @@ func TestObjective_BonusIsAddedToCredit(t *testing.T) {
 func TestObjective_UnitLimitIsEnforced(t *testing.T) {
 	// Arrange
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
-	objective := domain.NewObjectiveWithBonusAndLimit("objective-1", "BOUNTY_HUNTING", 100, 0, 2)
+	startContract(t, contract)
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 2)
+	freezeTerms(t, contract, objective)
 
 	// Act
-	_, errFirst := domain.ConfirmObjective(contract, objective, "target-1", season, "tenant-1")
-	_, errSecond := domain.ConfirmObjective(contract, objective, "target-2", season, "tenant-1")
-	_, errThird := domain.ConfirmObjective(contract, objective, "target-3", season, "tenant-1")
+	_, errFirst := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-1", season)
+	_, errSecond := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-2", season)
+	_, errThird := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-3", season)
 
 	// Assert
 	if errFirst != nil {

@@ -37,7 +37,7 @@ func (s fixedLeaderboardSeasonReader) Get(string) (domain.Season, error) { retur
 
 type fixedLeaderboardReader struct{ standings []domain.Standing }
 
-func (r fixedLeaderboardReader) ListStandings(string, string, string, domain.Track, int) ([]domain.Standing, error) {
+func (r fixedLeaderboardReader) ListStandings(string, string, domain.Track, int) ([]domain.Standing, error) {
 	return r.standings, nil
 }
 

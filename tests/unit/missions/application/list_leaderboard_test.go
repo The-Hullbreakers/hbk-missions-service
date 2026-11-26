@@ -22,7 +22,7 @@ type fakeLeaderboardReader struct {
 	err       error
 }
 
-func (r *fakeLeaderboardReader) ListStandings(tenantID, seasonID, category string, track domain.Track, minMerits int) ([]domain.Standing, error) {
+func (r *fakeLeaderboardReader) ListStandings(seasonID, category string, track domain.Track, minMerits int) ([]domain.Standing, error) {
 	return r.standings, r.err
 }
 
@@ -36,7 +36,7 @@ func TestListLeaderboardHandler_ReturnsLeaderboard(t *testing.T) {
 	}
 	handler := application.NewListLeaderboardHandler(seasonReader, leaderboardReader)
 
-	got, err := handler.Handle("tenant-1", "season-1", "BOUNTY_HUNTING", "individual", 10, 0, "")
+	got, err := handler.Handle("season-1", "BOUNTY_HUNTING", "individual", 10, 0, "")
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -53,7 +53,7 @@ func TestListLeaderboardHandler_RejectsInvalidTrack(t *testing.T) {
 	leaderboardReader := &fakeLeaderboardReader{}
 	handler := application.NewListLeaderboardHandler(seasonReader, leaderboardReader)
 
-	_, err := handler.Handle("tenant-1", "season-1", "BOUNTY_HUNTING", "squad", 10, 0, "")
+	_, err := handler.Handle("season-1", "BOUNTY_HUNTING", "squad", 10, 0, "")
 	if !errors.Is(err, domain.ErrInvalidTrack) {
 		t.Fatalf("expected ErrInvalidTrack, got %v", err)
 	}
@@ -64,7 +64,7 @@ func TestListLeaderboardHandler_ReturnsNotFound(t *testing.T) {
 	leaderboardReader := &fakeLeaderboardReader{}
 	handler := application.NewListLeaderboardHandler(seasonReader, leaderboardReader)
 
-	_, err := handler.Handle("tenant-1", "season-1", "BOUNTY_HUNTING", "individual", 10, 0, "")
+	_, err := handler.Handle("season-1", "BOUNTY_HUNTING", "individual", 10, 0, "")
 	if !errors.Is(err, domain.ErrSeasonNotFound) {
 		t.Fatalf("expected ErrSeasonNotFound, got %v", err)
 	}
@@ -75,7 +75,7 @@ func TestListLeaderboardHandler_ReturnsListStandingsError(t *testing.T) {
 	leaderboardReader := &fakeLeaderboardReader{err: errors.New("standings unavailable")}
 	handler := application.NewListLeaderboardHandler(seasonReader, leaderboardReader)
 
-	_, err := handler.Handle("tenant-1", "season-1", "BOUNTY_HUNTING", "individual", 10, 0, "")
+	_, err := handler.Handle("season-1", "BOUNTY_HUNTING", "individual", 10, 0, "")
 	if err == nil {
 		t.Fatalf("expected list standings error")
 	}

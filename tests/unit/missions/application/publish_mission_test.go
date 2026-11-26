@@ -12,7 +12,7 @@ func TestPublishMissionHandler_PublishesFromDefinition(t *testing.T) {
 	writer := &recordingOfferWriter{}
 	handler := application.NewPublishMissionHandler(writer, fixedDefinitionReader{definition: aPublishedDefinition()}, anActiveSeason())
 
-	offer, err := handler.Handle("tenant-1", "offer-1", "bounty-template", "v1", 0)
+	offer, err := handler.Handle("offer-1", "bounty-template", "v1")
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -22,24 +22,8 @@ func TestPublishMissionHandler_PublishesFromDefinition(t *testing.T) {
 	if offer.SeasonID != "season-2026-q4" {
 		t.Fatalf("expected season season-2026-q4, got %s", offer.SeasonID)
 	}
-	if offer.DefinitionID != "bounty-template" {
-		t.Fatalf("expected definition bounty-template, got %s", offer.DefinitionID)
-	}
-	if len(writer.saved) != 1 {
-		t.Fatalf("expected offer to be saved")
-	}
-}
-
-func TestPublishMissionHandler_PublishesWithCapacity(t *testing.T) {
-	writer := &recordingOfferWriter{}
-	handler := application.NewPublishMissionHandler(writer, fixedDefinitionReader{definition: aPublishedDefinition()}, anActiveSeason())
-
-	offer, err := handler.Handle("tenant-1", "offer-1", "bounty-template", "v1", 5)
-	if err != nil {
-		t.Fatalf("expected no error, got %v", err)
-	}
-	if offer.Capacity != 5 {
-		t.Fatalf("expected capacity 5, got %d", offer.Capacity)
+	if offer.DefinitionCode != "bounty-template" {
+		t.Fatalf("expected definition bounty-template, got %s", offer.DefinitionCode)
 	}
 	if len(writer.saved) != 1 {
 		t.Fatalf("expected offer to be saved")
@@ -50,7 +34,7 @@ func TestPublishMissionHandler_RejectsNoActiveSeason(t *testing.T) {
 	writer := &recordingOfferWriter{}
 	handler := application.NewPublishMissionHandler(writer, fixedDefinitionReader{definition: aPublishedDefinition()}, fixedActiveSeasonsStore{seasons: []domain.Season{}})
 
-	_, err := handler.Handle("tenant-1", "offer-1", "bounty-template", "v1", 0)
+	_, err := handler.Handle("offer-1", "bounty-template", "v1")
 	if !errors.Is(err, domain.ErrNoActiveSeason) {
 		t.Fatalf("expected ErrNoActiveSeason, got %v", err)
 	}
@@ -61,10 +45,10 @@ func TestPublishMissionHandler_RejectsNoActiveSeason(t *testing.T) {
 
 func TestPublishMissionHandler_RejectsUnpublishedDefinition(t *testing.T) {
 	writer := &recordingOfferWriter{}
-	draft, _ := domain.NewMissionDefinition("bounty-template", "BOUNTY_HUNTING", 10, domain.MissionModeSolo)
+	draft, _ := domain.NewMissionDefinition("bounty-template", "T", "D", "BOUNTY_HUNTING", domain.MissionModeSolo, 0, nil, nil)
 	handler := application.NewPublishMissionHandler(writer, fixedDefinitionReader{definition: draft}, anActiveSeason())
 
-	_, err := handler.Handle("tenant-1", "offer-1", "bounty-template", "", 0)
+	_, err := handler.Handle("offer-1", "bounty-template", "")
 	if !errors.Is(err, domain.ErrDefinitionNotPublished) {
 		t.Fatalf("expected ErrDefinitionNotPublished, got %v", err)
 	}
@@ -72,7 +56,7 @@ func TestPublishMissionHandler_RejectsUnpublishedDefinition(t *testing.T) {
 
 func TestPublishMissionHandler_ReturnsWriterError(t *testing.T) {
 	handler := application.NewPublishMissionHandler(failingOfferWriter{}, fixedDefinitionReader{definition: aPublishedDefinition()}, anActiveSeason())
-	_, err := handler.Handle("tenant-1", "offer-1", "bounty-template", "v1", 0)
+	_, err := handler.Handle("offer-1", "bounty-template", "v1")
 	if err == nil {
 		t.Fatalf("expected writer error")
 	}
@@ -82,7 +66,7 @@ func TestPublishMissionHandler_ReturnsSeasonsError(t *testing.T) {
 	writer := &recordingOfferWriter{}
 	handler := application.NewPublishMissionHandler(writer, fixedDefinitionReader{definition: aPublishedDefinition()}, fixedActiveSeasonsStore{err: errors.New("seasons unavailable")})
 
-	_, err := handler.Handle("tenant-1", "offer-1", "bounty-template", "v1", 0)
+	_, err := handler.Handle("offer-1", "bounty-template", "v1")
 	if err == nil {
 		t.Fatalf("expected seasons error")
 	}

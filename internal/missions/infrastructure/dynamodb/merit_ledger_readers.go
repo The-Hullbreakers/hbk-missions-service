@@ -14,9 +14,9 @@ import (
 )
 
 // ListStandings returns the standings for the given bucket, excluding those below minMerits.
-func (s *MeritLedgerStore) ListStandings(tenantID, seasonID, category string, track domain.Track, minMerits int) ([]domain.Standing, error) {
+func (s *MeritLedgerStore) ListStandings(seasonID, category string, track domain.Track, minMerits int) ([]domain.Standing, error) {
 	ctx := context.Background()
-	key := leaderboardBucketKeyFromParts(tenantID, seasonID, category, track)
+	key := leaderboardBucketKeyFromParts(seasonID, category, track)
 
 	var exclusiveStartKey map[string]types.AttributeValue
 	builder := make(map[string]*standingBuilder)
@@ -56,19 +56,29 @@ func (s *MeritLedgerStore) ListStandings(tenantID, seasonID, category string, tr
 		exclusiveStartKey = result.LastEvaluatedKey
 	}
 
+	completed, err := s.completedContractIDs(builder)
+	if err != nil {
+		return nil, err
+	}
+
 	var standings []domain.Standing
 	for recipientID, b := range builder {
 		if b.total < minMerits {
 			continue
 		}
+		completedCount := 0
+		for contractID := range b.contracts {
+			if completed[contractID] {
+				completedCount++
+			}
+		}
 		standings = append(standings, domain.Standing{
-			TenantID:          tenantID,
 			SeasonID:          seasonID,
 			Category:          category,
 			Track:             track,
 			RecipientID:       recipientID,
 			Total:             b.total,
-			CompletedMissions: len(b.contracts),
+			CompletedMissions: completedCount,
 			UniqueObjectives:  len(b.objectives),
 		})
 	}
@@ -81,9 +91,9 @@ func (s *MeritLedgerStore) ListStandings(tenantID, seasonID, category string, tr
 }
 
 // TotalFor returns the sum of credits for the given bucket.
-func (s *MeritLedgerStore) TotalFor(tenantID, seasonID, category string, track domain.Track, recipientID string) int {
+func (s *MeritLedgerStore) TotalFor(seasonID, category string, track domain.Track, recipientID string) int {
 	ctx := context.Background()
-	key := bucketKey(tenantID, seasonID, category, track, recipientID)
+	key := bucketKey(seasonID, category, track, recipientID)
 
 	var total int
 	var exclusiveStartKey map[string]types.AttributeValue

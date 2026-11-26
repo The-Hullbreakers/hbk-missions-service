@@ -1,0 +1,116 @@
+{
+  "translations": [
+    {
+      "DefinitionCode": "pvp-live-fps-5",
+      "DefinitionVersion": "4",
+      "SourceSpanish": {
+        "Title": "Contacto hostil — 5 bajas FPS",
+        "Description": "Consigue 5 bajas FPS confirmadas de jugadores distintos.",
+        "Rules": [
+          "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+          "Baja posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+          "Muerte confirmada e identificada en el video; una incapacitación no basta.",
+          "Víctima humana distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+          "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "bajas-fps-verificadas", "Name": "Bajas FPS verificadas", "Description": "Cada baja FPS de un jugador distinto, verificada en video."}]
+      },
+      "English": {
+        "Title": "Hostile Contact — 5 FPS Kills",
+        "Description": "Score 5 confirmed FPS kills against different players.",
+        "Rules": [
+          "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version.",
+          "The kill must occur after contract acceptance and during the active season; record continuous video of the encounter with no cuts during combat.",
+          "A confirmed death identifiable in the video is required; incapacitation alone is insufficient.",
+          "A different human player for each unit; NPCs, allies, alternate accounts, and arranged outcomes do not count.",
+          "Each piece of evidence counts toward one mission and one unit only; one payout per mission and season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "bajas-fps-verificadas", "Name": "Verified FPS Kills", "Description": "Each FPS kill of a different player, verified by video."}]
+      }
+    },
+    {
+      "DefinitionCode": "pvp-live-fps-10",
+      "DefinitionVersion": "4",
+      "SourceSpanish": {
+        "Title": "Línea de fuego — 10 bajas FPS",
+        "Description": "Consigue 10 bajas FPS confirmadas de jugadores distintos.",
+        "Rules": [
+          "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+          "Baja posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+          "Muerte confirmada e identificada en el video; una incapacitación no basta.",
+          "Víctima humana distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+          "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "bajas-fps-verificadas", "Name": "Bajas FPS verificadas", "Description": "Cada baja FPS de un jugador distinto, verificada en video."}]
+      },
+      "English": {
+        "Title": "Line of Fire — 10 FPS Kills",
+        "Description": "Score 10 confirmed FPS kills against different players.",
+        "Rules": [
+          "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version.",
+          "The kill must occur after contract acceptance and during the active season; record continuous video of the encounter with no cuts during combat.",
+          "A confirmed death identifiable in the video is required; incapacitation alone is insufficient.",
+          "A different human player for each unit; NPCs, allies, alternate accounts, and arranged outcomes do not count.",
+          "Each piece of evidence counts toward one mission and one unit only; one payout per mission and season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "bajas-fps-verificadas", "Name": "Verified FPS Kills", "Description": "Each FPS kill of a different player, verified by video."}]
+      }
+    },
+    {
+      "DefinitionCode": "pvp-live-fps-20",
+      "DefinitionVersion": "4",
+      "SourceSpanish": {
+        "Title": "Veterano de asalto — 20 bajas FPS",
+        "Description": "Consigue 20 bajas FPS confirmadas de jugadores distintos.",
+        "Rules": [
+          "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+          "Baja posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+          "Muerte confirmada e identificada en el video; una incapacitación no basta.",
+          "Víctima humana distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+          "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "bajas-fps-verificadas", "Name": "Bajas FPS verificadas", "Description": "Cada baja FPS de un jugador distinto, verificada en video."}]
+      },
+      "English": {
+        "Title": "Assault Veteran — 20 FPS Kills",
+        "Description": "Score 20 confirmed FPS kills against different players.",
+        "Rules": [
+          "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version.",
+          "The kill must occur after contract acceptance and during the active season; record continuous video of the encounter with no cuts during combat.",
+          "A confirmed death identifiable in the video is required; incapacitation alone is insufficient.",
+          "A different human player for each unit; NPCs, allies, alternate accounts, and arranged outcomes do not count.",
+          "Each piece of evidence counts toward one mission and one unit only; one payout per mission and season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "bajas-fps-verificadas", "Name": "Verified FPS Kills", "Description": "Each FPS kill of a different player, verified by video."}]
+      }
+    },
+    {
+      "DefinitionCode": "pvp-live-fps-50",
+      "DefinitionVersion": "4",
+      "SourceSpanish": {
+        "Title": "Campaña de infantería — 50 bajas FPS",
+        "Description": "Consigue 50 bajas FPS confirmadas de jugadores distintos.",
+        "Rules": [
+          "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+          "Baja posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+          "Muerte confirmada e identificada en el video; una incapacitación no basta.",
+          "Víctima humana distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+          "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+        ],
+        "Objectives": [{"ObjectiveID": "bajas-fps-verificadas", "Name": "Bajas FPS verificadas", "Description": "Cada baja FPS de un jugador distinto, verificada en video."}]
+      },
+      "English": {
+        "Title": "Infantry Campaign — 50 FPS Kills",
+        "Description": "Score 50 confirmed FPS kills against different players.",
+        "Rules": [
+          "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version.",
+          "The kill must occur after contract acceptance and during the active season; record continuous video of the encounter with no cuts during combat.",
+          "A confirmed death identifiable in the video is required; incapacitation alone is insufficient.",
+          "A different human player for each unit; NPCs, allies, alternate accounts, and arranged outcomes do not count.",
+          "Each piece of evidence counts toward one mission and one unit only; one payout per mission and season, subject to manual review."
+        ],
+        "Objectives": [{"ObjectiveID": "bajas-fps-verificadas", "Name": "Verified FPS Kills", "Description": "Each FPS kill of a different player, verified by video."}]
+      }
+    }
+  ]
+}

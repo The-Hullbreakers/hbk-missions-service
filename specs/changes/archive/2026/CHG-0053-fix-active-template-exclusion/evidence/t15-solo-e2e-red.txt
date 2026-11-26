@@ -1,0 +1,6 @@
+# github.com/hbk/hbk-missions-service/internal/missions/composition
+internal/missions/composition/server.go:52:80: too many arguments in call to application.NewLeaveContractHandler
+	have (*"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb".ContractStore, *"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb".ContractStore, *"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb".ContractStore)
+	want (application.ContractReader, application.DepartureWriter)
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/composition [build failed]
+FAIL

@@ -1,0 +1,11 @@
+change_id: CHG-0036
+artifact: traceability
+requirements:
+  - id: REQ-MB-016
+    title: Read a single offer (added)
+    capability: mission-board
+    scenarios:
+      - SCN-MB-OFFER-GET
+      - SCN-MB-OFFER-404
+    tasks:
+      - T-036-001

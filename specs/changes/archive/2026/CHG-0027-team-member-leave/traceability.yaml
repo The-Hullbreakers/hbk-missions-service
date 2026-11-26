@@ -1,0 +1,100 @@
+change_id: CHG-0027
+artifact: traceability
+updated: 2026-10-09
+
+requirements:
+  - id: REQ-MCF-013
+    title: Leave a team contract without terminating it
+    user_stories: [US-0027-01, US-0027-02, US-0027-03]
+    scenarios:
+      - id: SCN-MCF-LEAVE-MEMBER
+        tests:
+          - TEST-DOMAIN-LEAVE-KEEPS-CONTRACT
+          - TEST-APP-LEAVE-PERSISTS
+          - TEST-HTTP-LEAVE-200
+      - id: SCN-MCF-LEAVE-BLOCKED
+        tests:
+          - TEST-DOMAIN-DEPARTED-NO-EVIDENCE
+          - TEST-DOMAIN-DEPARTED-NO-LIFECYCLE
+      - id: SCN-MCF-LEAVE-LAST
+        tests:
+          - TEST-DOMAIN-LEAVE-LAST-ABANDONS
+      - id: SCN-MCF-LEAVE-OUTSIDER
+        tests:
+          - TEST-DOMAIN-LEAVE-OUTSIDER
+          - TEST-HTTP-LEAVE-403
+  - id: REQ-MCF-008
+    title: Progress a contract through its lifecycle (leave transition)
+    user_stories: [US-0027-02]
+    scenarios:
+      - id: SCN-MCF-LEAVE-MEMBER
+        tests:
+          - TEST-E2E-TEAM-LEAVE-COMPLETE
+  - id: REQ-MB-008
+    title: Hide an active template (departed excluded)
+    user_stories: [US-0027-01]
+    scenarios:
+      - id: SCN-MB-LEAVE-RESHOWS
+        tests:
+          - TEST-APP-DEPARTED-SLOT-FREED
+
+tasks:
+  - id: T-01
+    wave: 1
+    layer: domain
+    requirements: [REQ-MCF-013]
+    tests: [TEST-DOMAIN-LEAVE-KEEPS-CONTRACT, TEST-DOMAIN-DEPARTED-NO-EVIDENCE, TEST-DOMAIN-DEPARTED-NO-LIFECYCLE, TEST-DOMAIN-LEAVE-LAST-ABANDONS, TEST-DOMAIN-LEAVE-OUTSIDER]
+    production:
+      - internal/missions/domain/mission_contract.go
+      - internal/missions/domain/mission_contract_lifecycle.go
+  - id: T-02
+    wave: 1
+    layer: domain
+    requirements: [REQ-MCF-013]
+    production:
+      - internal/missions/domain/mission_contract.go
+  - id: T-03
+    wave: 2
+    layer: application
+    requirements: [REQ-MCF-013]
+    tests: [TEST-APP-LEAVE-PERSISTS]
+    production:
+      - internal/missions/application/leave_contract.go
+  - id: T-04
+    wave: 3
+    layer: interface
+    requirements: [REQ-MCF-013]
+    tests: [TEST-HTTP-LEAVE-200, TEST-HTTP-LEAVE-403]
+    production:
+      - internal/missions/interface/http/contract_lifecycle.go
+  - id: T-05
+    wave: 3
+    layer: infrastructure
+    requirements: [REQ-MCF-013, REQ-MB-008]
+    production:
+      - internal/missions/infrastructure/dynamodb/contract_store_confirm.go
+      - internal/missions/infrastructure/dynamodb/contract_store_mapping.go
+  - id: T-06
+    wave: 4
+    layer: composition
+    requirements: [REQ-MCF-013]
+    production:
+      - internal/missions/composition/server.go
+  - id: T-07
+    wave: 4
+    layer: e2e
+    requirements: [REQ-MCF-008, REQ-MB-008]
+    tests: [TEST-E2E-TEAM-LEAVE-COMPLETE]
+    production: []
+
+gates:
+  - id: GATE-RED-EVIDENCE
+    applies_to: [T-01, T-03, T-04]
+  - id: GATE-MUTATION
+    applies_to: risk L3
+  - id: GATE-CRITICAL-E2E
+    applies_to: [TEST-E2E-TEAM-LEAVE-COMPLETE]
+  - id: GATE-SECURITY
+    applies_to: roster authority change
+  - id: GATE-VALIDATE
+    command: tools/validate-sdd-change.sh

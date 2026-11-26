@@ -30,3 +30,18 @@ func (p ActiveLimitPolicy) EffectiveLimit(category string) int {
 	}
 	return p.defaultLimit
 }
+
+// Overrides returns a defensive copy of the per-category limits.
+func (p ActiveLimitPolicy) Overrides() map[string]int {
+	copied := make(map[string]int, len(p.overrides))
+	for category, limit := range p.overrides {
+		copied[category] = limit
+	}
+	return copied
+}
+
+// GetActiveLimit lets a static policy satisfy the reader port — it answers
+// itself, keeping tests and simple compositions unchanged.
+func (p ActiveLimitPolicy) GetActiveLimit() (ActiveLimitPolicy, error) {
+	return p, nil
+}

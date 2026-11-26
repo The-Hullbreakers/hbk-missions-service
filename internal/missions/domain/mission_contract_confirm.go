@@ -1,7 +1,21 @@
 package domain
 
-// Confirm validates the objective/season/unit and records a new merit credit.
-func (c *MissionContract) Confirm(objective Objective, unitID string, season Season, tenantID string) (MeritCredit, error) {
+// Confirm validates the season/unit and stages a new merit credit scored
+// from the contract's frozen ContractTerms. The credit is returned as a
+// projection for the response but only enters the ledger once a reviewer
+// approves the contract (REQ-MCF-003, CHG-0031). Objectives outside the
+// snapshot are rejected; unit limits and bonuses come from the terms.
+func (c *MissionContract) Confirm(objectiveID, unitID string, season Season) (MeritCredit, error) {
+	return c.confirm(objectiveID, unitID, "", season)
+}
+
+// ConfirmWithMedia behaves like Confirm and additionally records the already
+// validated media reference on the resulting credit.
+func (c *MissionContract) ConfirmWithMedia(objectiveID, unitID string, media MediaURI, season Season) (MeritCredit, error) {
+	return c.confirm(objectiveID, unitID, media, season)
+}
+
+func (c *MissionContract) confirm(objectiveID, unitID string, media MediaURI, season Season) (MeritCredit, error) {
 	if c == nil {
 		return MeritCredit{}, ErrContractNil
 	}
@@ -16,6 +30,13 @@ func (c *MissionContract) Confirm(objective Objective, unitID string, season Sea
 	}
 	if season.SeasonID != c.SeasonID {
 		return MeritCredit{}, ErrSeasonMismatch
+	}
+	objective, ok := c.Terms.Lookup(objectiveID)
+	if !ok {
+		return MeritCredit{}, ErrObjectiveNotInContract
+	}
+	if phase := c.Terms.ObjectivePhase(objectiveID); phase >= 0 && phase != c.currentPhase {
+		return MeritCredit{}, ErrPhaseNotUnlocked
 	}
 	if c.Offer.Category != objective.Category {
 		return MeritCredit{}, ErrCategoryMismatch
@@ -39,8 +60,7 @@ func (c *MissionContract) Confirm(objective Objective, unitID string, season Sea
 	}
 	c.confirmedUnits[confirmationID.String()] = true
 
-	return MeritCredit{
-		TenantID:       tenantID,
+	credit := MeritCredit{
 		SeasonID:       season.SeasonID,
 		Category:       objective.Category,
 		Track:          track,
@@ -50,7 +70,21 @@ func (c *MissionContract) Confirm(objective Objective, unitID string, season Sea
 		ObjectiveID:    objective.ObjectiveID,
 		UnitID:         unitID,
 		ConfirmationID: confirmationID.String(),
-	}, nil
+		MediaURI:       media,
+	}
+	c.pendingCredits[confirmationID.String()] = credit
+	c.advancePhases()
+	return credit, nil
+}
+
+// advancePhases moves the progression marker forward while the current phase's
+// mandatory objectives are all confirmed — optional objectives never gate. The
+// marker clamps at the last phase: a completed final phase keeps its objectives
+// eligible (remaining unit credits may still confirm).
+func (c *MissionContract) advancePhases() {
+	for c.currentPhase < c.Terms.PhaseCount()-1 && c.Terms.PhaseComplete(c.currentPhase, c.objectiveConfirmed) {
+		c.currentPhase++
+	}
 }
 
 func (c *MissionContract) recipient(roster []string) string {

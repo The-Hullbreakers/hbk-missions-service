@@ -1,0 +1,14 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestCommitAcceptance_(ConcurrentSameDefinitionSerializes|DifferentPlayersSameDefinitionBothCommit)\$
+=== RUN   TestCommitAcceptance_ConcurrentSameDefinitionSerializes
+    contract_store_reservation_test.go:49: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_reservation_test.go:49
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestCommitAcceptance_ConcurrentSameDefinitionSerializes
+--- FAIL: TestCommitAcceptance_ConcurrentSameDefinitionSerializes (0.03s)
+=== RUN   TestCommitAcceptance_DifferentPlayersSameDefinitionBothCommit
+--- PASS: TestCommitAcceptance_DifferentPlayersSameDefinitionBothCommit (0.02s)
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.305s
+FAIL

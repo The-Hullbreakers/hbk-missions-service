@@ -18,6 +18,9 @@ func NewConfirmationID(contractID, objectiveID, unitID, recipientID string) (Con
 	if contractID == "" || objectiveID == "" || unitID == "" || recipientID == "" {
 		return ConfirmationID{}, ErrInvalidConfirmationID
 	}
+	if strings.ContainsAny(contractID+objectiveID+unitID+recipientID, "~") {
+		return ConfirmationID{}, ErrInvalidConfirmationID
+	}
 	return ConfirmationID{
 		contractID:  contractID,
 		objectiveID: objectiveID,
@@ -27,8 +30,9 @@ func NewConfirmationID(contractID, objectiveID, unitID, recipientID string) (Con
 }
 
 // ParseConfirmationID parses a previously encoded confirmation identity.
+// The delimiter is "~" because generated contract ids contain colons.
 func ParseConfirmationID(raw string) (ConfirmationID, error) {
-	parts := strings.Split(raw, ":")
+	parts := strings.Split(raw, "~")
 	if len(parts) != 4 || parts[0] == "" || parts[1] == "" || parts[2] == "" || parts[3] == "" {
 		return ConfirmationID{}, ErrInvalidConfirmationID
 	}
@@ -40,9 +44,9 @@ func ParseConfirmationID(raw string) (ConfirmationID, error) {
 	}, nil
 }
 
-// String returns the canonical "contract:objective:unit:recipient" form.
+// String returns the canonical "contract~objective~unit~recipient" form.
 func (id ConfirmationID) String() string {
-	return id.contractID + ":" + id.objectiveID + ":" + id.unitID + ":" + id.recipientID
+	return id.contractID + "~" + id.objectiveID + "~" + id.unitID + "~" + id.recipientID
 }
 
 // ContractID returns the contract part of the identity.

@@ -1,0 +1,29 @@
+$ go test -count=1 ./tests/unit/missions/domain -run TestNewMissionOfferFromDefinition
+=== RUN   TestNewMissionOfferFromDefinition_RejectsEmptyOfferID
+--- PASS: TestNewMissionOfferFromDefinition_RejectsEmptyOfferID (0.00s)
+=== RUN   TestNewMissionOfferFromDefinition_RejectsEmptySeasonID
+--- PASS: TestNewMissionOfferFromDefinition_RejectsEmptySeasonID (0.00s)
+=== RUN   TestNewMissionOfferFromDefinition_RejectsEmptyDefinitionCode
+--- PASS: TestNewMissionOfferFromDefinition_RejectsEmptyDefinitionCode (0.00s)
+=== RUN   TestNewMissionOfferFromDefinition_RejectsDraftDefinition
+--- PASS: TestNewMissionOfferFromDefinition_RejectsDraftDefinition (0.00s)
+=== RUN   TestNewMissionOfferFromDefinition_RejectsRetiredDefinition
+--- PASS: TestNewMissionOfferFromDefinition_RejectsRetiredDefinition (0.00s)
+=== RUN   TestNewMissionOfferFromDefinition_FreezesPublishedContent
+--- PASS: TestNewMissionOfferFromDefinition_FreezesPublishedContent (0.00s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/domain	0.235s
+
+$ go test -count=1 ./tests/unit/missions/interface/http -run ListOffers
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/interface/http	0.252s
+
+$ go test -count=1 ./tests/integration/http -run "Dispute|Leave"
+ok  	github.com/hbk/hbk-missions-service/tests/integration/http	0.260s
+
+$ wc -l (split files)
+     103 tests/unit/missions/interface/http/list_offers_test.go
+      72 tests/unit/missions/interface/http/list_offers_doubles_test.go
+      87 tests/integration/http/contract_disputes_test.go
+      75 tests/integration/http/contract_disputes_doubles_test.go
+      99 tests/unit/missions/domain/mission_offer_definition_test.go
+     436 total

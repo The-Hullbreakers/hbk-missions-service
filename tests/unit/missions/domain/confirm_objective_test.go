@@ -10,15 +10,16 @@ import (
 func TestConfirmObjective_DuplicateTargetIsRejected(t *testing.T) {
 	// Arrange
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
+	startContract(t, contract)
 
-	objective := domain.NewObjective("objective-1", "BOUNTY_HUNTING", 100)
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 0)
+	freezeTerms(t, contract, objective)
 
 	// Act
-	_, errFirst := domain.ConfirmObjective(contract, objective, "target-1", season, "tenant-1")
-	_, errSecond := domain.ConfirmObjective(contract, objective, "target-1", season, "tenant-1")
+	_, errFirst := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-1", season)
+	_, errSecond := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-1", season)
 
 	// Assert
 	if errFirst != nil {
@@ -31,9 +32,9 @@ func TestConfirmObjective_DuplicateTargetIsRejected(t *testing.T) {
 
 func TestConfirmObjective_RejectsNilContract(t *testing.T) {
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	objective := domain.NewObjective("objective-1", "BOUNTY_HUNTING", 100)
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 0)
 
-	_, err := domain.ConfirmObjective(nil, objective, "target-1", season, "tenant-1")
+	_, err := domain.ConfirmObjective(nil, objective.ObjectiveID, "target-1", season)
 	if err == nil {
 		t.Fatalf("expected nil contract to be rejected")
 	}
@@ -41,11 +42,12 @@ func TestConfirmObjective_RejectsNilContract(t *testing.T) {
 
 func TestConfirmObjective_RejectsContractNotInProgress(t *testing.T) {
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	objective := domain.NewObjective("objective-1", "BOUNTY_HUNTING", 100)
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 0)
+	freezeTerms(t, contract, objective)
 
-	_, err := domain.ConfirmObjective(contract, objective, "target-1", season, "tenant-1")
+	_, err := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-1", season)
 	if err == nil {
 		t.Fatalf("expected non-started contract to be rejected")
 	}
@@ -54,13 +56,14 @@ func TestConfirmObjective_RejectsContractNotInProgress(t *testing.T) {
 func TestConfirmObjective_RejectsFinalizedSeason(t *testing.T) {
 	// Arrange
 	season := domain.NewSeason("season-1", domain.SeasonStateFinalized)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
-	objective := domain.NewObjective("objective-1", "BOUNTY_HUNTING", 100)
+	startContract(t, contract)
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 0)
+	freezeTerms(t, contract, objective)
 
 	// Act
-	_, err := domain.ConfirmObjective(contract, objective, "target-1", season, "tenant-1")
+	_, err := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-1", season)
 
 	// Assert
 	if err == nil {
@@ -73,12 +76,13 @@ func TestConfirmObjective_RejectsFinalizedSeason(t *testing.T) {
 
 func TestConfirmObjective_RejectsCategoryMismatch(t *testing.T) {
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
-	objective := domain.NewObjective("objective-1", "EXPLORATION", 100)
+	startContract(t, contract)
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "EXPLORATION", 100, 0, 0)
+	freezeTerms(t, contract, objective)
 
-	_, err := domain.ConfirmObjective(contract, objective, "target-1", season, "tenant-1")
+	_, err := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-1", season)
 	if err == nil {
 		t.Fatalf("expected category mismatch to be rejected")
 	}
@@ -86,13 +90,14 @@ func TestConfirmObjective_RejectsCategoryMismatch(t *testing.T) {
 
 func TestConfirmObjective_RejectsTerminalContract(t *testing.T) {
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
-	contract.Start()
-	contract.Abandon()
-	objective := domain.NewObjective("objective-1", "BOUNTY_HUNTING", 100)
+	startContract(t, contract)
+	contract.Abandon(player(t, "player-1"))
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 0)
+	freezeTerms(t, contract, objective)
 
-	_, err := domain.ConfirmObjective(contract, objective, "target-1", season, "tenant-1")
+	_, err := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-1", season)
 	if err == nil {
 		t.Fatalf("expected terminal contract to be rejected")
 	}
@@ -103,12 +108,15 @@ func TestConfirmObjective_RejectsTerminalContract(t *testing.T) {
 
 func TestConfirmObjective_RejectsEmptyRoster(t *testing.T) {
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{})
-	contract.Start()
-	objective := domain.NewObjective("objective-1", "BOUNTY_HUNTING", 100)
+	if err := contract.Start(player(t, "player-1")); err == nil {
+		t.Fatalf("expected empty roster to reject start")
+	}
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 0)
+	freezeTerms(t, contract, objective)
 
-	_, err := domain.ConfirmObjective(contract, objective, "target-1", season, "tenant-1")
+	_, err := domain.ConfirmObjective(contract, objective.ObjectiveID, "target-1", season)
 	if err == nil {
 		t.Fatalf("expected empty roster to be rejected")
 	}

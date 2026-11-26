@@ -28,7 +28,7 @@ Gate 1 authorizes the change artifacts. Gate 2 authorizes starting RED. Each Gat
 
 ## Service Invariants
 
-- All state and standings are isolated by tenant.
+- All state and standings live in a single global scope.
 - A confirmed objective produces at most one merit credit per recipient and policy.
 - Merits belong to a season, category, and competitive track.
 - A finalized season is never reopened or silently rewritten.

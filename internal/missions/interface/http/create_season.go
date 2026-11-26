@@ -8,8 +8,9 @@ import (
 	"github.com/hbk/hbk-missions-service/internal/missions/application"
 )
 
+// createSeasonRequest carries business fields only; caller identity is always
+// derived from the authenticated session, never from the body.
 type createSeasonRequest struct {
-	TenantID           string           `json:"tenant_id"`
 	SeasonID           string           `json:"season_id"`
 	OfficialStatistics *bool            `json:"official_statistics,omitempty"`
 	StartsAt           string           `json:"starts_at,omitempty"`
@@ -17,14 +18,23 @@ type createSeasonRequest struct {
 }
 
 type scheduleRequest struct {
-	ActiveWeeks int           `json:"active_weeks"`
-	OffWeeks    int           `json:"off_weeks"`
+	ActiveWeeks *int          `json:"active_weeks"`
+	OffWeeks    *int          `json:"off_weeks"`
+	ActiveDays  *int          `json:"active_days"`
+	OffDays     *int          `json:"off_days"`
 	Series      seriesRequest `json:"series"`
 }
 
 type seriesRequest struct {
 	Prefix    string `json:"prefix"`
 	Iteration int    `json:"iteration"`
+}
+
+func intOrZero(v *int) int {
+	if v == nil {
+		return 0
+	}
+	return *v
 }
 
 // CreateSeasonHandler returns an HTTP handler for creating a season.
@@ -43,10 +53,17 @@ func CreateSeasonHandler(app *application.CreateSeasonHandler, scheduledApp *app
 			official = *req.OfficialStatistics
 		}
 
+		_, idErr := CallerIdentityFromContext(r.Context())
+		if idErr != nil {
+			w.WriteHeader(nethttp.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{"code": "UNAUTHORIZED"})
+			return
+		}
+
 		var season any
 		var err error
 		if req.Schedule == nil {
-			season, err = app.Handle(req.TenantID, req.SeasonID, official)
+			season, err = app.Handle(req.SeasonID, official)
 		} else {
 			startsAt, parseErr := time.Parse(time.RFC3339, req.StartsAt)
 			if parseErr != nil {
@@ -54,15 +71,27 @@ func CreateSeasonHandler(app *application.CreateSeasonHandler, scheduledApp *app
 				_ = json.NewEncoder(w).Encode(map[string]string{"code": "BAD_REQUEST"})
 				return
 			}
-			season, err = scheduledApp.Handle(application.CreateScheduledSeasonCommand{
-				TenantID:     req.TenantID,
+			cmd := application.CreateScheduledSeasonCommand{
 				SeriesPrefix: req.Schedule.Series.Prefix,
 				Iteration:    req.Schedule.Series.Iteration,
 				StartsAt:     startsAt,
-				ActiveWeeks:  req.Schedule.ActiveWeeks,
-				OffWeeks:     req.Schedule.OffWeeks,
 				Official:     official,
-			})
+			}
+			daysPresent := req.Schedule.ActiveDays != nil || req.Schedule.OffDays != nil
+			weeksPresent := req.Schedule.ActiveWeeks != nil || req.Schedule.OffWeeks != nil
+			if daysPresent && weeksPresent {
+				w.WriteHeader(nethttp.StatusUnprocessableEntity)
+				_ = json.NewEncoder(w).Encode(map[string]string{"code": "INVALID_SEASON"})
+				return
+			}
+			if daysPresent {
+				cmd.ActiveDays = intOrZero(req.Schedule.ActiveDays)
+				cmd.OffDays = intOrZero(req.Schedule.OffDays)
+			} else {
+				cmd.ActiveWeeks = intOrZero(req.Schedule.ActiveWeeks)
+				cmd.OffWeeks = intOrZero(req.Schedule.OffWeeks)
+			}
+			season, err = scheduledApp.Handle(cmd)
 		}
 
 		if err != nil {

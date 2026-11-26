@@ -1,0 +1,298 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches:
+      - staging
+      - main
+  push:
+    branches:
+      - staging
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for deploy'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  AWS_DEFAULT_REGION: us-east-2
+
+jobs:
+  sdd-policy:
+    name: SDD policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Validate SDD change
+        run: bash tools/validate-sdd-change.sh
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    needs: [sdd-policy]
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Download Go modules
+        run: go mod download
+      - name: Run unit tests
+        run: go test ./tests/unit/...
+      - name: Set up Python for catalog checks
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test mission catalog and deployment contract
+        run: |
+          python3 -m unittest discover -s tests/seeds -p 'test_seed_missions.py' -v
+          bash tools/test-workflow-contract.sh
+
+  integration-tests:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    needs: [sdd-policy]
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Download Go modules
+        run: go mod download
+      - name: Start DynamoDB Local
+        run: docker compose -f docker-compose.test.yml up -d
+      - name: Wait for DynamoDB Local
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:18000 > /dev/null; then
+              echo "DynamoDB Local is ready"
+              exit 0
+            fi
+            echo "Waiting for DynamoDB Local... ($i/30)"
+            sleep 2
+          done
+          echo "DynamoDB Local failed to start"
+          exit 1
+      - name: Run integration tests
+        run: go test -p=1 ./tests/integration/...
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_REGION: us-east-1
+          DYNAMODB_TEST_ENDPOINT: http://localhost:18000
+      - name: Set up Python for catalog integration tests
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test catalog synchronization with DynamoDB Local
+        run: python3 -m unittest discover -s tests/seeds -p 'test_seed_integration.py' -v
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_EC2_METADATA_DISABLED: 'true'
+          DYNAMODB_SEED_TEST_ENDPOINT: http://localhost:18000
+      - name: Stop DynamoDB Local
+        if: always()
+        run: docker compose -f docker-compose.test.yml down
+
+  build:
+    name: SAM build
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Set up SAM
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+      - name: SAM validate
+        run: sam validate --template-file template.yaml --region us-east-2
+      - name: SAM build
+        run: sam build --template-file template.yaml
+      - name: Upload SAM build
+        uses: actions/upload-artifact@v4
+        with:
+          name: sam-build
+          path: .aws-sam/build/
+          retention-days: 1
+
+  deploy-staging:
+    name: Deploy to staging
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, build]
+    if: (github.ref == 'refs/heads/staging' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
+    environment: staging
+    concurrency:
+      group: missions-catalog-staging
+      cancel-in-progress: false
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          aws-region: us-east-2
+      - name: Download SAM build
+        uses: actions/download-artifact@v4
+        with:
+          name: sam-build
+          path: .aws-sam/build/
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
+      - name: Set up SAM
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+      - name: SAM deploy
+        env:
+          SEED_DEPLOYMENT_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+        run: |
+          sam deploy \
+            --template-file .aws-sam/build/template.yaml \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --s3-bucket hbk-missions-deploy-staging-us-east-2 \
+            --parameter-overrides \
+              ParameterKey=Environment,ParameterValue=stg \
+              ParameterKey=DynamoDBTableName,ParameterValue=hbk-missions-stg \
+              ParameterKey=SeedDeploymentRoleName,ParameterValue="${SEED_DEPLOYMENT_ROLE_ARN##*/}" \
+              ParameterKey=IdentityIssuer,ParameterValue=${{ secrets.OIDC_ISSUER_STAGING }} \
+              ParameterKey=IdentityClientID,ParameterValue=${{ secrets.OIDC_CLIENT_ID_STAGING }} \
+              ParameterKey=OIDCAllowedAudiences,ParameterValue="${{ secrets.OIDC_ALLOWED_AUDIENCES_STAGING || secrets.OIDC_CLIENT_ID_STAGING }}" \
+              ParameterKey=OIDCAllowedOrigins,ParameterValue="https://app-stg.thehullbreakers.com" \
+            --stack-name hbk-missions-staging \
+            --capabilities CAPABILITY_IAM \
+            --region us-east-2
+      - name: Set up Python for mission synchronization
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Synchronize racing missions
+        shell: bash
+        run: |
+          python3 scripts/seed_missions.py --environment staging \
+            --table hbk-missions-stg --region us-east-2 --apply | tee seed-result.json
+          cat seed-result.json >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-production:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, build]
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && inputs.environment == 'production')
+    environment: production
+    concurrency:
+      group: missions-catalog-production
+      cancel-in-progress: false
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          aws-region: us-east-2
+      - name: Download SAM build
+        uses: actions/download-artifact@v4
+        with:
+          name: sam-build
+          path: .aws-sam/build/
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
+      - name: Set up SAM
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+      - name: SAM deploy
+        env:
+          SEED_DEPLOYMENT_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+        run: |
+          sam deploy \
+            --template-file .aws-sam/build/template.yaml \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --s3-bucket hbk-missions-deploy-production-us-east-2 \
+            --parameter-overrides \
+              ParameterKey=Environment,ParameterValue=prod \
+              ParameterKey=DynamoDBTableName,ParameterValue=hbk-missions-prod \
+              ParameterKey=SeedDeploymentRoleName,ParameterValue="${SEED_DEPLOYMENT_ROLE_ARN##*/}" \
+              ParameterKey=IdentityIssuer,ParameterValue=${{ secrets.OIDC_ISSUER_PRODUCTION }} \
+              ParameterKey=IdentityClientID,ParameterValue=${{ secrets.OIDC_CLIENT_ID_PRODUCTION }} \
+              ParameterKey=OIDCAllowedAudiences,ParameterValue="${{ secrets.OIDC_ALLOWED_AUDIENCES_PRODUCTION || secrets.OIDC_CLIENT_ID_PRODUCTION }}" \
+              ParameterKey=OIDCAllowedOrigins,ParameterValue="https://app.thehullbreakers.com" \
+            --stack-name hbk-missions-production \
+            --capabilities CAPABILITY_IAM \
+            --region us-east-2
+      - name: Set up Python for mission synchronization
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Synchronize racing missions
+        shell: bash
+        run: |
+          python3 scripts/seed_missions.py --environment production \
+            --table hbk-missions-prod --region us-east-2 --apply | tee seed-result.json
+          cat seed-result.json >> "$GITHUB_STEP_SUMMARY"

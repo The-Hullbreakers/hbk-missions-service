@@ -1,0 +1,27 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_(TerminalSaveReleasesOnlyActiveMembers|StaleReleaseKeepsNewerReservation|PendingValidationKeepsReservation)\$
+=== RUN   TestContractStore_TerminalSaveReleasesOnlyActiveMembers
+    contract_store_release_test.go:58: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_release_test.go:58
+        	Error:      	Not equal: 
+        	            	expected: ""
+        	            	actual  : "c-1"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-
+        	            	+c-1
+        	Test:       	TestContractStore_TerminalSaveReleasesOnlyActiveMembers
+--- FAIL: TestContractStore_TerminalSaveReleasesOnlyActiveMembers (0.04s)
+=== RUN   TestContractStore_StaleReleaseKeepsNewerReservation
+    contract_store_release_test.go:81: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_release_test.go:81
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestContractStore_StaleReleaseKeepsNewerReservation
+--- FAIL: TestContractStore_StaleReleaseKeepsNewerReservation (0.01s)
+=== RUN   TestContractStore_PendingValidationKeepsReservation
+--- PASS: TestContractStore_PendingValidationKeepsReservation (0.01s)
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.488s
+FAIL

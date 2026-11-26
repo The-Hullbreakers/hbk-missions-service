@@ -19,11 +19,20 @@ func ListSeasonsHandler(app *application.ListSeasonsHandler) nethttp.Handler {
 			return
 		}
 
+		if _, idErr := CallerIdentityFromContext(r.Context()); idErr != nil {
+			w.WriteHeader(nethttp.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{"code": "UNAUTHORIZED"})
+			return
+		}
+
 		seasons, err := app.Handle(filter)
 		if err != nil {
 			w.WriteHeader(nethttp.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(map[string]string{"code": "INTERNAL_ERROR"})
 			return
+		}
+		if seasons == nil {
+			seasons = []domain.Season{}
 		}
 
 		w.WriteHeader(nethttp.StatusOK)

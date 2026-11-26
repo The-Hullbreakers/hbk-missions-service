@@ -1,0 +1,21 @@
+=== RUN   TestLeaveContract_PersistsDepartureAndContractSurvives
+--- PASS: TestLeaveContract_PersistsDepartureAndContractSurvives (0.00s)
+=== RUN   TestLeaveContract_OutsideRosterRejected
+--- PASS: TestLeaveContract_OutsideRosterRejected (0.00s)
+=== RUN   TestLeaveContract_ReleasesThroughDepartureWriter
+--- PASS: TestLeaveContract_ReleasesThroughDepartureWriter (0.00s)
+=== RUN   TestLeaveContract_LastMemberUsesDepartureWriter
+--- PASS: TestLeaveContract_LastMemberUsesDepartureWriter (0.00s)
+=== RUN   TestLeaveContract_TerminalRejected
+--- PASS: TestLeaveContract_TerminalRejected (0.00s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.228s
+=== package ===
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.232s
+=== http unit ===
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/interface/http	0.308s
+=== expected build blocker ===
+# github.com/hbk/hbk-missions-service/internal/missions/composition
+internal/missions/composition/server.go:52:80: too many arguments in call to application.NewLeaveContractHandler
+	have (*"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb".ContractStore, *"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb".ContractStore, *"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb".ContractStore)
+	want (application.ContractReader, application.DepartureWriter)

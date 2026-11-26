@@ -12,7 +12,6 @@ func TestMeritLedgerRepository_SavesCredit(t *testing.T) {
 	repo := infrastructure.NewMeritLedgerRepository(ledger)
 
 	credit := domain.MeritCredit{
-		TenantID:    "tenant-1",
 		SeasonID:    "season-1",
 		Category:    "BOUNTY_HUNTING",
 		Track:       domain.TrackIndividual,
@@ -25,7 +24,7 @@ func TestMeritLedgerRepository_SavesCredit(t *testing.T) {
 		t.Fatalf("expected no error, got %v", err)
 	}
 
-	if ledger.TotalFor("tenant-1", "season-1", "BOUNTY_HUNTING", domain.TrackIndividual, "player-1") != 100 {
+	if ledger.TotalFor("season-1", "BOUNTY_HUNTING", domain.TrackIndividual, "player-1") != 100 {
 		t.Fatalf("expected ledger total 100")
 	}
 }

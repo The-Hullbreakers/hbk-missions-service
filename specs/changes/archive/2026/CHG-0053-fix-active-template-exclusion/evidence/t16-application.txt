@@ -1,0 +1,1 @@
+ok  	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.242s

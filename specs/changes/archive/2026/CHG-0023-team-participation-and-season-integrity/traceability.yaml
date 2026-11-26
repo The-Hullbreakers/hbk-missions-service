@@ -1,0 +1,67 @@
+change_id: CHG-0023
+artifact: traceability
+requirements:
+  - id: REQ-MCF-001
+    title: Execute solo or team (modified — validated participation)
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-TEAM-SOLO-REJECT
+      - SCN-MCF-TEAM-ROSTER
+      - SCN-MCF-TEAM-CONTRACT
+    tasks:
+      - T-023-001
+      - T-023-003
+      - T-023-007
+    tests:
+      - tests/unit/missions/domain/roster_test.go
+      - tests/unit/missions/application/accept_mission_team_test.go
+      - tests/integration/http/accept_mission_team_test.go
+    production:
+      - internal/missions/domain/roster.go
+      - internal/missions/domain/mission_offer.go
+      - internal/missions/application/accept_mission.go
+      - internal/missions/interface/http/errors.go
+  - id: REQ-SCC-005
+    title: Create a season with an official-statistics flag (modified — never overwrite)
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SCC-CREATE-EXISTS
+    tasks:
+      - T-023-002
+      - T-023-004
+      - T-023-006
+    tests:
+      - tests/unit/missions/application/create_season_exists_test.go
+      - tests/integration/infrastructure/dynamodb/season_store_test.go
+    production:
+      - internal/missions/application/create_season.go
+      - internal/missions/infrastructure/dynamodb/season_store.go
+  - id: REQ-SCC-008
+    title: Apply published tie-breaks (modified — completed only)
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SCC-TIE-COMPLETED
+    tasks:
+      - T-023-006
+    tests:
+      - tests/integration/infrastructure/dynamodb/merit_ledger_readers_test.go
+    production:
+      - internal/missions/infrastructure/dynamodb/merit_ledger_readers.go
+  - id: REQ-SCC-010
+    title: Auto-freeze, finalize, and start the next season (modified — retry)
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SCC-RETRY-NEXT
+    tasks:
+      - T-023-002
+      - T-023-005
+    tests:
+      - tests/unit/missions/application/season_scheduler_test.go
+    production:
+      - internal/missions/application/season_scheduler.go
+gates:
+  security: security-review.md
+  mutation: mandatory (roster + scheduler branches)
+  critical_e2e: team-offer exploit rejection + scheduled rollover recovery
+  coverage: ">=90% project production scope"
+  reviewer_handoff: required before consolidation

@@ -1,0 +1,13 @@
+change_id: CHG-0035
+artifact: traceability
+requirements:
+  - id: REQ-MCF-022
+    title: Read own contract detail (added)
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-DETAIL-MEMBER
+      - SCN-MCF-DETAIL-OUTSIDER
+    tasks:
+      - T-035-001
+      - T-035-002
+      - T-035-003

@@ -1,0 +1,15 @@
+change_id: CHG-0042
+artifact: traceability
+requirements:
+  - id: REQ-MCF-025
+    title: Confirm team invitations before roster freeze (added)
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-INVITE-CONFIRM
+      - SCN-MCF-INVITE-DECLINE
+      - SCN-MCF-INVITE-EXPIRE
+    tasks:
+      - T-042-001
+      - T-042-002
+      - T-042-003
+      - T-042-004

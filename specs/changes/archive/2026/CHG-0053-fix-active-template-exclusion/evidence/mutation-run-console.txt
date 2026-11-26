@@ -1,0 +1,168 @@
+roster-definition-conflict: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-cl1vn2pc/overlay.json ./tests/unit/missions/domain -run ^TestDecideRosterAcceptance_RejectsMemberWithSameDefinition$
+--- FAIL: TestDecideRosterAcceptance_RejectsMemberWithSameDefinition (0.00s)
+    --- FAIL: TestDecideRosterAcceptance_RejectsMemberWithSameDefinition/IN_PROGRESS (0.00s)
+        active_template_test.go:77: 
+            	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/unit/missions/domain/active_template_test.go:77
+            	Error:      	Not equal: 
+            	            	expected: "MISSION_DEFINITION_ALREADY_ACTIVE"
+            	            	actual  : "TEAMMATE_LIMIT_REACHED"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-MISSION_DEFINITION_ALREADY_ACTIVE
+            	            	+TEAMMATE_LIMIT_REACHED
+            	Test:       	TestDecideRosterAcceptance_RejectsMemberWithSameDefinition/IN_PROGRESS
+    --- FAIL: TestDecideRosterAcceptance_RejectsMemberWithSameDefinition/PENDING_VALIDATION (0.00s)
+        active_template_test.go:77: 
+            	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/unit/missions/domain/active_template_test.go:77
+            	Error:      	Not equal: 
+            	            	expected: "MISSION_DEFINITION_ALREADY_ACTIVE"
+            	            	actual  : "TEAMMATE_LIMIT_REACHED"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-MISSION_DEFINITION_ALREADY_ACTIVE
+            	            	+TEAMMATE_LIMIT_REACHED
+            	Test:       	TestDecideRosterAcceptance_RejectsMemberWithSameDefinition/PENDING_VALIDATION
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/unit/missions/domain	0.362s
+FAIL
+
+board-exclusion: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-y_fv70hk/overlay.json ./tests/unit/missions/application -run ^TestListOffers_DepartedMemberSeesTemplateAgain$
+--- FAIL: TestListOffers_DepartedMemberSeesTemplateAgain (0.00s)
+    list_offers_visibility_test.go:65: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/unit/missions/application/list_offers_visibility_test.go:65
+        	Error:      	"[]" should have 2 item(s), but has 0
+        	Test:       	TestListOffers_DepartedMemberSeesTemplateAgain
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.263s
+FAIL
+
+atomic-reservation: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-xbrfbbij/overlay.json ./tests/integration/infrastructure/dynamodb -run ^TestCommitAcceptance_ConcurrentSameDefinitionSerializes$
+SDK 2026/10/26 12:02:22 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 12:02:22 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2801172217
+SDK 2026/10/26 12:02:22 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2801172217
+--- FAIL: TestCommitAcceptance_ConcurrentSameDefinitionSerializes (0.05s)
+    contract_store_reservation_test.go:57: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_reservation_test.go:57
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 0
+        	Test:       	TestCommitAcceptance_ConcurrentSameDefinitionSerializes
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.372s
+FAIL
+
+owner-scoped-release: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-hw1lqvs_/overlay.json ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_TerminalSaveReleasesOnlyActiveMembers$
+SDK 2026/10/26 12:02:23 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 12:02:23 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 3340565194
+--- FAIL: TestContractStore_TerminalSaveReleasesOnlyActiveMembers (0.04s)
+    contract_store_release_test.go:61: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_release_test.go:61
+        	Error:      	Received unexpected error:
+        	            	failed to save contract: operation error DynamoDB: TransactWriteItems, https response error StatusCode: 400, RequestID: 86c28697-37bc-49d5-9483-234ad87ced5b, TransactionCanceledException: Transaction cancelled, please refer cancellation reasons for specific reasons [None, None, None, ConditionalCheckFailed]
+        	Test:       	TestContractStore_TerminalSaveReleasesOnlyActiveMembers
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.366s
+FAIL
+
+credit-conflict-classification: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-xtt3h1w7/overlay.json ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate$
+SDK 2026/10/26 12:02:24 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 12:02:24 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2597991568
+--- FAIL: TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate (0.03s)
+    contract_store_release_test.go:112: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_release_test.go:112
+        	Error:      	Target error should not be in err chain:
+        	            	found: "duplicate confirmation"
+        	            	in chain: "duplicate confirmation"
+        	Test:       	TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.344s
+FAIL
+
+departure-prior-members: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-qkt2q03v/overlay.json ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet$
+SDK 2026/10/26 12:02:24 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 12:02:24 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2149385224
+--- FAIL: TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet (0.04s)
+    contract_store_departure_fence_test.go:98: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_departure_fence_test.go:98
+        	Error:      	Should be in error chain:
+        	            	expected: *types.TransactionCanceledException
+        	            	in chain: "failed to save departure: operation error DynamoDB: TransactWriteItems, https response error StatusCode: 400, RequestID: 0c34fb9b-121e-48b3-8c52-eaff9e01edbb, api error ValidationException: Value provided in ExpressionAttributeValues unused in expressions: keys: {:departed0}" (*fmt.wrapError)
+        	            		"operation error DynamoDB: TransactWriteItems, https response error StatusCode: 400, RequestID: 0c34fb9b-121e-48b3-8c52-eaff9e01edbb, api error ValidationException: Value provided in ExpressionAttributeValues unused in expressions: keys: {:departed0}" (*smithy.OperationError)
+        	            		"https response error StatusCode: 400, RequestID: 0c34fb9b-121e-48b3-8c52-eaff9e01edbb, api error ValidationException: Value provided in ExpressionAttributeValues unused in expressions: keys: {:departed0}" (*http.ResponseError)
+        	            		"api error ValidationException: Value provided in ExpressionAttributeValues unused in expressions: keys: {:departed0}" (*smithy.GenericAPIError)
+        	Test:       	TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.359s
+FAIL
+
+departure-legacy-empty: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-4upau7s5/overlay.json ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount$
+SDK 2026/10/26 12:02:25 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 12:02:25 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 837963753
+--- FAIL: TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount (0.02s)
+    contract_store_departure_fence_test.go:53: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_departure_fence_test.go:53
+        	Error:      	Received unexpected error:
+        	            	failed to save contract: operation error DynamoDB: PutItem, https response error StatusCode: 400, RequestID: e9146e55-a7ef-4cf0-988b-3047bb96dff7, ConditionalCheckFailedException: The conditional request failed
+        	Test:       	TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.370s
+FAIL
+
+stale-save-membership-fence: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-52ae20e4/overlay.json ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_(StaleSaveDoesNotRestoreDepartedMember|StaleSaveApprovedDoesNotRestoreOrCredit)$
+SDK 2026/10/26 12:02:26 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- FAIL: TestContractStore_StaleSaveDoesNotRestoreDepartedMember (0.04s)
+    contract_store_save_fence_test.go:34: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_save_fence_test.go:34
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestContractStore_StaleSaveDoesNotRestoreDepartedMember
+SDK 2026/10/26 12:02:26 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- FAIL: TestContractStore_StaleSaveApprovedDoesNotRestoreOrCredit (0.02s)
+    contract_store_stale_approval_test.go:51: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_stale_approval_test.go:51
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestContractStore_StaleSaveApprovedDoesNotRestoreOrCredit
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.386s
+FAIL
+
+last-member-departure: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-8agvnsyo/overlay.json ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_LastMemberSaveDepartureReleasesGuards$
+SDK 2026/10/26 12:02:27 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+--- FAIL: TestContractStore_LastMemberSaveDepartureReleasesGuards (0.03s)
+    contract_store_last_member_test.go:32: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_last_member_test.go:32
+        	Error:      	Received unexpected error:
+        	            	departure of player-1 cannot move contract contract-1 from IN_PROGRESS to ABANDONED
+        	Test:       	TestContractStore_LastMemberSaveDepartureReleasesGuards
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.343s
+FAIL
+
+departure-previous-state: KILLED
+$ go test -count=1 -overlay /var/folders/qg/7d9b7ry90fs0c7sh6fkkwws80000gn/T/chg0053-mutant-tkc80b5_/overlay.json ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_LastMemberSaveDepartureReleasesGuards$
+SDK 2026/10/26 12:02:28 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 12:02:28 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1139970490
+--- FAIL: TestContractStore_LastMemberSaveDepartureReleasesGuards (0.03s)
+    contract_store_last_member_test.go:32: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_last_member_test.go:32
+        	Error:      	Received unexpected error:
+        	            	failed to save departure: operation error DynamoDB: TransactWriteItems, https response error StatusCode: 400, RequestID: 4f9055f5-6668-49db-9eff-1270ab5d5b5c, TransactionCanceledException: Transaction cancelled, please refer cancellation reasons for specific reasons [ConditionalCheckFailed, None, None]
+        	Test:       	TestContractStore_LastMemberSaveDepartureReleasesGuards
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.336s
+FAIL
+

@@ -28,32 +28,28 @@ type fixedObjectiveStore struct{ objective domain.Objective }
 
 func (s fixedObjectiveStore) Get(string) (domain.Objective, error) { return s.objective, nil }
 
-type recordingLedger struct{ ledger *domain.MeritLedger }
-
-func (r *recordingLedger) Save(credit domain.MeritCredit) error {
-	r.ledger.Record(credit)
-	return nil
-}
-
-func newTestServer(started bool) (*httptest.Server, *domain.MeritLedger) {
-	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", 10, "season-1")
+func newTestServer(started bool) (*httptest.Server, *stagedContractWriter) {
+	offer := domain.NewMissionOffer("offer-1", "BOUNTY_HUNTING", "season-1")
 	contract := domain.NewMissionContract("contract-1", offer, []string{"player-1"})
+	objective := domain.NewObjectiveNamed("objective-1", "objective-1", "", "BOUNTY_HUNTING", 100, 0, 0)
+	terms, _ := domain.NewContractTerms([]domain.Objective{objective})
+	contract.Terms = terms
 	if started {
-		contract.Start()
+		member, _ := domain.NewCallerIdentity("player-1", nil, nil)
+
+		contract.Start(member)
 	}
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	objective := domain.NewObjective("objective-1", "BOUNTY_HUNTING", 100)
-	ledger := domain.NewMeritLedger()
+	writer := &stagedContractWriter{}
 
 	app := application.NewConfirmObjectiveHandler(
 		fixedContractStore{contract: contract},
-		fixedContractWriter{},
+		writer,
 		fixedSeasonStore{season: season},
-		fixedObjectiveStore{objective: objective},
-		&recordingLedger{ledger: ledger},
 	)
 
-	return httptest.NewServer(missionhttp.ConfirmEvidenceHandler(app)), ledger
+	auth := missionhttp.NewAuthMiddleware(roleSessionFake{playerID: "player-1"})
+	return httptest.NewServer(auth.Authenticate(missionhttp.ConfirmEvidenceHandler(app))), writer
 }
 
 func postEvidence(t *testing.T, server *httptest.Server, body string) *http.Response {
@@ -63,6 +59,7 @@ func postEvidence(t *testing.T, server *httptest.Server, body string) *http.Resp
 		t.Fatalf("could not create request: %v", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer valid-token")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -72,18 +69,18 @@ func postEvidence(t *testing.T, server *httptest.Server, body string) *http.Resp
 }
 
 func TestConfirmEvidenceEndpoint_AcceptsValidEvidence(t *testing.T) {
-	server, ledger := newTestServer(true)
+	server, writer := newTestServer(true)
 	defer server.Close()
 
-	body := `{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1","tenant_id":"tenant-1"}`
+	body := `{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1"}`
 	resp := postEvidence(t, server, body)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
 		t.Fatalf("expected status 201, got %d", resp.StatusCode)
 	}
-	if ledger.TotalFor("tenant-1", "season-1", "BOUNTY_HUNTING", domain.TrackIndividual, "player-1") != 100 {
-		t.Fatalf("expected ledger total 100")
+	if writer.saved == nil || len(writer.saved.PendingCredits()) != 1 || writer.saved.PendingCredits()[0].Amount != 100 {
+		t.Fatalf("expected one staged credit of 100")
 	}
 }
 

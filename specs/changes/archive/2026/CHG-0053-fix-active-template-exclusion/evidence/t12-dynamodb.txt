@@ -1,0 +1,2 @@
+$ go test -count=1 -p=1 ./tests/integration/infrastructure/dynamodb
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	9.443s

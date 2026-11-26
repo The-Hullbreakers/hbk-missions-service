@@ -7,12 +7,12 @@ import (
 	"github.com/hbk/hbk-missions-service/internal/missions/application"
 )
 
+// publishMissionRequest carries business fields only; caller identity is
+// always derived from the authenticated session, never from the body.
 type publishMissionRequest struct {
-	TenantID          string `json:"tenant_id"`
 	OfferID           string `json:"offer_id"`
-	DefinitionID      string `json:"definition_id"`
+	DefinitionCode    string `json:"definition_code"`
 	DefinitionVersion string `json:"definition_version"`
-	Capacity          int    `json:"capacity"`
 }
 
 // PublishMissionHandler returns an HTTP handler for publishing mission offers.
@@ -26,7 +26,14 @@ func PublishMissionHandler(app *application.PublishMissionHandler) nethttp.Handl
 			return
 		}
 
-		offer, err := app.Handle(req.TenantID, req.OfferID, req.DefinitionID, req.DefinitionVersion, req.Capacity)
+		_, idErr := CallerIdentityFromContext(r.Context())
+		if idErr != nil {
+			w.WriteHeader(nethttp.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{"code": "UNAUTHORIZED"})
+			return
+		}
+
+		offer, err := app.Handle(req.OfferID, req.DefinitionCode, req.DefinitionVersion)
 		if err != nil {
 			w.WriteHeader(nethttp.StatusUnprocessableEntity)
 			_ = json.NewEncoder(w).Encode(map[string]string{"code": PublicCode(err)})

@@ -1,0 +1,2 @@
+$ go test -count=1 -p=1 ./tests/integration/http
+ok  	github.com/hbk/hbk-missions-service/tests/integration/http	0.307s

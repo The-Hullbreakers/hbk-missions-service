@@ -1,0 +1,176 @@
+change_id: CHG-0028
+artifact: traceability
+updated: 2026-10-09
+
+requirements:
+  - id: REQ-MCF-014
+    title: Request an evidence media upload grant
+    user_stories: [US-0028-01]
+    scenarios:
+      - id: SCN-MCF-UPLOAD-GRANT
+        tests:
+          - TEST-APP-UPLOAD-GRANT-MEMBER
+          - TEST-HTTP-UPLOAD-201
+      - id: SCN-MCF-UPLOAD-NOT-IN-PROGRESS
+        tests:
+          - TEST-APP-UPLOAD-NOT-IN-PROGRESS
+          - TEST-HTTP-UPLOAD-422
+      - id: SCN-MCF-UPLOAD-OUTSIDER
+        tests:
+          - TEST-APP-UPLOAD-OUTSIDER
+          - TEST-HTTP-UPLOAD-403
+      - id: SCN-MCF-UPLOAD-TYPE-REJECTED
+        tests:
+          - TEST-APP-UPLOAD-TYPE-REJECTED
+          - TEST-APP-UPLOAD-OVERSIZE
+          - TEST-HTTP-UPLOAD-400
+  - id: REQ-MCF-015
+    title: Attach media to an evidence confirmation
+    user_stories: [US-0028-02]
+    scenarios:
+      - id: SCN-MCF-EVIDENCE-MEDIA
+        tests:
+          - TEST-DOMAIN-MEDIAURI-VALID
+          - TEST-DOMAIN-CONFIRM-MEDIAURI
+          - TEST-APP-CONFIRM-MEDIA-STORED
+          - TEST-HTTP-EVIDENCE-MEDIA-201
+      - id: SCN-MCF-EVIDENCE-MEDIA-PHANTOM
+        tests:
+          - TEST-APP-CONFIRM-MEDIA-PHANTOM
+          - TEST-HTTP-EVIDENCE-MEDIA-422
+      - id: SCN-MCF-EVIDENCE-MEDIA-FOREIGN
+        tests:
+          - TEST-DOMAIN-MEDIAURI-FOREIGN
+          - TEST-APP-CONFIRM-MEDIA-FOREIGN
+  - id: REQ-MCF-016
+    title: Read grant for stored evidence media
+    user_stories: [US-0028-03]
+    scenarios:
+      - id: SCN-MCF-MEDIA-READ-REVIEWER
+        tests:
+          - TEST-APP-MEDIA-READ-MODERATOR
+          - TEST-HTTP-MEDIA-READ-200
+      - id: SCN-MCF-MEDIA-READ-DENIED
+        tests:
+          - TEST-APP-MEDIA-READ-DENIED
+          - TEST-HTTP-MEDIA-READ-403
+  - id: REQ-MCF-003
+    title: Confirm countable units (optional media reference)
+    user_stories: [US-0028-02]
+    scenarios:
+      - id: SCN-MCF-EVIDENCE-MEDIA
+        tests:
+          - TEST-INFRA-CREDIT-MEDIAURI-PERSISTED
+          - TEST-E2E-EVIDENCE-MEDIA-JOURNEY
+  - id: REQ-MCF-007
+    title: Evidence authority covers media grants
+    user_stories: [US-0028-01, US-0028-03]
+    scenarios:
+      - id: SCN-MCF-UPLOAD-OUTSIDER
+        tests:
+          - TEST-E2E-EVIDENCE-MEDIA-JOURNEY
+
+tasks:
+  - id: T-01
+    wave: 1
+    layer: domain
+    requirements: [REQ-MCF-015]
+    production:
+      - internal/missions/domain/errors.go
+  - id: T-02
+    wave: 1
+    layer: domain
+    requirements: [REQ-MCF-015]
+    tests: [TEST-DOMAIN-MEDIAURI-VALID, TEST-DOMAIN-MEDIAURI-FOREIGN]
+    production:
+      - internal/missions/domain/media_uri.go
+      - internal/missions/domain/mission_contract.go
+  - id: T-03
+    wave: 1
+    layer: domain
+    requirements: [REQ-MCF-015, REQ-MCF-003]
+    tests: [TEST-DOMAIN-CONFIRM-MEDIAURI]
+    production:
+      - internal/missions/domain/merit_credit.go
+      - internal/missions/domain/mission_contract_confirm.go
+  - id: T-04
+    wave: 2
+    layer: application
+    requirements: [REQ-MCF-014, REQ-MCF-016]
+    production:
+      - internal/missions/application/evidence_media_ports.go
+  - id: T-05
+    wave: 2
+    layer: application
+    requirements: [REQ-MCF-014, REQ-MCF-007]
+    tests: [TEST-APP-UPLOAD-GRANT-MEMBER, TEST-APP-UPLOAD-NOT-IN-PROGRESS, TEST-APP-UPLOAD-OUTSIDER, TEST-APP-UPLOAD-TYPE-REJECTED, TEST-APP-UPLOAD-OVERSIZE]
+    production:
+      - internal/missions/application/request_evidence_upload.go
+  - id: T-06
+    wave: 2
+    layer: application
+    requirements: [REQ-MCF-015, REQ-MCF-003]
+    tests: [TEST-APP-CONFIRM-MEDIA-STORED, TEST-APP-CONFIRM-MEDIA-PHANTOM, TEST-APP-CONFIRM-MEDIA-FOREIGN]
+    production:
+      - internal/missions/application/confirm_objective.go
+  - id: T-07
+    wave: 2
+    layer: application
+    requirements: [REQ-MCF-016, REQ-MCF-007]
+    tests: [TEST-APP-MEDIA-READ-MODERATOR, TEST-APP-MEDIA-READ-DENIED]
+    production:
+      - internal/missions/application/request_evidence_read.go
+  - id: T-08
+    wave: 3
+    layer: interface
+    requirements: [REQ-MCF-014, REQ-MCF-015, REQ-MCF-016]
+    tests: [TEST-HTTP-UPLOAD-201, TEST-HTTP-UPLOAD-400, TEST-HTTP-UPLOAD-403, TEST-HTTP-UPLOAD-422, TEST-HTTP-EVIDENCE-MEDIA-201, TEST-HTTP-EVIDENCE-MEDIA-422, TEST-HTTP-MEDIA-READ-200, TEST-HTTP-MEDIA-READ-403]
+    production:
+      - internal/missions/interface/http/evidence_upload.go
+      - internal/missions/interface/http/evidence_read.go
+      - internal/missions/interface/http/handler.go
+      - internal/missions/interface/http/errors.go
+  - id: T-09
+    wave: 3
+    layer: infrastructure
+    requirements: [REQ-MCF-014, REQ-MCF-016]
+    production:
+      - internal/missions/infrastructure/s3/evidence_store.go
+      - internal/missions/infrastructure/s3/s3_client.go
+  - id: T-10
+    wave: 3
+    layer: infrastructure
+    requirements: [REQ-MCF-015]
+    tests: [TEST-INFRA-CREDIT-MEDIAURI-PERSISTED, TEST-INFRA-CREDIT-MEDIAURI-ABSENT]
+    production:
+      - internal/missions/infrastructure/dynamodb/merit_ledger_save.go
+  - id: T-11
+    wave: 4
+    layer: composition
+    requirements: [REQ-MCF-014, REQ-MCF-016]
+    production:
+      - internal/missions/composition/server.go
+      - internal/missions/composition/config.go
+      - cmd/lambda/main.go
+      - cmd/hbk-missions-service/main.go
+      - template.yaml
+  - id: T-12
+    wave: 4
+    layer: e2e
+    requirements: [REQ-MCF-003, REQ-MCF-007]
+    tests: [TEST-E2E-EVIDENCE-MEDIA-JOURNEY]
+    production: []
+
+gates:
+  - id: GATE-RED-EVIDENCE
+    applies_to: [T-02, T-03, T-05, T-06, T-07, T-08]
+  - id: GATE-MUTATION
+    applies_to: [T-02, T-03, T-05, T-06, T-07]
+  - id: GATE-CRITICAL-E2E
+    applies_to: [TEST-E2E-EVIDENCE-MEDIA-JOURNEY]
+  - id: GATE-SECURITY
+    applies_to: presigned upload/read trust boundary
+  - id: GATE-COVERAGE
+    applies_to: production >= 90%
+  - id: GATE-VALIDATE
+    command: tools/validate-sdd-change.sh

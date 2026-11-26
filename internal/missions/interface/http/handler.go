@@ -2,16 +2,20 @@ package http
 
 import (
 	"encoding/json"
+	"errors"
 	nethttp "net/http"
 
 	"github.com/hbk/hbk-missions-service/internal/missions/application"
+	"github.com/hbk/hbk-missions-service/internal/missions/domain"
 )
 
+// evidenceRequest carries submission fields only; caller identity
+// are always derived from the authenticated session, never from the body.
 type evidenceRequest struct {
 	ObjectiveID string `json:"objective_id"`
 	UnitID      string `json:"unit_id"`
 	SeasonID    string `json:"season_id"`
-	TenantID    string `json:"tenant_id"`
+	MediaURI    string `json:"media_uri"`
 }
 
 // ConfirmEvidenceHandler returns an HTTP handler for confirming objective evidence.
@@ -27,9 +31,25 @@ func ConfirmEvidenceHandler(app *application.ConfirmObjectiveHandler) nethttp.Ha
 			return
 		}
 
-		credit, err := app.Handle(req.TenantID, contractID, req.ObjectiveID, req.UnitID, req.SeasonID)
+		identity, err := CallerIdentityFromContext(r.Context())
 		if err != nil {
-			w.WriteHeader(nethttp.StatusUnprocessableEntity)
+			w.WriteHeader(nethttp.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{"code": "UNAUTHORIZED"})
+			return
+		}
+
+		var credit domain.MeritCredit
+		if req.MediaURI != "" {
+			credit, err = app.HandleWithMedia(identity, contractID, req.ObjectiveID, req.UnitID, req.MediaURI, req.SeasonID)
+		} else {
+			credit, err = app.Handle(identity, contractID, req.ObjectiveID, req.UnitID, req.SeasonID)
+		}
+		if err != nil {
+			status := nethttp.StatusUnprocessableEntity
+			if errors.Is(err, domain.ErrCallerNotAuthorized) {
+				status = nethttp.StatusForbidden
+			}
+			w.WriteHeader(status)
 			_ = json.NewEncoder(w).Encode(map[string]string{"code": PublicCode(err)})
 			return
 		}

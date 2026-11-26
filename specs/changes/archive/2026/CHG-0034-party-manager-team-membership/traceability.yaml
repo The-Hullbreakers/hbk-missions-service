@@ -1,0 +1,14 @@
+change_id: CHG-0034
+artifact: traceability
+requirements:
+  - id: REQ-MCF-001
+    title: Execute solo or team (modified — real membership)
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-MEMBER-VALID
+      - SCN-MCF-MEMBER-INVALID
+      - SCN-MCF-MEMBER-UNAVAILABLE
+    tasks:
+      - T-034-001
+      - T-034-002
+      - T-034-003

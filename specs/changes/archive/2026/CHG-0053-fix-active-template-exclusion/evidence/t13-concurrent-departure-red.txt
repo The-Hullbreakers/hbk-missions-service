@@ -1,0 +1,10 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_ConcurrentDeparturesDoNotRestoreFormerMember$
+=== RUN   TestContractStore_ConcurrentDeparturesDoNotRestoreFormerMember
+    contract_store_leave_test.go:118: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/integration/infrastructure/dynamodb/contract_store_leave_test.go:118
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestContractStore_ConcurrentDeparturesDoNotRestoreFormerMember
+--- FAIL: TestContractStore_ConcurrentDeparturesDoNotRestoreFormerMember (0.04s)
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.348s
+FAIL

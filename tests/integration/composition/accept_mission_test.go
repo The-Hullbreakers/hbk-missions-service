@@ -19,18 +19,22 @@ func TestCompositionServer_AcceptMissionOffer(t *testing.T) {
 		t.Fatalf("could not create client: %v", err)
 	}
 
-	if err := client.CreateMissionsTable(ctx, "hbk-missions"); err != nil {
+	if err := client.CreateMissionsTable(ctx, "hbk-missions-composition"); err != nil {
 		t.Fatalf("could not create table: %v", err)
 	}
-	clearMissionsTable(t, ctx, client, "hbk-missions")
+	clearMissionsTable(t, ctx, client, "hbk-missions-composition")
 
-	offerStore := missiondynamo.NewOfferStore(client, "hbk-missions")
-	if err := offerStore.Save(domain.NewMissionOffer("offer-accept-1", "BOUNTY_HUNTING", 10, "season-1")); err != nil {
+	offerStore := missiondynamo.NewOfferStore(client, "hbk-missions-composition")
+	if err := offerStore.Save(domain.NewMissionOffer("offer-accept-1", "BOUNTY_HUNTING", "season-1")); err != nil {
 		t.Fatalf("could not seed offer: %v", err)
+	}
+	seasonStore := missiondynamo.NewSeasonStore(client, "hbk-missions-composition")
+	if err := seasonStore.Save(domain.NewSeason("season-1", domain.SeasonStateActive)); err != nil {
+		t.Fatalf("could not seed season: %v", err)
 	}
 
 	server, err := missioncomposition.NewServer(missioncomposition.Config{
-		TableName:   "hbk-missions",
+		TableName:   "hbk-missions-composition",
 		DynamoDB:    client,
 		UserSession: fakeUserSession{},
 	})
@@ -41,7 +45,7 @@ func TestCompositionServer_AcceptMissionOffer(t *testing.T) {
 	ts := httptest.NewServer(server)
 	defer ts.Close()
 
-	body := `{"tenant_id":"tenant-1","player_id":"player-1"}`
+	body := `{}`
 	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/v1/missions/offers/offer-accept-1/accept", bytes.NewReader([]byte(body)))
 	if err != nil {
 		t.Fatalf("could not create request: %v", err)

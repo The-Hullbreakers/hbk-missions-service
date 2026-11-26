@@ -2,10 +2,10 @@ package application
 
 import "github.com/hbk/hbk-missions-service/internal/missions/domain"
 
-// DefinitionReader loads a mission definition by identity.
+// DefinitionReader loads a mission definition by code.
 type DefinitionReader interface {
-	Get(tenantID, definitionID string) (domain.MissionDefinition, error)
-	GetVersion(tenantID, definitionID, version string) (domain.MissionDefinition, error)
+	Get(definitionCode string) (domain.MissionDefinition, error)
+	GetVersion(definitionCode, version string) (domain.MissionDefinition, error)
 }
 
 // PublishMissionDefinitionHandler publishes a draft definition version.
@@ -20,8 +20,8 @@ func NewPublishMissionDefinitionHandler(definitions DefinitionReader, writer Def
 }
 
 // Handle loads a draft definition, publishes it with the given version, and persists it.
-func (h *PublishMissionDefinitionHandler) Handle(tenantID, definitionID, version string) (domain.MissionDefinition, error) {
-	definition, err := h.definitions.Get(tenantID, definitionID)
+func (h *PublishMissionDefinitionHandler) Handle(definitionCode, version string) (domain.MissionDefinition, error) {
+	definition, err := h.definitions.Get(definitionCode)
 	if err != nil {
 		return domain.MissionDefinition{}, err
 	}

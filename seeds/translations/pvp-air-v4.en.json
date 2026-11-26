@@ -1,0 +1,122 @@
+{"translations": [
+  {
+    "DefinitionCode": "pvp-live-air-5",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Interceptor — 5 derribos PvP",
+      "Description": "Consigue 5 derribos de naves pilotadas por jugadores distintos.",
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE. Cualquier nave vale en combate abierto.",
+        "Derribo posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "El objetivo es una nave pilotada por un jugador y operativa en vuelo; nombre del piloto legible por ping, escaneo o MFD.",
+        "Un derribo es una nave destruida o fuera de combate por tu intervención; no cuentan retiradas, desconexiones, naves vacías ni derribos no atribuibles.",
+        "Víctima distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ],
+      "Objectives": [{"ObjectiveID": "derribos-verificados", "Name": "Derribos verificados", "Description": "Cada derribo de nave pilotada por un jugador, verificado en video."}]
+    },
+    "English": {
+      "Title": "Interceptor — 5 PvP Ship Takedowns",
+      "Description": "Score 5 takedowns of ships piloted by different players.",
+      "Rules": [
+        "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version. Any ship is allowed in open combat.",
+        "The takedown must occur after contract acceptance and during the active season; record continuous video of the encounter with no cuts during combat.",
+        "The target must be a functioning player-piloted ship in flight; the pilot's name must be readable by ping, scan, or MFD.",
+        "A takedown means a ship destroyed or rendered unable to fight by your intervention; retreats, disconnections, empty ships, and unattributable takedowns do not count.",
+        "A different victim for each unit; NPCs, allies, alternate accounts, and arranged outcomes do not count.",
+        "Each piece of evidence counts toward one mission and one unit only; one payout per mission and season, subject to manual review."
+      ],
+      "Objectives": [{"ObjectiveID": "derribos-verificados", "Name": "Verified Ship Takedowns", "Description": "Each takedown of a player-piloted ship, verified by video."}]
+    }
+  },
+  {
+    "DefinitionCode": "pvp-live-air-10",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Cazador de escuadrones — 10 derribos PvP",
+      "Description": "Consigue 10 derribos de naves pilotadas por jugadores distintos.",
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE. Cualquier nave vale en combate abierto.",
+        "Derribo posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "El objetivo es una nave pilotada por un jugador y operativa en vuelo; nombre del piloto legible por ping, escaneo o MFD.",
+        "Un derribo es una nave destruida o fuera de combate por tu intervención; no cuentan retiradas, desconexiones, naves vacías ni derribos no atribuibles.",
+        "Víctima distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ],
+      "Objectives": [{"ObjectiveID": "derribos-verificados", "Name": "Derribos verificados", "Description": "Cada derribo de nave pilotada por un jugador, verificado en video."}]
+    },
+    "English": {
+      "Title": "Squadron Hunter — 10 PvP Ship Takedowns",
+      "Description": "Score 10 takedowns of ships piloted by different players.",
+      "Rules": [
+        "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version. Any ship is allowed in open combat.",
+        "The takedown must occur after contract acceptance and during the active season; record continuous video of the encounter with no cuts during combat.",
+        "The target must be a functioning player-piloted ship in flight; the pilot's name must be readable by ping, scan, or MFD.",
+        "A takedown means a ship destroyed or rendered unable to fight by your intervention; retreats, disconnections, empty ships, and unattributable takedowns do not count.",
+        "A different victim for each unit; NPCs, allies, alternate accounts, and arranged outcomes do not count.",
+        "Each piece of evidence counts toward one mission and one unit only; one payout per mission and season, subject to manual review."
+      ],
+      "Objectives": [{"ObjectiveID": "derribos-verificados", "Name": "Verified Ship Takedowns", "Description": "Each takedown of a player-piloted ship, verified by video."}]
+    }
+  },
+  {
+    "DefinitionCode": "pvp-live-air-20",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Superioridad espacial — 20 derribos PvP",
+      "Description": "Consigue 20 derribos de naves pilotadas por jugadores distintos.",
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE. Cualquier nave vale en combate abierto.",
+        "Derribo posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "El objetivo es una nave pilotada por un jugador y operativa en vuelo; nombre del piloto legible por ping, escaneo o MFD.",
+        "Un derribo es una nave destruida o fuera de combate por tu intervención; no cuentan retiradas, desconexiones, naves vacías ni derribos no atribuibles.",
+        "Víctima distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ],
+      "Objectives": [{"ObjectiveID": "derribos-verificados", "Name": "Derribos verificados", "Description": "Cada derribo de nave pilotada por un jugador, verificado en video."}]
+    },
+    "English": {
+      "Title": "Space Superiority — 20 PvP Ship Takedowns",
+      "Description": "Score 20 takedowns of ships piloted by different players.",
+      "Rules": [
+        "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version. Any ship is allowed in open combat.",
+        "The takedown must occur after contract acceptance and during the active season; record continuous video of the encounter with no cuts during combat.",
+        "The target must be a functioning player-piloted ship in flight; the pilot's name must be readable by ping, scan, or MFD.",
+        "A takedown means a ship destroyed or rendered unable to fight by your intervention; retreats, disconnections, empty ships, and unattributable takedowns do not count.",
+        "A different victim for each unit; NPCs, allies, alternate accounts, and arranged outcomes do not count.",
+        "Each piece of evidence counts toward one mission and one unit only; one payout per mission and season, subject to manual review."
+      ],
+      "Objectives": [{"ObjectiveID": "derribos-verificados", "Name": "Verified Ship Takedowns", "Description": "Each takedown of a player-piloted ship, verified by video."}]
+    }
+  },
+  {
+    "DefinitionCode": "pvp-live-air-50",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Campaña de superioridad — 50 derribos PvP",
+      "Description": "Consigue 50 derribos de naves pilotadas por jugadores distintos.",
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE. Cualquier nave vale en combate abierto.",
+        "Derribo posterior a aceptar el contrato y dentro de la temporada activa; video continuo del enfrentamiento, sin cortes dentro del combate.",
+        "El objetivo es una nave pilotada por un jugador y operativa en vuelo; nombre del piloto legible por ping, escaneo o MFD.",
+        "Un derribo es una nave destruida o fuera de combate por tu intervención; no cuentan retiradas, desconexiones, naves vacías ni derribos no atribuibles.",
+        "Víctima distinta en cada unidad; no cuentan NPC, aliados, cuentas alternativas ni resultados pactados.",
+        "Cada evidencia acredita una sola misión y una sola unidad; un cobro por misión y temporada con revisión manual."
+      ],
+      "Objectives": [{"ObjectiveID": "derribos-verificados", "Name": "Derribos verificados", "Description": "Cada derribo de nave pilotada por un jugador, verificado en video."}]
+    },
+    "English": {
+      "Title": "Superiority Campaign — 50 PvP Ship Takedowns",
+      "Description": "Score 50 takedowns of ships piloted by different players.",
+      "Rules": [
+        "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version. Any ship is allowed in open combat.",
+        "The takedown must occur after contract acceptance and during the active season; record continuous video of the encounter with no cuts during combat.",
+        "The target must be a functioning player-piloted ship in flight; the pilot's name must be readable by ping, scan, or MFD.",
+        "A takedown means a ship destroyed or rendered unable to fight by your intervention; retreats, disconnections, empty ships, and unattributable takedowns do not count.",
+        "A different victim for each unit; NPCs, allies, alternate accounts, and arranged outcomes do not count.",
+        "Each piece of evidence counts toward one mission and one unit only; one payout per mission and season, subject to manual review."
+      ],
+      "Objectives": [{"ObjectiveID": "derribos-verificados", "Name": "Verified Ship Takedowns", "Description": "Each takedown of a player-piloted ship, verified by video."}]
+    }
+  }
+]}

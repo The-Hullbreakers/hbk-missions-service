@@ -29,6 +29,16 @@ func (s *recordingSeasonStateStore) Save(season domain.Season) error {
 	return nil
 }
 
+func (s *recordingSeasonStateStore) SaveFinalized(season domain.Season, _ []domain.PlacementFact) error {
+	return s.Save(season)
+}
+
+type failingFinalizedPersister struct{}
+
+func (failingFinalizedPersister) SaveFinalized(domain.Season, []domain.PlacementFact) error {
+	return errors.New("finalized persister unavailable")
+}
+
 type failingSeasonStateReader struct{}
 
 func (failingSeasonStateReader) Get(string) (domain.Season, error) {

@@ -1,0 +1,19 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_(SaveDepartureRejectsMissingDepartedWithPriorCount|SaveDepartureRejectsSameCountDifferentDepartedSet|SaveDepartureAcceptsLegacyMissingDeparted|ConcurrentDeparturesDoNotRestoreFormerMember|SaveDepartureReleasesDepartedGuards)\$
+=== RUN   TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount
+--- PASS: TestContractStore_SaveDepartureRejectsMissingDepartedWithPriorCount (0.11s)
+=== RUN   TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet
+--- PASS: TestContractStore_SaveDepartureRejectsSameCountDifferentDepartedSet (0.03s)
+=== RUN   TestContractStore_SaveDepartureAcceptsLegacyMissingDeparted
+--- PASS: TestContractStore_SaveDepartureAcceptsLegacyMissingDeparted (0.02s)
+=== RUN   TestContractStore_SaveDepartureReleasesDepartedGuards
+--- PASS: TestContractStore_SaveDepartureReleasesDepartedGuards (0.02s)
+=== RUN   TestContractStore_ConcurrentDeparturesDoNotRestoreFormerMember
+--- PASS: TestContractStore_ConcurrentDeparturesDoNotRestoreFormerMember (0.02s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.554s
+
+$ go test -count=1 -v ./tests/integration/composition -run ^TestTeamLeaveJourney_DepartedMemberRetakes$
+=== RUN   TestTeamLeaveJourney_DepartedMemberRetakes
+--- PASS: TestTeamLeaveJourney_DepartedMemberRetakes (0.05s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/integration/composition	0.408s

@@ -1,0 +1,8 @@
+--- FAIL: TestListOffers_DepartedMemberSeesTemplateAgain (0.00s)
+    list_offers_visibility_test.go:65: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/unit/missions/application/list_offers_visibility_test.go:65
+        	Error:      	"[{offer-y   BOUNTY SOLO 0 [] [] season-2026-q4 def-y }]" should have 2 item(s), but has 1
+        	Test:       	TestListOffers_DepartedMemberSeesTemplateAgain
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.389s
+FAIL

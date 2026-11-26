@@ -18,12 +18,12 @@ func TestCompositionServer_FreezeAndFinalize(t *testing.T) {
 		t.Fatalf("could not create client: %v", err)
 	}
 
-	if err := client.CreateMissionsTable(ctx, "hbk-missions"); err != nil {
+	if err := client.CreateMissionsTable(ctx, "hbk-missions-composition"); err != nil {
 		t.Fatalf("could not create table: %v", err)
 	}
-	clearMissionsTable(t, ctx, client, "hbk-missions")
+	clearMissionsTable(t, ctx, client, "hbk-missions-composition")
 
-	seasonStore := missiondynamo.NewSeasonStore(client, "hbk-missions")
+	seasonStore := missiondynamo.NewSeasonStore(client, "hbk-missions-composition")
 	if err := seasonStore.Save(domain.NewSeason("season-1", domain.SeasonStateActive)); err != nil {
 		t.Fatalf("could not seed active season: %v", err)
 	}
@@ -35,7 +35,7 @@ func TestCompositionServer_FreezeAndFinalize(t *testing.T) {
 	}
 
 	server, err := missioncomposition.NewServer(missioncomposition.Config{
-		TableName:   "hbk-missions",
+		TableName:   "hbk-missions-composition",
 		DynamoDB:    client,
 		UserSession: fakeUserSession{},
 	})

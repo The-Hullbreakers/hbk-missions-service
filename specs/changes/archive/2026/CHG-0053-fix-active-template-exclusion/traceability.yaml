@@ -1,0 +1,379 @@
+change_id: CHG-0053
+artifact: traceability
+status: archived
+updated: 2026-10-26
+
+canonical:
+  - capability: mission-board
+    path: specs/capabilities/mission-board/spec.md
+    action: modify
+  - capability: mission-contract-fulfillment
+    path: specs/capabilities/mission-contract-fulfillment/spec.md
+    action: modify
+
+defects:
+  - bug_id: BUG-0053-01
+    title: Departed member keeps the template exclusion and the active slot
+    classification: production_defect
+    reg_id: REG-0053-01
+    reg_title: Departure restores board visibility and frees the member's guard
+    requirements: [REQ-MB-008]
+    stories: [US-0053-01]
+  - bug_id: BUG-0053-02
+    title: Same-definition uniqueness is only a check-then-act decision
+    classification: production_defect
+    reg_id: REG-0053-02
+    reg_title: Acceptance commit enforces per-player+definition uniqueness
+    requirements: [REQ-MB-004, REQ-MB-008]
+    stories: [US-0053-02]
+  - bug_id: BUG-0053-03
+    title: Stale SaveDeparture resurrects a departed member
+    classification: production_defect
+    reg_id: REG-0053-03
+    reg_title: Stale parallel departure conflicts and releases no guards
+    requirements: [REQ-MB-008, REQ-MCF-013]
+    stories: [US-0053-01]
+  - bug_id: BUG-0053-04
+    title: Stale ordinary Save resurrects a departed member
+    classification: production_defect
+    reg_id: REG-0053-04
+    reg_title: Non-departure writes are fenced on the prior departed set
+    requirements: [REQ-MCF-013, REQ-MCF-010]
+    stories: [US-0053-01]
+  - bug_id: BUG-0053-05
+    title: Stale SaveApproved overwrites departure and mints credits
+    classification: production_defect
+    reg_id: REG-0053-05
+    reg_title: Approval requires the persisted departed set to match
+    requirements: [REQ-MCF-010, REQ-MCF-020]
+    stories: [US-0053-01]
+
+stories:
+  - us_id: US-0053-01
+    title: Departed member regains the template
+    scenarios:
+      - SCN-MB-DEPART-VISIBLE
+      - SCN-MB-DEPART-RETAKE
+      - SCN-MB-DEPART-RACE
+      - SCN-MCF-LEAVE-LAST-RETAKE
+      - SCN-MCF-STALE-SAVE
+      - SCN-MCF-STALE-APPROVAL
+  - us_id: US-0053-02
+    title: One live contract per definition per player
+    scenarios:
+      - SCN-MB-UNIQUE-CONCURRENT
+      - SCN-MB-UNIQUE-VERSION
+      - SCN-MB-UNIQUE-TEAMMATE
+      - SCN-MB-UNIQUE-OTHERS
+      - SCN-MB-PENDING-BLOCKS
+      - SCN-MB-TEMPLATE-RELEASED
+
+requirements:
+  - req_id: REQ-MB-004
+    title: "Consistent acceptance (delta: reservation inside the commit transaction)"
+    scenarios: [SCN-MB-UNIQUE-CONCURRENT, SCN-MB-UNIQUE-OTHERS]
+    tasks: [T-7, T-9, T-10, T-12]
+    tests:
+      - TEST-INF-CON-001
+      - TEST-INF-CON-002
+      - TEST-E2E-MB-001
+    production_files:
+      - internal/missions/infrastructure/dynamodb/contract_store_accept.go
+    gates: [Gate 3-BOUNDARY]
+  - req_id: REQ-MB-008
+    title: "Hide an active template (delta: active-membership binding, atomic uniqueness, member-scoped release)"
+    scenarios:
+      - SCN-MB-DEPART-VISIBLE
+      - SCN-MB-DEPART-RETAKE
+      - SCN-MB-DEPART-RACE
+      - SCN-MB-UNIQUE-VERSION
+      - SCN-MB-UNIQUE-TEAMMATE
+      - SCN-MB-PENDING-BLOCKS
+      - SCN-MB-TEMPLATE-RELEASED
+    tasks: [T-1, T-2, T-3, T-4, T-5, T-6, T-8, T-9, T-10, T-12, T-13]
+    tests:
+      - TEST-APP-LOB-001
+      - TEST-APP-LOB-002
+      - TEST-APP-ACC-001
+      - TEST-APP-ACC-002
+      - TEST-APP-LVE-001
+      - TEST-DOM-ACC-001
+      - TEST-INF-REL-001
+      - TEST-INF-REL-002
+      - TEST-INF-REL-003
+      - TEST-INF-REL-004
+      - TEST-INF-REL-005
+      - TEST-E2E-MB-002
+    production_files:
+      - internal/missions/application/list_offers.go
+      - internal/missions/application/accept_mission.go
+      - internal/missions/application/accept_mission_team.go
+      - internal/missions/application/leave_contract.go
+      - internal/missions/domain/team_participation.go
+      - internal/missions/infrastructure/dynamodb/contract_store.go
+      - internal/missions/infrastructure/dynamodb/contract_store_departure.go
+      - internal/missions/infrastructure/dynamodb/contract_store_review.go
+    gates: [Gate 3-APPLICATION, Gate 3-DOMAIN, Gate 3-BOUNDARY]
+  - req_id: REQ-MCF-013
+    title: "Leave a team contract (delta: every exit via the fenced departure write)"
+    scenarios:
+      - SCN-MCF-LEAVE-LAST-RETAKE
+      - SCN-MCF-STALE-SAVE
+    tasks: [T-8, T-10, T-13, T-15]
+    tests:
+      - TEST-APP-LVE-002
+      - TEST-INF-REL-005
+      - TEST-INF-REL-006
+      - TEST-INF-REL-008
+      - TEST-E2E-MB-003
+    production_files:
+      - internal/missions/application/leave_contract.go
+      - internal/missions/infrastructure/dynamodb/contract_store_departure.go
+      - internal/missions/infrastructure/dynamodb/contract_store.go
+    gates: [Gate 3-BOUNDARY, Gate 3-MCF-EXPANSION (approved via Gate 3-BOUNDARY-EXPANSION 2026-10-26)]
+  - req_id: REQ-MCF-010
+    title: "Commit adjudication and credits atomically (delta: writes fenced on departed set)"
+    scenarios: [SCN-MCF-STALE-SAVE, SCN-MCF-STALE-APPROVAL]
+    tasks: [T-15]
+    tests:
+      - TEST-INF-REL-006
+      - TEST-INF-REL-007
+    production_files:
+      - internal/missions/infrastructure/dynamodb/contract_store.go
+      - internal/missions/infrastructure/dynamodb/contract_store_review.go
+    gates: [Gate 3-MCF-EXPANSION (approved via Gate 3-BOUNDARY-EXPANSION 2026-10-26)]
+  - req_id: REQ-MCF-020
+    title: "Adjudicate a pending contract (delta: approval requires matching departed set)"
+    scenarios: [SCN-MCF-STALE-APPROVAL]
+    tasks: [T-15]
+    tests: [TEST-INF-REL-007]
+    production_files:
+      - internal/missions/infrastructure/dynamodb/contract_store_review.go
+    gates: [Gate 3-MCF-EXPANSION (approved via Gate 3-BOUNDARY-EXPANSION 2026-10-26)]
+
+tests:
+  - test_id: TEST-APP-LOB-001
+    title: Departed member sees the template's offers again
+    layer: application
+    task: T-1
+    path: tests/unit/missions/application/list_offers_visibility_test.go
+    test_name: TestListOffers_DepartedMemberSeesTemplateAgain
+    command: go test ./tests/unit/missions/application -run 'TestListOffers_'
+    expected_red: hidden set still includes departed members (roster-history source)
+    status: green
+    evidence: evidence/t1-application-red.txt (RED), evidence/t6-application-green.txt (GREEN)
+    reg: REG-0053-01
+  - test_id: TEST-APP-LOB-002
+    title: Still-active roster member keeps the template hidden
+    layer: application
+    task: T-1
+    path: tests/unit/missions/application/list_offers_visibility_test.go
+    test_name: TestListOffers_ActiveRosterMemberKeepsTemplateHidden
+    command: go test ./tests/unit/missions/application -run 'TestListOffers_'
+    expected_red: guard test; expected green pre- and post-fix
+    status: green
+    evidence: evidence/t1-application-red.txt (guard green at RED), evidence/t6-application-green.txt (GREEN)
+    reg: REG-0053-01
+  - test_id: TEST-APP-ACC-001
+    title: Team accept rejects a roster member already bound to the definition
+    layer: application
+    task: T-2
+    path: tests/unit/missions/application/accept_mission_team_test.go
+    test_name: TestAcceptMissionHandler_RejectsTeammateWithSameDefinitionActive
+    command: go test ./tests/unit/missions/application -run 'TestAcceptMissionHandler_'
+    expected_red: teammates are limit-checked only, never definition-checked
+    status: green
+    evidence: evidence/t2-application-red.txt (RED), evidence/t6-application-green.txt (GREEN)
+    reg: REG-0053-02
+  - test_id: TEST-APP-ACC-002
+    title: PENDING_VALIDATION blocks retake while the policy has spare slots
+    layer: application
+    task: T-2
+    path: tests/unit/missions/application/accept_mission_team_test.go
+    test_name: TestAcceptMissionHandler_RejectsTeammatePendingValidation
+    command: go test ./tests/unit/missions/application -run 'TestAcceptMissionHandler_'
+    expected_red: asserts the block given spare slots; the submit-side PLAYER_ACTIVE release is a separate out-of-scope defect
+    status: green
+    evidence: evidence/t2-application-red.txt (RED), evidence/t6-application-green.txt (GREEN)
+    reg: REG-0053-02
+  - test_id: TEST-APP-LVE-001
+    title: Non-terminal leave commits through DepartureWriter.SaveDeparture
+    layer: application
+    task: T-3
+    path: tests/unit/missions/application/leave_contract_test.go
+    test_name: TestLeaveContract_ReleasesThroughDepartureWriter
+    command: go test ./tests/unit/missions/application -run 'TestLeaveContract_'
+    expected_red: DepartureWriter port undefined
+    status: green
+    evidence: evidence/t3-application-red.txt (RED), evidence/t6-application-green.txt (GREEN); re-verified post-expansion evidence/t15-application-green.txt
+    reg: REG-0053-01
+  - test_id: TEST-DOM-ACC-001
+    title: DecideRosterAcceptance delegates to DecideAcceptance for every member
+    layer: domain
+    task: T-4
+    path: tests/unit/missions/domain/active_template_test.go
+    test_name: TestDecideRosterAcceptance_RejectsMemberWithSameDefinition
+    command: go test ./tests/unit/missions/domain -run 'TestDecideRosterAcceptance'
+    expected_red: teammates are never definition-checked today
+    status: green
+    evidence: evidence/t4-domain-red.txt (RED), evidence/t5-domain-narrow-green.txt + evidence/t5-domain-standalone-green.txt (GREEN)
+    reg: REG-0053-02
+  - test_id: TEST-INF-CON-001
+    title: Two parallel accepts, same player and definition, different versions serialize
+    layer: infrastructure
+    task: T-7
+    path: tests/integration/infrastructure/dynamodb/contract_store_reservation_test.go
+    test_name: TestCommitAcceptance_ConcurrentSameDefinitionSerializes
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'TestCommitAcceptance_'
+    expected_red: both commits succeed today — no uniqueness guard in the transaction
+    status: green
+    evidence: evidence/t7-boundary-red.txt (RED), evidence/t10-persistence-green.txt (GREEN)
+    reg: REG-0053-02
+  - test_id: TEST-INF-CON-002
+    title: Two players accepting the same definition both commit
+    layer: infrastructure
+    task: T-7
+    path: tests/integration/infrastructure/dynamodb/contract_store_reservation_test.go
+    test_name: TestCommitAcceptance_DifferentPlayersSameDefinitionBothCommit
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'TestCommitAcceptance_'
+    expected_red: guard test; expected green pre- and post-fix
+    status: green
+    evidence: evidence/t7-boundary-red.txt (guard green at RED), evidence/t10-persistence-green.txt (GREEN)
+    reg: REG-0053-02
+  - test_id: TEST-INF-REL-001
+    title: Terminal save releases reservations of still-active members only
+    layer: infrastructure
+    task: T-8
+    path: tests/integration/infrastructure/dynamodb/contract_store_release_test.go
+    test_name: TestContractStore_TerminalSaveReleasesOnlyActiveMembers
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'Release'
+    expected_red: no reservation exists pre-fix; departed member's newer reservation must remain
+    status: green
+    evidence: evidence/t8-release-red.txt (RED), evidence/t10-persistence-green.txt (GREEN)
+    reg: REG-0053-02
+  - test_id: TEST-INF-REL-002
+    title: Leave releases the departed member's reservation and active-set entry
+    layer: infrastructure
+    task: T-8
+    path: tests/integration/infrastructure/dynamodb/contract_store_leave_test.go
+    test_name: TestContractStore_SaveDepartureReleasesDepartedGuards
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'Leave|Departure'
+    expected_red: non-terminal save releases nothing today
+    status: green
+    evidence: evidence/t8-departure-red.txt (compile RED — SaveDeparture undefined), evidence/t10-persistence-green.txt (GREEN); re-verified post-expansion evidence/t15-persistence-green.txt
+    reg: REG-0053-01
+  - test_id: TEST-INF-REL-003
+    title: Stale save refuses to delete a foreign-owned reservation
+    layer: infrastructure
+    task: T-8
+    path: tests/integration/infrastructure/dynamodb/contract_store_release_test.go
+    test_name: TestContractStore_StaleReleaseKeepsNewerReservation
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'Stale|Release'
+    expected_red: "a re-run/stale terminal save with a mismatched owner must not delete or clean up the newer reservation — it conflicts and writes nothing"
+    status: green
+    evidence: evidence/t8-release-red.txt (RED), evidence/t10-persistence-green.txt (GREEN)
+    reg: REG-0053-02
+  - test_id: TEST-INF-REL-004
+    title: PENDING_VALIDATION keeps the reservation
+    layer: infrastructure
+    task: T-8
+    path: tests/integration/infrastructure/dynamodb/contract_store_release_test.go
+    test_name: TestContractStore_PendingValidationKeepsReservation
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'PendingValidation'
+    expected_red: characterization; reservation must survive submit
+    status: green
+    evidence: evidence/t8-release-red.txt (green at RED as characterization), evidence/t10-persistence-green.txt (GREEN)
+    reg: REG-0053-02
+  - test_id: TEST-INF-REL-005
+    title: Stale parallel departure conflicts without restoring the leaver
+    layer: infrastructure
+    task: T-13
+    path: tests/integration/infrastructure/dynamodb/contract_store_leave_test.go
+    test_name: TestContractStore_ConcurrentDeparturesDoNotRestoreFormerMember
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'ConcurrentDepartures'
+    expected_red: unconditional contract put overwrites the newer departure (stale write returns nil)
+    status: green
+    evidence: evidence/t13-concurrent-departure-red.txt (RED), evidence/t13-departure-green.txt (GREEN), evidence/t13-departure-set-green.txt (same-set fence), evidence/t13-departure-cancel-reason.txt (cancel-reason hardening)
+    reg: REG-0053-03
+  - test_id: TEST-INF-REL-006
+    title: Stale ordinary Save cannot restore a departed member
+    layer: infrastructure
+    task: T-13
+    path: tests/integration/infrastructure/dynamodb/contract_store_save_fence_test.go
+    test_name: TestContractStore_StaleSaveDoesNotRestoreDepartedMember
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'StaleSave'
+    expected_red: unconditional non-terminal Save put overwrites the committed departure (captured)
+    status: green
+    evidence: evidence/t13-stale-save-red.txt (RED), evidence/t15-persistence-green.txt (GREEN)
+    reg: REG-0053-04
+  - test_id: TEST-INF-REL-007
+    title: Stale SaveApproved conflicts atomically — no overwrite, no credits
+    layer: infrastructure
+    task: T-15
+    path: tests/integration/infrastructure/dynamodb/contract_store_stale_approval_test.go
+    test_name: TestContractStore_StaleSaveApprovedDoesNotRestoreOrCredit
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'StaleSaveApproved'
+    expected_red: unconditional approval put overwrites departure and writes credits — captured (returned nil)
+    status: green
+    evidence: evidence/t15-stale-approval-red.txt (RED), evidence/t15-persistence-green.txt (GREEN)
+    reg: REG-0053-05
+  - test_id: TEST-INF-REL-008
+    title: Last-member departure releases the leaver's reservation and slot
+    layer: infrastructure
+    task: T-15
+    path: tests/integration/infrastructure/dynamodb/contract_store_last_member_test.go
+    test_name: TestContractStore_LastMemberSaveDepartureReleasesGuards
+    command: go test ./tests/integration/infrastructure/dynamodb -run 'LastMember'
+    expected_red: compile RED — 3-arg SaveDeparture signature did not exist yet (captured)
+    status: green
+    evidence: evidence/t15-last-member-red.txt (RED), evidence/t15-persistence-green.txt (GREEN)
+    reg: REG-0053-01
+  - test_id: TEST-APP-LVE-002
+    title: Last-member leave routes through DepartureWriter (supersedes T-3 Save guard)
+    layer: application
+    task: T-15
+    path: tests/unit/missions/application/leave_contract_test.go
+    test_name: TestLeaveContract_LastMemberUsesDepartureWriter
+    command: go test ./tests/unit/missions/application -run 'TestLeaveContract_'
+    expected_red: behavioral RED — departureCalls 0, terminal leave routed to generic Save (captured)
+    status: green
+    supersedes: TestLeaveContract_LastMemberStillSaves (removed post-GREEN; covered by ABANDONED + no-generic-Save + single-departure-call + prevState assertions)
+    evidence: evidence/t15-application-red.txt (RED), evidence/t15-application-green.txt (GREEN)
+    reg: REG-0053-01
+  - test_id: TEST-E2E-MB-003
+    title: Public API solo last-member leave re-shows and retakes the template
+    layer: critical-e2e
+    task: T-15
+    path: tests/integration/composition/solo_leave_retake_e2e_test.go
+    test_name: TestSoloLeaveJourney_LastMemberRetakes
+    command: go test ./tests/integration/composition -run 'SoloLeave'
+    expected_red: compile RED — composition wired the old 3-arg NewLeaveContractHandler (captured)
+    status: green
+    evidence: evidence/t15-solo-e2e-red.txt (RED), evidence/t15-composition-green.txt (GREEN); repeated 3x green in evidence/t16-critical-e2e.txt
+    reg: REG-0053-01
+  - test_id: TEST-E2E-MB-001
+    title: Public API concurrent accept of the same definition serializes
+    layer: critical-e2e
+    task: T-9
+    path: tests/integration/composition/same_definition_acceptance_e2e_test.go
+    test_name: TestConcurrentAcceptance_SameDefinitionSerializes
+    command: go test ./tests/integration/composition -run 'SameDefinition'
+    expected_red: written and run RED pre-fix (T-9); re-run green post-GREEN (T-12)
+    status: green
+    evidence: evidence/t9-composition-red.txt (RED), evidence/t11-composition-green.txt (GREEN); repeated 3x green evidence/t16-critical-e2e.txt
+    reg: REG-0053-02
+  - test_id: TEST-E2E-MB-002
+    title: Public API leave-to-retake journey restores the template
+    layer: critical-e2e
+    task: T-9
+    path: tests/integration/composition/departed_retake_e2e_test.go
+    test_name: TestTeamLeaveJourney_DepartedMemberRetakes
+    command: go test ./tests/integration/composition -run 'DepartedMemberRetakes'
+    expected_red: written and run RED pre-fix (T-9); re-run green post-GREEN (T-12)
+    status: green
+    evidence: evidence/t9-composition-red.txt (RED), evidence/t11-composition-green.txt (GREEN); repeated 3x green evidence/t16-critical-e2e.txt
+    reg: REG-0053-01
+
+owners:
+  default: agent
+  review: independent Reviewer handoff before final validation

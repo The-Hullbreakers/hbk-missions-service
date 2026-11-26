@@ -59,6 +59,28 @@ func getBool(item map[string]types.AttributeValue, key string) bool {
 	return v.Value
 }
 
+func stringMapToAttribute(values map[string]string) types.AttributeValue {
+	members := make(map[string]types.AttributeValue, len(values))
+	for k, v := range values {
+		members[k] = &types.AttributeValueMemberS{Value: v}
+	}
+	return &types.AttributeValueMemberM{Value: members}
+}
+
+func getStringMap(item map[string]types.AttributeValue, key string) map[string]string {
+	v, ok := item[key].(*types.AttributeValueMemberM)
+	if !ok {
+		return nil
+	}
+	values := make(map[string]string, len(v.Value))
+	for k, attr := range v.Value {
+		if s, ok := attr.(*types.AttributeValueMemberS); ok {
+			values[k] = s.Value
+		}
+	}
+	return values
+}
+
 func timeToAttribute(value time.Time) types.AttributeValue {
 	return &types.AttributeValueMemberS{Value: value.UTC().Format(time.RFC3339Nano)}
 }

@@ -9,3 +9,13 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
     command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+  localstack-s3:
+    image: localstack/localstack:3.0.2
+    container_name: hbk-missions-s3-test
+    ports:
+      - "${S3_TEST_PORT:-14566}:4566"
+    environment:
+      - SERVICES=s3
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1

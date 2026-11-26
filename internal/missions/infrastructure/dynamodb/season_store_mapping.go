@@ -20,12 +20,23 @@ func seasonFromItem(item map[string]types.AttributeValue) domain.Season {
 func scheduleFromItem(item map[string]types.AttributeValue) *domain.SeasonSchedule {
 	prefix := getString(item, "ScheduleSeriesPrefix")
 	iteration := getInt(item, "ScheduleSeriesIteration")
+	activeDays := getInt(item, "ScheduleActiveDays")
+	offDays := getInt(item, "ScheduleOffDays")
 	activeWeeks := getInt(item, "ScheduleActiveWeeks")
 	offWeeks := getInt(item, "ScheduleOffWeeks")
-	if prefix == "" || iteration <= 0 || activeWeeks <= 0 {
+	// Legacy items written before CHG-0044 only carry week attributes.
+	if activeDays == 0 && activeWeeks > 0 {
+		activeDays = activeWeeks * 7
+	}
+	if offDays == 0 && offWeeks > 0 {
+		offDays = offWeeks * 7
+	}
+	if prefix == "" || iteration < 0 || activeDays <= 0 {
 		return nil
 	}
 	return &domain.SeasonSchedule{
+		ActiveDays:  activeDays,
+		OffDays:     offDays,
 		ActiveWeeks: activeWeeks,
 		OffWeeks:    offWeeks,
 		Series: domain.SeasonSeries{

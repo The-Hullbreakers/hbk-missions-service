@@ -1,0 +1,79 @@
+---
+change_id: CHG-0050
+artifact: traceability
+updated: 2026-10-20
+
+requirements:
+  - id: REQ-MCF-020
+    title: Adjudicate a pending contract (per-unit verdicts)
+    user_stories: [US-0050-02]
+    tasks: [T-050-001, T-050-002, T-050-003, T-050-004, T-050-005]
+    scenarios:
+      - id: SCN-MCF-APPROVE-UNITS
+        tests:
+          - TEST-DOMAIN-APPROVE-DROPS-REJECTED
+          - TEST-APP-APPROVE-VERDICT
+          - TEST-INFRA-APPROVE-VERDICT-ATOMIC
+          - TEST-HTTP-APPROVE-REJECTED-UNITS-200
+      - id: SCN-MCF-APPROVE-UNITS-DEFAULT
+        tests:
+          - TEST-DOMAIN-APPROVE-EMPTY-VERDICT
+          - TEST-HTTP-APPROVE-NO-BODY-200
+      - id: SCN-MCF-APPROVE-UNKNOWN-UNIT
+        tests:
+          - TEST-DOMAIN-APPROVE-UNKNOWN-UNIT
+          - TEST-APP-APPROVE-UNKNOWN-UNIT
+          - TEST-HTTP-APPROVE-UNIT-NOT-STAGED-422
+  - id: REQ-MCF-012
+    title: Completion grants the frozen reward (full fulfillment)
+    user_stories: [US-0050-01, US-0050-03]
+    tasks: [T-050-002, T-050-003]
+    scenarios:
+      - id: SCN-MCF-REJECT-BLOCKS-BONUS
+        tests:
+          - TEST-DOMAIN-REJECT-BLOCKS-BONUS
+      - id: SCN-MCF-FULL-BONUS
+        tests:
+          - TEST-DOMAIN-FULL-SATISFACTION-BONUS
+          - TEST-APP-APPROVE-FULL-BONUS
+      - id: SCN-MCF-PARTIAL-STAGE-NO-BONUS
+        tests:
+          - TEST-DOMAIN-PARTIAL-STAGE-NO-BONUS
+  - id: REQ-MCF-022
+    title: Read own contract detail (rejected units)
+    user_stories: [US-0050-02]
+    tasks: [T-050-004, T-050-005]
+    scenarios:
+      - id: SCN-MCF-REJECTED-VISIBLE
+        tests:
+          - TEST-HTTP-DETAIL-REJECTED-UNITS
+          - TEST-HTTP-DETAIL-REJECTED-MEMBER
+  - id: REQ-MCF-004
+    title: Prevent duplicates and basic farming (rejects released)
+    user_stories: [US-0050-02]
+    tasks: [T-050-002]
+    scenarios:
+      - id: SCN-MCF-REJECTED-UNIT-RESPONSE
+        tests:
+          - TEST-DOMAIN-REJECTED-NO-CREDIT
+          - TEST-INFRA-REJECTED-NO-CREDIT
+  - id: CATALOG-REMODEL
+    title: Seed missions use per-unit objectives and reduced rules
+    user_stories: [US-0050-01, US-0050-03, US-0050-04]
+    tasks: [T-050-007]
+    scenarios:
+      - id: SCN-SEED-UNIT-SHAPE
+        tests:
+          - TEST-SEED-PVP-UNIT-OBJECTIVES
+          - TEST-SEED-RACING-LAP-OBJECTIVES
+          - TEST-SEED-RULES-REDUCED
+
+user_stories:
+  - id: US-0050-01
+    title: Earn per verified unit
+  - id: US-0050-02
+    title: Adjudicate per unit
+  - id: US-0050-03
+    title: Completion objective and bonus
+  - id: US-0050-04
+    title: Concise mission rules

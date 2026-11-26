@@ -24,7 +24,7 @@ func TestSeasonScheduler_StartRunsAndStops(t *testing.T) {
 	defer cancel()
 
 	scheduler := store.buildScheduler(time.Now())
-	scheduler.Start(ctx, time.Millisecond)
+	scheduler.Start(ctx, time.Millisecond, nil)
 	time.Sleep(2 * time.Millisecond)
 	cancel()
 }

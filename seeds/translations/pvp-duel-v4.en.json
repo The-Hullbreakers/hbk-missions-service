@@ -1,0 +1,114 @@
+{"translations": [
+  {
+    "DefinitionCode": "pvp-live-duel-1",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Primer duelo — 1 victorias",
+      "Description": "Gana 1 duelos contra al menos 1 oponentes distintos.",
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Duelo 1v1 con la misma nave y equipamiento equivalente acordado; solo cañones, sin misiles, embestidas deliberadas ni intervención de terceros.",
+        "Victoria posterior a aceptar el contrato y dentro de la temporada activa; video continuo del duelo con el nombre del rival legible por ping, escaneo o MFD.",
+        "Cuenta destrucción, inutilización confirmada o rendición explícita verificable; abandono o desconexión no bastan por sí solos.",
+        "El combate puede estar organizado pero el resultado no puede estar pactado; cada evidencia acredita una sola misión y una sola unidad."
+      ],
+      "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Victorias verificadas", "Description": "Cada victoria en duelo verificada en video."}]
+    },
+    "English": {
+      "Title": "First Duel — 1 Victory",
+      "Description": "Win 1 duel against at least 1 distinct opponent.",
+      "Rules": [
+        "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version.",
+        "A 1v1 duel in the same ship with mutually agreed equivalent loadouts; guns only, with no missiles, deliberate ramming, or third-party interference.",
+        "The victory must occur after contract acceptance and during the active season; record continuous video of the duel with the opponent's name readable by ping, scan, or MFD.",
+        "Confirmed destruction, confirmed disabling, or explicit verifiable surrender counts; withdrawal or disconnection alone does not.",
+        "The fight may be organized, but the outcome must not be prearranged; each piece of evidence counts toward one mission and one unit only."
+      ],
+      "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Verified Duel Victories", "Description": "Each duel victory verified by video."}]
+    }
+  },
+  {
+    "DefinitionCode": "pvp-live-duel-3",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Duelista — 3 victorias",
+      "Description": "Gana 3 duelos contra al menos 2 oponentes distintos.",
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Duelo 1v1 con la misma nave y equipamiento equivalente acordado; solo cañones, sin misiles, embestidas deliberadas ni intervención de terceros.",
+        "Victoria posterior a aceptar el contrato y dentro de la temporada activa; video continuo del duelo con el nombre del rival legible por ping, escaneo o MFD.",
+        "Cuenta destrucción, inutilización confirmada o rendición explícita verificable; abandono o desconexión no bastan por sí solos.",
+        "El combate puede estar organizado pero el resultado no puede estar pactado; cada evidencia acredita una sola misión y una sola unidad."
+      ],
+      "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Victorias verificadas", "Description": "Cada victoria en duelo verificada en video."}]
+    },
+    "English": {
+      "Title": "Duelist — 3 Victories",
+      "Description": "Win 3 duels against at least 2 distinct opponents.",
+      "Rules": [
+        "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version.",
+        "A 1v1 duel in the same ship with mutually agreed equivalent loadouts; guns only, with no missiles, deliberate ramming, or third-party interference.",
+        "The victory must occur after contract acceptance and during the active season; record continuous video of the duel with the opponent's name readable by ping, scan, or MFD.",
+        "Confirmed destruction, confirmed disabling, or explicit verifiable surrender counts; withdrawal or disconnection alone does not.",
+        "The fight may be organized, but the outcome must not be prearranged; each piece of evidence counts toward one mission and one unit only."
+      ],
+      "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Verified Duel Victories", "Description": "Each duel victory verified by video."}]
+    }
+  },
+  {
+    "DefinitionCode": "pvp-live-duel-5",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "Dominio del caza — 5 victorias",
+      "Description": "Gana 5 duelos contra al menos 3 oponentes distintos.",
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Duelo 1v1 con la misma nave y equipamiento equivalente acordado; solo cañones, sin misiles, embestidas deliberadas ni intervención de terceros.",
+        "Victoria posterior a aceptar el contrato y dentro de la temporada activa; video continuo del duelo con el nombre del rival legible por ping, escaneo o MFD.",
+        "Cuenta destrucción, inutilización confirmada o rendición explícita verificable; abandono o desconexión no bastan por sí solos.",
+        "El combate puede estar organizado pero el resultado no puede estar pactado; cada evidencia acredita una sola misión y una sola unidad."
+      ],
+      "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Victorias verificadas", "Description": "Cada victoria en duelo verificada en video."}]
+    },
+    "English": {
+      "Title": "Fighter Dominance — 5 Victories",
+      "Description": "Win 5 duels against at least 3 distinct opponents.",
+      "Rules": [
+        "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version.",
+        "A 1v1 duel in the same ship with mutually agreed equivalent loadouts; guns only, with no missiles, deliberate ramming, or third-party interference.",
+        "The victory must occur after contract acceptance and during the active season; record continuous video of the duel with the opponent's name readable by ping, scan, or MFD.",
+        "Confirmed destruction, confirmed disabling, or explicit verifiable surrender counts; withdrawal or disconnection alone does not.",
+        "The fight may be organized, but the outcome must not be prearranged; each piece of evidence counts toward one mission and one unit only."
+      ],
+      "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Verified Duel Victories", "Description": "Each duel victory verified by video."}]
+    }
+  },
+  {
+    "DefinitionCode": "pvp-live-duel-10",
+    "DefinitionVersion": "4",
+    "SourceSpanish": {
+      "Title": "As de combate — 10 victorias",
+      "Description": "Gana 10 duelos contra al menos 5 oponentes distintos.",
+      "Rules": [
+        "Exclusivamente en el universo persistente PU/LIVE; el video muestra tu identidad y la versión LIVE.",
+        "Duelo 1v1 con la misma nave y equipamiento equivalente acordado; solo cañones, sin misiles, embestidas deliberadas ni intervención de terceros.",
+        "Victoria posterior a aceptar el contrato y dentro de la temporada activa; video continuo del duelo con el nombre del rival legible por ping, escaneo o MFD.",
+        "Cuenta destrucción, inutilización confirmada o rendición explícita verificable; abandono o desconexión no bastan por sí solos.",
+        "El combate puede estar organizado pero el resultado no puede estar pactado; cada evidencia acredita una sola misión y una sola unidad."
+      ],
+      "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Victorias verificadas", "Description": "Cada victoria en duelo verificada en video."}]
+    },
+    "English": {
+      "Title": "Combat Ace — 10 Victories",
+      "Description": "Win 10 duels against at least 5 distinct opponents.",
+      "Rules": [
+        "Only in the PU/LIVE persistent universe; the video must show your identity and the LIVE game version.",
+        "A 1v1 duel in the same ship with mutually agreed equivalent loadouts; guns only, with no missiles, deliberate ramming, or third-party interference.",
+        "The victory must occur after contract acceptance and during the active season; record continuous video of the duel with the opponent's name readable by ping, scan, or MFD.",
+        "Confirmed destruction, confirmed disabling, or explicit verifiable surrender counts; withdrawal or disconnection alone does not.",
+        "The fight may be organized, but the outcome must not be prearranged; each piece of evidence counts toward one mission and one unit only."
+      ],
+      "Objectives": [{"ObjectiveID": "victorias-verificadas", "Name": "Verified Duel Victories", "Description": "Each duel victory verified by video."}]
+    }
+  }
+]}

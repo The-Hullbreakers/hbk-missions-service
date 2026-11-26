@@ -29,12 +29,11 @@ Offer an experience similar to the Star Citizen contract board: available missio
 10. Missions communicates the awarded positions to Achievements.
 ## Mission Offer
 
-An offer publishes issuer, narrative, category, type, subtype, difficulty, mode, team participation, location, availability, duration, objectives, merits, repeatability, cooldown and capacity.
+An offer publishes issuer, narrative, category, type, subtype, difficulty, mode, team participation, location, availability, duration, objectives, merits, repeatability and cooldown.
 It can be:
 
 - `UNLIMITED`: multiple contracts while still available;
 - `LIMITED`: a maximum of acceptances;
-- `SINGLE_CLAIM`: special case with capacity one.
 ## Mission Definitions And Offers
 
 - `MissionDefinition` is the reusable template that has basic objectives and merits.
@@ -48,7 +47,7 @@ The board is customized per player. If a player already has an `ACCEPTED`, `IN_P
 The rule uses the template's stable identity, not its version. At the end of the contract, the template can be displayed again if cooldown and repeatability allow it. For teams, it applies to each confirmed participant.
 ## Active Contract Limit
 
-- There is a default limit per tenant.
+- There is a global default limit.
 - There may be an override per category.
 - The initial recommended value is three.
 - Any contract accepted, in progress or pending validation counts.

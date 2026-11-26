@@ -1,0 +1,10 @@
+--- FAIL: TestLeaveContract_ReleasesThroughDepartureWriter (0.00s)
+    leave_contract_test.go:90: 
+        	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/unit/missions/application/leave_contract_test.go:90
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 0
+        	Test:       	TestLeaveContract_ReleasesThroughDepartureWriter
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/unit/missions/application	0.230s
+FAIL

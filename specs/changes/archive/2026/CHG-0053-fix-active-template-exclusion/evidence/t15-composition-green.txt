@@ -1,0 +1,16 @@
+=== BUILD OK ===
+=== RUN   TestTeamLeaveJourney_DepartedMemberRetakes
+SDK 2026/10/26 10:58:29 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 10:58:29 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1756396488
+--- PASS: TestTeamLeaveJourney_DepartedMemberRetakes (0.04s)
+=== RUN   TestConcurrentAcceptance_SameDefinitionSerializes
+SDK 2026/10/26 10:58:29 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 10:58:29 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1756396488
+SDK 2026/10/26 10:58:29 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2801172217
+--- PASS: TestConcurrentAcceptance_SameDefinitionSerializes (0.02s)
+=== RUN   TestSoloLeaveJourney_LastMemberRetakes
+SDK 2026/10/26 10:58:29 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 2080965641
+SDK 2026/10/26 10:58:29 WARN failed to close HTTP response body, this may affect connection reuse: response did not match expected checksum, 0, 1756396488
+--- PASS: TestSoloLeaveJourney_LastMemberRetakes (0.03s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/integration/composition	0.411s

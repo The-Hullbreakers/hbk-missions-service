@@ -30,7 +30,6 @@ func ParseTrack(raw string) (Track, error) {
 
 // MeritCredit is an immutable record of merits granted for a confirmed objective.
 type MeritCredit struct {
-	TenantID       string
 	SeasonID       string
 	Category       string
 	Track          Track
@@ -40,4 +39,6 @@ type MeritCredit struct {
 	ObjectiveID    string
 	UnitID         string
 	ConfirmationID string
+	// MediaURI references the stored evidence object, when one was attached.
+	MediaURI MediaURI
 }

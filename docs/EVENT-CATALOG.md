@@ -1,6 +1,6 @@
 # Proposed Event Catalog
 
-All events include identity, version, time, correlation/causation, and tenant. Consumers validate schema, source and idempotence.
+All events include identity, version, time, correlation/causation. Consumers validate schema, source and idempotence.
 
 ## Published By Missions
 
@@ -22,17 +22,17 @@ All events include identity, version, time, correlation/causation, and tenant. C
 
 ```json
 {
-  "seasonId": "2956-S3",
+  "season_id": "2956-S3",
   "category": "BOUNTY_HUNTING",
   "track": "INDIVIDUAL",
-  "recipientId": "user-id",
+  "recipient_id": "user-id",
   "rank": 1,
-  "tier": "CHAMPION",
-  "finalMerits": 18500
+  "final_merits": 18500,
+  "member_ids": []
 }
 ```
 
-Achievements uses this fact to materialize permanent achievement. The `event_id` and the season/category/track/recipient/tier identity prevent duplicates.
+Achievements uses this fact to materialize permanent unlocks; its definitions decide which ranks grant which achievement. The `event_id` and the season/category/track/recipient/rank identity prevent duplicates.
 
 ## Consumed By Missions
 
@@ -40,4 +40,4 @@ Achievements uses this fact to materialize permanent achievement. The `event_id`
 - Confirmations from explicitly reliable sources for objectives.
 - Award materialization result for observability/retry only; does not change standings.
 
-An arrival from a queue is not considered reliable on its own. Source, tenant, contract, target and receiver must match local state.
+An arrival from a queue is not considered reliable on its own. Source, contract, target and receiver must match local state.

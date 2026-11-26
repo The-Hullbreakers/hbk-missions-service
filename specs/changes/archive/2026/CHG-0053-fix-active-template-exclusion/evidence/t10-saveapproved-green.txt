@@ -1,0 +1,13 @@
+$ go test -count=1 -v ./tests/integration/infrastructure/dynamodb -run ^TestContractStore_(SaveApprovedStaleReleaseIsNotDuplicate|.*Review.*|.*Approved.*)\$
+=== RUN   TestContractStore_ListPendingReviewFiltersState
+--- PASS: TestContractStore_ListPendingReviewFiltersState (0.06s)
+=== RUN   TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate
+--- PASS: TestContractStore_SaveApprovedStaleReleaseIsNotDuplicate (0.03s)
+=== RUN   TestContractStore_SaveApprovedCommitsContractAndCredits
+--- PASS: TestContractStore_SaveApprovedCommitsContractAndCredits (0.07s)
+=== RUN   TestContractStore_SaveApprovedWithVerdictDropsRejectedUnit
+--- PASS: TestContractStore_SaveApprovedWithVerdictDropsRejectedUnit (0.05s)
+=== RUN   TestContractStore_SaveApprovedRejectsDuplicateRetry
+--- PASS: TestContractStore_SaveApprovedRejectsDuplicateRetry (0.05s)
+PASS
+ok  	github.com/hbk/hbk-missions-service/tests/integration/infrastructure/dynamodb	0.759s

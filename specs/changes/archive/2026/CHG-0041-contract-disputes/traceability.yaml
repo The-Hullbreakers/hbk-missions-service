@@ -1,0 +1,15 @@
+change_id: CHG-0041
+artifact: traceability
+requirements:
+  - id: REQ-MCF-024
+    title: Dispute an adjudication outcome (added)
+    capability: mission-contract-fulfillment
+    scenarios:
+      - SCN-MCF-DISPUTE-RAISE
+      - SCN-MCF-DISPUTE-BLOCK
+      - SCN-MCF-DISPUTE-RESOLVE
+    tasks:
+      - T-041-001
+      - T-041-002
+      - T-041-003
+      - T-041-004

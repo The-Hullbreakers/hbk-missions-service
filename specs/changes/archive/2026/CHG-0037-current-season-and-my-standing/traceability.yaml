@@ -1,0 +1,18 @@
+change_id: CHG-0037
+artifact: traceability
+requirements:
+  - id: REQ-SCC-014
+    title: Read the current season (added)
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SCC-CURRENT
+      - SCN-SCC-CURRENT-NONE
+    tasks:
+      - T-037-001
+  - id: REQ-SCC-015
+    title: Read own standing (added)
+    capability: seasonal-category-competition
+    scenarios:
+      - SCN-SCC-ME
+    tasks:
+      - T-037-002

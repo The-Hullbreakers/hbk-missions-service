@@ -1,0 +1,14 @@
+--- FAIL: TestDecideRosterAcceptance_RejectsMemberWithSameDefinition (0.00s)
+    --- FAIL: TestDecideRosterAcceptance_RejectsMemberWithSameDefinition/IN_PROGRESS (0.00s)
+        active_template_test.go:76: 
+            	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/unit/missions/domain/active_template_test.go:76
+            	Error:      	Should be false
+            	Test:       	TestDecideRosterAcceptance_RejectsMemberWithSameDefinition/IN_PROGRESS
+    --- FAIL: TestDecideRosterAcceptance_RejectsMemberWithSameDefinition/PENDING_VALIDATION (0.00s)
+        active_template_test.go:76: 
+            	Error Trace:	/Users/chiro/Projects/HBK/hbk-missions-service/tests/unit/missions/domain/active_template_test.go:76
+            	Error:      	Should be false
+            	Test:       	TestDecideRosterAcceptance_RejectsMemberWithSameDefinition/PENDING_VALIDATION
+FAIL
+FAIL	github.com/hbk/hbk-missions-service/tests/unit/missions/domain	0.380s
+FAIL

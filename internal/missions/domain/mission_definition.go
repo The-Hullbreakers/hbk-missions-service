@@ -1,5 +1,7 @@
 package domain
 
+import "strings"
+
 // DefinitionState represents the lifecycle state of a mission definition.
 type DefinitionState string
 
@@ -19,37 +21,68 @@ func (s DefinitionState) IsPublished() bool {
 	return s == DefinitionStatePublished
 }
 
-// MissionDefinition is a reusable, versioned mission template.
+// MissionDefinition is a reusable, versioned mission template with
+// player-facing content: title, markdown description, named objectives,
+// readable rules, and the competitive-points reward granted when a
+// contract on it completes.
 type MissionDefinition struct {
-	DefinitionID string
-	Category     string
-	Mode         MissionMode
-	Capacity     int
-	State        DefinitionState
-	Version      string
+	DefinitionCode   string
+	Title            string
+	Description      string
+	Category         string
+	Mode             MissionMode
+	CompletionReward int
+	State            DefinitionState
+	Version          string
+	Objectives       []Objective
+	Rules            []string
+	ContentEn        LocalizedContent `json:"-"`
 }
 
-// NewMissionDefinition creates a draft definition.
-func NewMissionDefinition(definitionID, category string, capacity int, mode MissionMode) (MissionDefinition, error) {
-	if definitionID == "" || category == "" || capacity < 0 || !mode.IsValid() {
+// NewMissionDefinition creates a draft definition with required player-facing
+// content. Objectives are validated element-wise and require a name; rules
+// are optional short requirement statements and reject blank items.
+func NewMissionDefinition(definitionCode, title, description, category string, mode MissionMode, completionReward int, objectives []Objective, rules []string) (MissionDefinition, error) {
+	if definitionCode == "" || title == "" || description == "" || category == "" ||
+		!mode.IsValid() || completionReward < 0 {
 		return MissionDefinition{}, ErrDefinitionInvalid
 	}
+	for _, objective := range objectives {
+		if objective.ObjectiveID == "" || objective.Name == "" ||
+			objective.ObjectiveID == CompletionObjectiveID {
+			return MissionDefinition{}, ErrDefinitionInvalid
+		}
+	}
+	for _, rule := range rules {
+		if strings.TrimSpace(rule) == "" {
+			return MissionDefinition{}, ErrDefinitionInvalid
+		}
+	}
 	return MissionDefinition{
-		DefinitionID: definitionID,
-		Category:     category,
-		Mode:         mode,
-		Capacity:     capacity,
-		State:        DefinitionStateDraft,
-		Version:      "",
+		DefinitionCode:   definitionCode,
+		Title:            title,
+		Description:      description,
+		Category:         category,
+		Mode:             mode,
+		CompletionReward: completionReward,
+		State:            DefinitionStateDraft,
+		Version:          "",
+		Objectives:       objectives,
+		Rules:            append([]string(nil), rules...),
 	}, nil
 }
 
-// Publish transitions the definition from DRAFT to PUBLISHED with the given version.
+// Publish transitions the definition from DRAFT to PUBLISHED with the given
+// version. A new version publishes only with a structurally complete
+// English snapshot; already-published records are never revalidated.
 func (d *MissionDefinition) Publish(version string) error {
 	if d.State != DefinitionStateDraft {
 		return ErrDefinitionInvalid
 	}
 	if version == "" {
+		return ErrDefinitionInvalid
+	}
+	if !d.englishSnapshotComplete() {
 		return ErrDefinitionInvalid
 	}
 	d.State = DefinitionStatePublished
