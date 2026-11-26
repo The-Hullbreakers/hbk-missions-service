@@ -20,6 +20,12 @@ updated: 2026-11-26
   is absent or malformed.
 - The resolved ARN is appended as the last `--parameter-overrides` entry:
   `ParameterKey=SharedEventsTopicArn,ParameterValue="$shared_events_topic_arn"`.
+- The same staging step drops the `SEED_DEPLOYMENT_ROLE_ARN` env binding and
+  the `ParameterKey=SeedDeploymentRoleName,...` override, so the stack stops
+  trying to manage the deployment role's own policy — the failed staging job's
+  root cause (`iam:GetRolePolicy` denied while CloudFormation managed the role
+  policy). `template.yaml` keeps `SeedDeploymentRoleName` default `''` and the
+  `HasSeedDeploymentRole` conditional; the post-deploy seed step is unchanged.
 - `deploy-production` is untouched; `template.yaml` is untouched (the
   `SharedEventsTopicArn` parameter already exists).
 
@@ -44,6 +50,12 @@ staging `SAM deploy` step runs, then `sam deploy` is invoked with
 Given the export lookup returns `None` (absent or invalid), when the staging
 `SAM deploy` step runs, then it exits 1 with
 `Missing or invalid staging events topic export` and `sam` is never invoked.
+
+### SCN-STG-NO-SELF-MANAGED-ROLE — Stack does not manage the deploy role
+
+Given the staging `SAM deploy` step runs, when `sam deploy` is invoked, then
+its parameter overrides contain no `ParameterKey=SeedDeploymentRoleName` entry,
+so the stack cannot attempt IAM writes on its own deployment role.
 
 ## HTTP Boundary Changes
 

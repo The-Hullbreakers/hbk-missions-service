@@ -77,13 +77,17 @@ aws() {
 }
 sam() { printf '%s\n' "$@"; }
 export -f aws sam
-export SEED_DEPLOYMENT_ROLE_ARN='arn:aws:iam::123456789012:role/staging-fixture'
 expected_topic='arn:aws:sns:us-east-2:123456789012:hbk-domain-events-stg'
 # Act
 success=$(TOPIC_RESULT="$expected_topic" bash -ec "$staging_deploy")
 # Assert
 grep -Fxq "ParameterKey=SharedEventsTopicArn,ParameterValue=$expected_topic" <<< "$success" ||
   fail 'staging SAM deploy does not receive the exported events topic ARN'
+
+# TEST-STG-CATALOG-IAM-001: staging must not ask the stack to manage its own deploy role.
+if grep -q '^ParameterKey=SeedDeploymentRoleName,' <<< "$success"; then
+  fail 'staging SAM deploy still asks CloudFormation to manage the deployment role policy'
+fi
 
 # Arrange
 export TOPIC_RESULT=None

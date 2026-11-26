@@ -201,8 +201,6 @@ jobs:
         with:
           use-installer: true
       - name: SAM deploy
-        env:
-          SEED_DEPLOYMENT_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN_STAGING }}
         shell: bash
         run: |
           shared_events_topic_arn=$(aws cloudformation list-exports --region us-east-2 \
@@ -219,7 +217,6 @@ jobs:
             --parameter-overrides \
               ParameterKey=Environment,ParameterValue=stg \
               ParameterKey=DynamoDBTableName,ParameterValue=hbk-missions-stg \
-              ParameterKey=SeedDeploymentRoleName,ParameterValue="${SEED_DEPLOYMENT_ROLE_ARN##*/}" \
               ParameterKey=IdentityIssuer,ParameterValue=${{ secrets.OIDC_ISSUER_STAGING }} \
               ParameterKey=IdentityClientID,ParameterValue=${{ secrets.OIDC_CLIENT_ID_STAGING }} \
               ParameterKey=OIDCAllowedAudiences,ParameterValue="${{ secrets.OIDC_ALLOWED_AUDIENCES_STAGING || secrets.OIDC_CLIENT_ID_STAGING }}" \

@@ -17,6 +17,9 @@ updated: 2026-11-26
   already declared and already feeds `SNS_TOPIC_ARN` and the Lambda's
   `sns:Publish` policy. Supplying a real ARN at deploy time replaces the
   empty-string default only in the staging stack.
+- `SeedDeploymentRoleName` keeps its `''` default and the
+  `HasSeedDeploymentRole` conditional stays, so omitting the override makes the
+  role-policy resources no-ops instead of removing them from the template.
 
 ## Boundary (CI/CD workflow)
 
@@ -31,6 +34,17 @@ updated: 2026-11-26
   from the named export in the authenticated deployment account.
 - The parameter override is appended last so the diff stays additive and the
   production block is untouched.
+- The `SEED_DEPLOYMENT_ROLE_ARN` env binding and `SeedDeploymentRoleName`
+  override are removed from the staging step. Passing the deploy role's own
+  name made CloudFormation create/attach a policy on that role; the deploy
+  role lacks `iam:GetRolePolicy`/role-management rights, which is the observed
+  staging deploy failure. Seed synchronization still runs post-deploy via the
+  job's ambient AWS credentials — it never needed the stack-managed policy.
+- Security note: the staging managed policy already grants `dynamodb:*` on
+  `*` (pre-existing wildcard, discovered out-of-band). The removed override is
+  therefore a repair, not a privilege change; no new grant is added and no
+  scoped-effective-rights claim is made. Narrowing the wildcard needs its own
+  approval.
 
 ## Test strategy
 
@@ -43,6 +57,9 @@ updated: 2026-11-26
   `ParameterKey=SharedEventsTopicArn,ParameterValue=<arn>` line.
 - Assert 2: on `None`, the step exits 1 with the exact stderr message and
   `sam` output is absent (fail-before-deploy).
+- Assert 3 (TEST-STG-CATALOG-IAM-001): the captured `sam` invocation must not
+  contain a `ParameterKey=SeedDeploymentRoleName,` line — staging can no
+  longer ask the stack to manage its own deploy role.
 
 ## Verification commands
 
