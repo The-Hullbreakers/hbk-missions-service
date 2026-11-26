@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
 
 	"github.com/hbk/hbk-missions-service/internal/missions/application"
 	missioncomposition "github.com/hbk/hbk-missions-service/internal/missions/composition"
@@ -18,6 +17,7 @@ import (
 	missions3 "github.com/hbk/hbk-missions-service/internal/missions/infrastructure/s3"
 	"github.com/hbk/hbk-missions-service/internal/missions/infrastructure/session"
 	missionsns "github.com/hbk/hbk-missions-service/internal/missions/infrastructure/sns"
+	missionlambda "github.com/hbk/hbk-missions-service/internal/missions/interface/lambdahttp"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 		panic("failed to initialize lambda handler: " + err.Error())
 	}
 
-	lambda.Start(httpadapter.NewV2(handler).ProxyWithContext)
+	lambda.Start(missionlambda.NewProxy(handler))
 }
 
 func newHandler() (http.Handler, error) {
