@@ -203,7 +203,14 @@ jobs:
       - name: SAM deploy
         env:
           SEED_DEPLOYMENT_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+        shell: bash
         run: |
+          shared_events_topic_arn=$(aws cloudformation list-exports --region us-east-2 \
+            --query "Exports[?Name=='hbk-shared-infrastructure-stg-EventsTopicArn'].Value | [0]" --output text)
+          if [[ ! "$shared_events_topic_arn" =~ ^arn:aws:sns:us-east-2:[0-9]{12}:hbk-domain-events-stg$ ]]; then
+            echo 'Missing or invalid staging events topic export' >&2
+            exit 1
+          fi
           sam deploy \
             --template-file .aws-sam/build/template.yaml \
             --no-confirm-changeset \
@@ -217,6 +224,7 @@ jobs:
               ParameterKey=IdentityClientID,ParameterValue=${{ secrets.OIDC_CLIENT_ID_STAGING }} \
               ParameterKey=OIDCAllowedAudiences,ParameterValue="${{ secrets.OIDC_ALLOWED_AUDIENCES_STAGING || secrets.OIDC_CLIENT_ID_STAGING }}" \
               ParameterKey=OIDCAllowedOrigins,ParameterValue="https://app-stg.thehullbreakers.com" \
+              ParameterKey=SharedEventsTopicArn,ParameterValue="$shared_events_topic_arn" \
             --stack-name hbk-missions-staging \
             --capabilities CAPABILITY_IAM \
             --region us-east-2

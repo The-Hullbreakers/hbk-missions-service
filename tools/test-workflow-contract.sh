@@ -65,4 +65,33 @@ grep -q 'AWS::ApiGatewayV2::Route' "$TEMPLATE" || fail "template missing ApiGate
 require "github.ref == 'refs/heads/staging'"
 require "github.ref == 'refs/heads/main'"
 
+# TEST-STG-EVENTS-001: staging passes the exported topic to SAM or stops before deploy.
+# Arrange
+staging_deploy=$(sed -n '/^  deploy-staging:$/,/^  deploy-production:$/p' "$WORKFLOW" |
+  sed -n '/^      - name: SAM deploy$/,/^      - name: Set up Python /p' |
+  sed '1,/^        run: |$/d; /^      - name: /d; s/\${{[^}]*}}/fixture/g')
+[ -n "$staging_deploy" ] || fail 'staging SAM deploy body is missing'
+aws() {
+  [ "$*" = "cloudformation list-exports --region us-east-2 --query Exports[?Name=='hbk-shared-infrastructure-stg-EventsTopicArn'].Value | [0] --output text" ] || return 64
+  printf '%s\n' "$TOPIC_RESULT"
+}
+sam() { printf '%s\n' "$@"; }
+export -f aws sam
+export SEED_DEPLOYMENT_ROLE_ARN='arn:aws:iam::123456789012:role/staging-fixture'
+expected_topic='arn:aws:sns:us-east-2:123456789012:hbk-domain-events-stg'
+# Act
+success=$(TOPIC_RESULT="$expected_topic" bash -ec "$staging_deploy")
+# Assert
+grep -Fxq "ParameterKey=SharedEventsTopicArn,ParameterValue=$expected_topic" <<< "$success" ||
+  fail 'staging SAM deploy does not receive the exported events topic ARN'
+
+# Arrange
+export TOPIC_RESULT=None
+# Act
+status=0
+failure=$(bash -ec "$staging_deploy" 2>&1) || status=$?
+# Assert
+[ "$status" -eq 1 ] && [ "$failure" = 'Missing or invalid staging events topic export' ] ||
+  fail 'staging must stop before SAM when the events topic export is missing'
+
 echo "Workflow contract OK"
