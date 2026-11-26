@@ -18,8 +18,10 @@ import (
 func NewServer(cfg Config) (http.Handler, error) {
 	ctx := context.Background()
 
-	if err := cfg.DynamoDB.CreateMissionsTable(ctx, cfg.TableName); err != nil {
-		return nil, fmt.Errorf("failed to create missions table: %w", err)
+	if !cfg.UseExistingTable {
+		if err := cfg.DynamoDB.CreateMissionsTable(ctx, cfg.TableName); err != nil {
+			return nil, fmt.Errorf("failed to create missions table: %w", err)
+		}
 	}
 
 	contractStore := missiondynamo.NewContractStore(cfg.DynamoDB, cfg.TableName)

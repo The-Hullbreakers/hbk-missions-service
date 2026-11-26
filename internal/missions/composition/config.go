@@ -11,8 +11,10 @@ import (
 
 // Config holds the dependencies needed to build the HTTP server.
 type Config struct {
-	TableName        string
-	DynamoDB         *missiondynamo.DynamoDBClient
+	TableName string
+	DynamoDB  *missiondynamo.DynamoDBClient
+	// UseExistingTable leaves table provisioning to the infrastructure owner.
+	UseExistingTable bool
 	UserSession      session.UserSession
 	ShutdownContext  context.Context
 	SchedulerTick    time.Duration

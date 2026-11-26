@@ -293,6 +293,12 @@ Resources:
       <<: *RouteProps
       RouteKey: POST /api/v1/seasons
 
+  MissionsCurrentSeasonRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: GET /api/v1/missions/seasons/current
+
   MissionsLeaderboardRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:

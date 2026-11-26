@@ -77,6 +77,7 @@ func newHandler() (http.Handler, error) {
 	return missioncomposition.NewServer(missioncomposition.Config{
 		TableName:        tableName,
 		DynamoDB:         db,
+		UseExistingTable: true,
 		UserSession:      userSession,
 		ShutdownContext:  ctx,
 		SchedulerTick:    time.Minute,

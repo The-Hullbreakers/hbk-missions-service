@@ -61,6 +61,10 @@ grep -q 'hbk-shared-infrastructure-${Environment}-ApiGatewayId' "$TEMPLATE" || f
 grep -q 'AWS::ApiGatewayV2::Integration' "$TEMPLATE" || fail "template missing ApiGatewayV2 integration"
 grep -q 'AWS::ApiGatewayV2::Route' "$TEMPLATE" || fail "template missing ApiGatewayV2 routes"
 
+# TEST-STG-CURRENT-SEASON-ROUTE-001: the current-season GET reaches the shared Lambda integration.
+sed -n '/^  MissionsCurrentSeasonRoute:$/,+4p' "$TEMPLATE" |
+  grep -Fxq '      RouteKey: GET /api/v1/missions/seasons/current' || fail 'template missing current-season GET route'
+
 # No deploy secrets on pull requests is enforced by if-conditions on push/dispatch
 require "github.ref == 'refs/heads/staging'"
 require "github.ref == 'refs/heads/main'"
