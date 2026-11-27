@@ -1,7 +1,12 @@
 ---
 change_id: CHG-0059
 title: Restore the staging current-season API and stop table provisioning at init
-status: locally_verified
+status: archived
+validation_status: passed
+verified_at: 2026-11-26
+source_revision: 212088dec8c29556a3c12ca2f2833d51799156f2
+archive_path: specs/changes/archive/2026/CHG-0059-staging-seasons-api/
+context_scope: none
 risk: L2
 canonical_action: not_affected
 canonical_paths:
@@ -52,3 +57,31 @@ denies `CreateTable` — the Lambda must start (no provisioning call) and the
 request must reach authentication. Security/cost: existing route auth
 unchanged, no IAM changes, one skipped API call at init. Rollback: revert the
 route block and the config flag.
+
+## Final outcome — 2026-11-26
+
+- `validation_status: passed`; explicit user approval received for final
+  closure/archive and the commit/push/PR request to staging.
+- Verified commit: `212088dec8c29556a3c12ca2f2833d51799156f2` on
+  `The-Hullbreakers/hbk-missions-service`, byte-identical to the prior local
+  implementation `261bd4f` for all CHG-0059 paths.
+- Verified CI run:
+  `https://github.com/The-Hullbreakers/hbk-missions-service/actions/runs/45893405142`
+  — all jobs successful: SDD validation, unit tests, integration tests, SAM
+  build, staging deploy; production job skipped as designed.
+- Independent security review of the exact implementation found no blockers:
+  the current-season handler retains existing in-Lambda authentication, no
+  IAM changes were introduced, and the loopback integration test asserted
+  zero DynamoDB calls at init and `401 Unauthorized` for unauthenticated
+  requests.
+- Closure commands (this worktree): `git diff --check` clean;
+  `bash tools/test-workflow-contract.sh` OK; focused Go composition test
+  green; seeds unittest discovery green. No runtime, Docker, deployment,
+  seeding, or shared-AWS actions performed by this closure.
+- Full-repo local validator intentionally skipped (it manipulates Docker;
+  not required for archival packaging). CI evidence is the recorded run;
+  new PR CI pending the lead's git actions.
+- `canonical_action: not_affected` retained — the existing
+  seasonal-category-competition contract (REQ-SCC-014) is unchanged; this
+  restored deployed wiring only. No canonical spec update and no durable
+  context snapshot (operational restoration, no reusable knowledge).
