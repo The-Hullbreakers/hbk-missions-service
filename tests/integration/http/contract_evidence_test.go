@@ -41,11 +41,13 @@ func newTestServer(started bool) (*httptest.Server, *stagedContractWriter) {
 	}
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
 	writer := &stagedContractWriter{}
+	blobs := &evidenceBlobFake{exists: map[string]bool{"evidence/contract-1/stored": true}}
 
-	app := application.NewConfirmObjectiveHandler(
+	app := application.NewConfirmObjectiveHandlerWithEvidence(
 		fixedContractStore{contract: contract},
 		writer,
 		fixedSeasonStore{season: season},
+		blobs,
 	)
 
 	auth := missionhttp.NewAuthMiddleware(roleSessionFake{playerID: "player-1"})
@@ -72,7 +74,7 @@ func TestConfirmEvidenceEndpoint_AcceptsValidEvidence(t *testing.T) {
 	server, writer := newTestServer(true)
 	defer server.Close()
 
-	body := `{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1"}`
+	body := `{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1","media_uri":"evidence/contract-1/stored"}`
 	resp := postEvidence(t, server, body)
 	defer resp.Body.Close()
 
@@ -100,7 +102,7 @@ func TestConfirmEvidenceEndpoint_RejectsDomainError(t *testing.T) {
 	server, _ := newTestServer(false)
 	defer server.Close()
 
-	body := `{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1","tenant_id":"tenant-1"}`
+	body := `{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1","media_uri":"evidence/contract-1/stored","tenant_id":"tenant-1"}`
 	resp := postEvidence(t, server, body)
 	defer resp.Body.Close()
 
@@ -114,5 +116,60 @@ func TestConfirmEvidenceEndpoint_RejectsDomainError(t *testing.T) {
 	}
 	if bodyJSON["code"] != "CONTRACT_NOT_IN_PROGRESS" {
 		t.Fatalf("expected code CONTRACT_NOT_IN_PROGRESS, got %s", bodyJSON["code"])
+	}
+}
+
+// TEST-0063-HTTP-001: evidence posted without a media_uri is rejected before
+// staging — 422 EVIDENCE_REQUIRED and nothing persisted.
+func TestConfirmEvidenceEndpoint_RejectsMissingMedia(t *testing.T) {
+	// Arrange
+	server, writer := newTestServer(true)
+	defer server.Close()
+
+	// Act
+	resp := postEvidence(t, server,
+		`{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1"}`)
+	defer resp.Body.Close()
+
+	// Assert
+	if resp.StatusCode != http.StatusUnprocessableEntity {
+		t.Fatalf("expected status 422, got %d", resp.StatusCode)
+	}
+	var bodyJSON map[string]string
+	if err := json.NewDecoder(resp.Body).Decode(&bodyJSON); err != nil {
+		t.Fatalf("could not decode error body: %v", err)
+	}
+	if bodyJSON["code"] != "EVIDENCE_REQUIRED" {
+		t.Fatalf("expected code EVIDENCE_REQUIRED, got %s", bodyJSON["code"])
+	}
+	if writer.saved != nil {
+		t.Fatal("expected no persisted contract")
+	}
+}
+
+// TEST-0063-HTTP-001: an explicit empty media_uri is rejected identically.
+func TestConfirmEvidenceEndpoint_RejectsEmptyMedia(t *testing.T) {
+	// Arrange
+	server, writer := newTestServer(true)
+	defer server.Close()
+
+	// Act
+	resp := postEvidence(t, server,
+		`{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1","media_uri":""}`)
+	defer resp.Body.Close()
+
+	// Assert
+	if resp.StatusCode != http.StatusUnprocessableEntity {
+		t.Fatalf("expected status 422, got %d", resp.StatusCode)
+	}
+	var bodyJSON map[string]string
+	if err := json.NewDecoder(resp.Body).Decode(&bodyJSON); err != nil {
+		t.Fatalf("could not decode error body: %v", err)
+	}
+	if bodyJSON["code"] != "EVIDENCE_REQUIRED" {
+		t.Fatalf("expected code EVIDENCE_REQUIRED, got %s", bodyJSON["code"])
+	}
+	if writer.saved != nil {
+		t.Fatal("expected no persisted contract")
 	}
 }

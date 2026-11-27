@@ -61,10 +61,11 @@ func TestAdjudication_ConfirmCreditsFreezingInProgressBeforeLock(t *testing.T) {
 	seed := mcfContractStore{contract: contract}
 	writer := &reviewStore{}
 	seasons := mcfSeasonStore{"season-1": domain.NewSeason("season-1", domain.SeasonStateFreezing)}
-	handler := application.NewConfirmObjectiveHandler(seed, writer, seasons)
+	evidence, uris := storedEvidence(contract.ContractID, "e1")
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(seed, writer, seasons, evidence)
 
 	// Act
-	credit, err := handler.Handle(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", "season-1")
+	credit, err := handler.HandleWithMedia(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", uris[0], "season-1")
 
 	// Assert
 	require.NoError(t, err)
@@ -81,10 +82,11 @@ func TestAdjudication_ConfirmConflictLeavesContractUnstaged(t *testing.T) {
 	seed := mcfContractStore{contract: contract}
 	writer := &adjudicationConflictWriter{err: errAdjudicationBlocked}
 	seasons := mcfSeasonStore{"season-1": domain.NewSeason("season-1", domain.SeasonStateFreezing)}
-	handler := application.NewConfirmObjectiveHandler(seed, writer, seasons)
+	evidence, uris := storedEvidence(contract.ContractID, "e1")
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(seed, writer, seasons, evidence)
 
 	// Act
-	_, err := handler.Handle(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", "season-1")
+	_, err := handler.HandleWithMedia(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", uris[0], "season-1")
 
 	// Assert
 	require.ErrorIs(t, err, errAdjudicationBlocked)

@@ -9,7 +9,7 @@ import (
 )
 
 func TestSubmitContract_MemberSubmitsAndPersists(t *testing.T) {
-	contract := inProgressContract(t)
+	contract := inProgressContractWithEvidence(t)
 	store := &reviewStore{contract: contract}
 	handler := application.NewSubmitContractHandler(store, store)
 
@@ -18,6 +18,23 @@ func TestSubmitContract_MemberSubmitsAndPersists(t *testing.T) {
 	require.NoError(t, err)
 	require.False(t, store.saved == nil || store.saved.State != domain.ContractPendingValidation)
 	require.False(t, store.credits != nil || store.saveCalls != 1)
+}
+
+// TEST-0063-APP-002: an in-progress contract with no media-backed staged
+// credit cannot enter review — nothing is saved and the state is unchanged.
+func TestSubmitContract_RejectsWithoutStagedEvidence(t *testing.T) {
+	// Arrange
+	contract := inProgressContract(t)
+	store := &reviewStore{contract: contract}
+	handler := application.NewSubmitContractHandler(store, store)
+
+	// Act
+	err := handler.Handle(lifecycleMember(t), "c-1")
+
+	// Assert
+	require.ErrorIs(t, err, domain.ErrContractEvidenceRequired)
+	require.False(t, store.saved != nil || store.saveCalls != 0)
+	require.Equal(t, domain.ContractInProgress, contract.State)
 }
 
 func TestSubmitContract_RejectsOutsider(t *testing.T) {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/hbk/hbk-missions-service/internal/missions/application"
 	"github.com/hbk/hbk-missions-service/internal/missions/domain"
 	missiondynamo "github.com/hbk/hbk-missions-service/internal/missions/infrastructure/dynamodb"
 )
@@ -45,6 +46,16 @@ func caller(t *testing.T, id string) domain.CallerIdentity {
 	identity, err := domain.NewCallerIdentity(id, nil, nil)
 	require.NoError(t, err)
 	return identity
+}
+
+// stubEvidenceReader reports every well-formed reference as uploaded —
+// infrastructure tests exercise the storage adapters, not the blob port.
+type stubEvidenceReader struct{}
+
+func (stubEvidenceReader) Exists(domain.MediaURI) (bool, error) { return true, nil }
+
+func (stubEvidenceReader) PresignRead(uri domain.MediaURI) (application.ReadGrant, error) {
+	return application.ReadGrant{URL: "https://signed.example/read?key=" + string(uri)}, nil
 }
 
 // REG-0053-01: SaveDeparture releases the departing member's reservation and

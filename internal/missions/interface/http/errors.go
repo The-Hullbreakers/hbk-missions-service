@@ -103,6 +103,8 @@ func PublicCode(err error) string {
 		return "MISSION_DEFINITION_ALREADY_ACTIVE"
 	case errors.Is(err, domain.ErrEvidenceMediaInvalid):
 		return "EVIDENCE_MEDIA_INVALID"
+	case errors.Is(err, domain.ErrContractEvidenceRequired):
+		return "EVIDENCE_REQUIRED"
 	case errors.Is(err, domain.ErrUnitNotStaged):
 		return "UNIT_NOT_STAGED"
 	case errors.Is(err, domain.ErrInvalidOfferStatusFilter),

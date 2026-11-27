@@ -36,7 +36,9 @@ func rewardedContract(t *testing.T, contractID string, reward int) *domain.Missi
 func confirmObjective(t *testing.T, contract *domain.MissionContract, objectiveID string) {
 	t.Helper()
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	_, err := contract.Confirm(objectiveID, "unit-1", season)
+	media, err := domain.NewMediaURI("evidence/"+contract.ContractID+"/unit-1", contract.ContractID)
+	require.NoError(t, err)
+	_, err = contract.ConfirmWithMedia(objectiveID, "unit-1", media, season)
 	require.NoError(t, err)
 }
 
@@ -97,6 +99,11 @@ func TestContractApprove_ZeroRewardRecordsNoCredit(t *testing.T) {
 
 func TestContractApprove_PartialFulfillmentSkipsCompletionCredit(t *testing.T) {
 	contract := rewardedContract(t, "c-4", 200)
+	extra := domain.NewObjectiveNamed("obj-b", "Segundo objetivo", "", "BOUNTY", 20, 0, 0)
+	terms, err := domain.NewContractTerms(append(contract.Terms.Objectives(), extra))
+	require.NoError(t, err)
+	contract.Terms = terms
+	confirmObjective(t, contract, "obj-a")
 
 	credits := approveContract(t, contract)
 

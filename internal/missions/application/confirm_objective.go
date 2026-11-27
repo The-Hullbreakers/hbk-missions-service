@@ -25,56 +25,22 @@ type ConfirmObjectiveHandler struct {
 	evidence  EvidenceObjectReader
 }
 
-// NewConfirmObjectiveHandler creates a handler with the required ports.
-func NewConfirmObjectiveHandler(contracts ContractReader, writer ContractWriter, seasons SeasonReader) *ConfirmObjectiveHandler {
+// NewConfirmObjectiveHandlerWithEvidence creates a handler that validates
+// and attaches stored media references through the evidence port.
+func NewConfirmObjectiveHandlerWithEvidence(contracts ContractReader, writer ContractWriter, seasons SeasonReader, evidence EvidenceObjectReader) *ConfirmObjectiveHandler {
 	return &ConfirmObjectiveHandler{
 		contracts: contracts,
 		writer:    writer,
 		seasons:   seasons,
+		evidence:  evidence,
 	}
 }
 
-// NewConfirmObjectiveHandlerWithEvidence creates a handler that can also
-// validate and attach stored media references through the evidence port.
-func NewConfirmObjectiveHandlerWithEvidence(contracts ContractReader, writer ContractWriter, seasons SeasonReader, evidence EvidenceObjectReader) *ConfirmObjectiveHandler {
-	h := NewConfirmObjectiveHandler(contracts, writer, seasons)
-	h.evidence = evidence
-	return h
-}
-
-// Handle confirms a unit submitted by the authenticated caller and stages
-// the resulting credit on the contract; reviewer approval commits it to the
-// ledger. Authorization requires roster membership or a privileged role.
-func (h *ConfirmObjectiveHandler) Handle(identity domain.CallerIdentity, contractID, objectiveID, unitID, seasonID string) (domain.MeritCredit, error) {
-	contract, err := h.contracts.Get(contractID)
-	if err != nil {
-		return domain.MeritCredit{}, err
-	}
-
-	if !canAdjudicate(identity, contract) {
-		return domain.MeritCredit{}, domain.ErrCallerNotAuthorized
-	}
-
-	season, err := h.seasons.Get(seasonID)
-	if err != nil {
-		return domain.MeritCredit{}, err
-	}
-
-	credit, err := domain.ConfirmObjective(contract, objectiveID, unitID, season)
-	if err != nil {
-		return domain.MeritCredit{}, err
-	}
-
-	if err := h.writer.Save(contract); err != nil {
-		return domain.MeritCredit{}, err
-	}
-
-	return credit, nil
-}
-
-// HandleWithMedia behaves like Handle and additionally validates that the
-// submitted media reference belongs to the contract and exists in storage,
-// then attaches it to the staged credit.
+// HandleWithMedia confirms a unit submitted by the authenticated caller and
+// stages the resulting credit on the contract; reviewer approval commits it
+// to the ledger. A stored media reference owned by the contract is required
+// for every confirmation. Authorization requires roster membership or a
+// privileged role.
 func (h *ConfirmObjectiveHandler) HandleWithMedia(identity domain.CallerIdentity, contractID, objectiveID, unitID, mediaURI, seasonID string) (domain.MeritCredit, error) {
 	contract, err := h.contracts.Get(contractID)
 	if err != nil {
@@ -83,6 +49,10 @@ func (h *ConfirmObjectiveHandler) HandleWithMedia(identity domain.CallerIdentity
 
 	if !canAdjudicate(identity, contract) {
 		return domain.MeritCredit{}, domain.ErrCallerNotAuthorized
+	}
+
+	if mediaURI == "" {
+		return domain.MeritCredit{}, domain.ErrContractEvidenceRequired
 	}
 
 	uri, err := domain.NewMediaURI(mediaURI, contract.ContractID)

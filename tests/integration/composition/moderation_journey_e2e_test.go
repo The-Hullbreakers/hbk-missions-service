@@ -45,6 +45,7 @@ func TestModerationJourney_RejectPaysNothing(t *testing.T) {
 		TableName:   "hbk-missions-composition",
 		DynamoDB:    client,
 		UserSession: tokenSession{},
+		Evidence:    &blobStoreFake{stored: map[string]bool{"evidence/contract-1/e1": true, "evidence/contract-1/e2": true}},
 	})
 	require.NoError(t, err)
 	ts := httptest.NewServer(server)
@@ -83,7 +84,7 @@ func TestModerationJourney_RejectPaysNothing(t *testing.T) {
 
 	// Evidence is staged, not paid — the leaderboard stays empty until review.
 	if status := post(player, "/api/v1/missions/contracts/contract-1/evidence",
-		`{"objective_id":"objective-1","unit_id":"unit-1","season_id":"season-1"}`); status != http.StatusCreated {
+		`{"objective_id":"objective-1","unit_id":"unit-1","season_id":"season-1","media_uri":"evidence/contract-1/e1"}`); status != http.StatusCreated {
 		require.Failf(t, "unexpected failure", "evidence: expected 201, got %d", status)
 	}
 	total := leaderboardTotal()
@@ -94,7 +95,7 @@ func TestModerationJourney_RejectPaysNothing(t *testing.T) {
 		require.Failf(t, "unexpected failure", "submit: expected 200, got %d", status)
 	}
 	if status := post(player, "/api/v1/missions/contracts/contract-1/evidence",
-		`{"objective_id":"objective-1","unit_id":"unit-2","season_id":"season-1"}`); status != http.StatusUnprocessableEntity {
+		`{"objective_id":"objective-1","unit_id":"unit-2","season_id":"season-1","media_uri":"evidence/contract-1/e2"}`); status != http.StatusUnprocessableEntity {
 		require.Failf(t, "unexpected failure", "pending evidence: expected 422, got %d", status)
 	}
 

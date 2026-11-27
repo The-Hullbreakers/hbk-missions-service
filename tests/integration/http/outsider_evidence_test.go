@@ -22,10 +22,11 @@ func TestConfirmEvidenceEndpoint_RejectsOutsiderDespiteForgedBody(t *testing.T) 
 	member, _ := domain.NewCallerIdentity("player-1", nil, nil)
 	_ = contract.Start(member)
 
-	app := application.NewConfirmObjectiveHandler(
+	app := application.NewConfirmObjectiveHandlerWithEvidence(
 		fixedContractStore{contract: contract},
 		&stagedContractWriter{},
 		fixedSeasonStore{season: domain.NewSeason("season-1", domain.SeasonStateActive)},
+		&evidenceBlobFake{exists: map[string]bool{"evidence/contract-1/stored": true}},
 	)
 	auth := missionhttp.NewAuthMiddleware(boundarySession{playerID: "outsider"})
 	server := httptest.NewServer(auth.Authenticate(missionhttp.ConfirmEvidenceHandler(app)))

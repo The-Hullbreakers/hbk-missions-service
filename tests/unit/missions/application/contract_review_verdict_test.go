@@ -20,7 +20,9 @@ func pendingContractWithUnits(t *testing.T, reward int, unitLimit int, units ...
 	require.NoError(t, contract.Start(member))
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
 	for _, unit := range units {
-		_, err := contract.Confirm("obj-a", unit, season)
+		media, err := domain.NewMediaURI("evidence/"+contract.ContractID+"/"+unit, contract.ContractID)
+		require.NoError(t, err)
+		_, err = contract.ConfirmWithMedia("obj-a", unit, media, season)
 		require.NoError(t, err)
 	}
 	require.NoError(t, contract.Submit(member))

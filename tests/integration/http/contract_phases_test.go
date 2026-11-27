@@ -65,16 +65,17 @@ func TestConfirmEvidence_Phase2ObjectiveRejected(t *testing.T) {
 	// Arrange — phased contract wired into the confirm handler.
 	contract := phasedContractFixture()
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	app := application.NewConfirmObjectiveHandler(
+	app := application.NewConfirmObjectiveHandlerWithEvidence(
 		fixedContractStore{contract: contract},
 		&stagedContractWriter{},
-		fixedSeasonStore{season: season})
+		fixedSeasonStore{season: season},
+		&evidenceBlobFake{exists: map[string]bool{"evidence/contract-1/stored": true}})
 	auth := missionhttp.NewAuthMiddleware(roleSessionFake{playerID: "player-1"})
 	server := httptest.NewServer(auth.Authenticate(missionhttp.ConfirmEvidenceHandler(app)))
 	defer server.Close()
 
 	// Act — obj-b belongs to phase 2 while phase 1 is incomplete
-	resp := postEvidence(t, server, `{"objective_id":"obj-b","unit_id":"u1","season_id":"season-1"}`)
+	resp := postEvidence(t, server, `{"objective_id":"obj-b","unit_id":"u1","season_id":"season-1","media_uri":"evidence/contract-1/stored"}`)
 
 	// Assert
 	require.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)

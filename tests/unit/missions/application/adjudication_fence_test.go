@@ -17,13 +17,15 @@ func TestConfirmObjective_AdjudicationFencePropagatesNamedConflict(t *testing.T)
 	// Arrange
 	persisted := inProgressContract(t)
 	writer := &adjudicationConflictWriter{err: domain.ErrSeasonAdjudicating}
-	handler := application.NewConfirmObjectiveHandler(
+	evidence, uris := storedEvidence(persisted.ContractID, "e1")
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(
 		mcfContractStore{contract: persisted}, writer,
 		mcfSeasonStore{"season-1": domain.NewSeason("season-1", domain.SeasonStateFreezing)},
+		evidence,
 	)
 
 	// Act
-	_, err := handler.Handle(lifecycleMember(t), persisted.ContractID, "obj-a", "unit-1", "season-1")
+	_, err := handler.HandleWithMedia(lifecycleMember(t), persisted.ContractID, "obj-a", "unit-1", uris[0], "season-1")
 
 	// Assert
 	require.ErrorIs(t, err, domain.ErrSeasonAdjudicating)

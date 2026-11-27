@@ -2,7 +2,8 @@ package domain
 
 // Submit transitions an in-progress contract to PENDING_VALIDATION so a
 // reviewer adjudicates the staged credits. Only a roster member may submit,
-// at any confirmation level — partial fulfillment is administrable.
+// at any confirmation level — partial fulfillment is administrable as long
+// as at least one staged credit carries a media evidence reference.
 func (c *MissionContract) Submit(identity CallerIdentity) error {
 	if !c.CanSubmitEvidence(identity) {
 		return ErrCallerNotAuthorized
@@ -13,8 +14,22 @@ func (c *MissionContract) Submit(identity CallerIdentity) error {
 	if c.State != ContractInProgress {
 		return ErrContractStateInvalid
 	}
+	if !c.hasStagedEvidence() {
+		return ErrContractEvidenceRequired
+	}
 	c.State = ContractPendingValidation
 	return nil
+}
+
+// hasStagedEvidence reports whether any pending credit carries a stored
+// media reference — the minimum evidence bar for entering review.
+func (c *MissionContract) hasStagedEvidence() bool {
+	for _, credit := range c.pendingCredits {
+		if credit.MediaURI != "" {
+			return true
+		}
+	}
+	return false
 }
 
 // Approve transitions a pending contract to COMPLETED and materializes every

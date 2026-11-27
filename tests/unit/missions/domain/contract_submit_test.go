@@ -34,13 +34,62 @@ func TestContractSubmit_InProgressBecomesPendingValidation(t *testing.T) {
 	require.False(t, contract.State.IsActive(), "expected pending validation to release the active slot")
 }
 
-func TestContractSubmit_AllowsPartialConfirmation(t *testing.T) {
+// TEST-0063-DOM-001: submit requires at least one staged credit carrying a
+// media reference; partial progress with evidence still submits.
+func TestContractSubmit_RejectsInProgressWithoutEvidence(t *testing.T) {
+	// Arrange
 	contract := rewardedContract(t, "c-1", 200)
 
+	// Act
 	err := contract.Submit(member(t))
 
+	// Assert
+	require.ErrorIs(t, err, domain.ErrContractEvidenceRequired)
+	require.Equal(t, domain.ContractInProgress, contract.State)
+}
+
+// TEST-0063-DOM-001: a staged legacy credit without a media reference does
+// not satisfy the evidence requirement.
+func TestContractSubmit_RejectsLegacyOnlyStagedCredit(t *testing.T) {
+	// Arrange
+	base := rewardedContract(t, "c-1", 200)
+	season := domain.NewSeason("season-1", domain.SeasonStateActive)
+	legacy, err := base.Confirm("obj-a", "unit-1", season)
+	require.NoError(t, err)
+	contract := domain.NewMissionContractFromState(
+		base.ContractID, base.Offer, base.Roster(), domain.ContractInProgress,
+		base.RosterFrozen(), "", base.SeasonID,
+		base.Confirmations(), nil, []domain.MeritCredit{legacy},
+	)
+	contract.Terms = base.Terms
+
+	// Act
+	err = contract.Submit(member(t))
+
+	// Assert
+	require.ErrorIs(t, err, domain.ErrContractEvidenceRequired)
+	require.Equal(t, domain.ContractInProgress, contract.State)
+}
+
+// TEST-0063-DOM-001: one media-backed staged credit submits even while
+// objectives remain unconfirmed.
+func TestContractSubmit_AllowsPartialProgressWithEvidence(t *testing.T) {
+	// Arrange
+	contract := rewardedContract(t, "c-1", 200)
+	extra := domain.NewObjectiveNamed("obj-b", "Segundo objetivo", "", "BOUNTY", 20, 0, 0)
+	terms, err := domain.NewContractTerms(append(contract.Terms.Objectives(), extra))
+	require.NoError(t, err)
+	contract.Terms = terms
+	confirmObjective(t, contract, "obj-a")
+
+	// Act
+	err = contract.Submit(member(t))
+
+	// Assert
 	require.NoError(t, err)
 	require.Equal(t, domain.ContractPendingValidation, contract.State)
+	require.Less(t, len(contract.Confirmations()), len(contract.Terms.Objectives()),
+		"objectives remain unconfirmed — partial progress still submits")
 }
 
 func TestContractSubmit_RejectsOutsider(t *testing.T) {

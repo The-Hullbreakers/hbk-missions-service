@@ -48,6 +48,19 @@ func inProgressReviewContract() *domain.MissionContract {
 	return contract
 }
 
+// inProgressReviewContractWithEvidence returns a started contract with one
+// media-backed staged credit, satisfying the submit evidence requirement.
+func inProgressReviewContractWithEvidence(t *testing.T) *domain.MissionContract {
+	t.Helper()
+	contract := inProgressReviewContract()
+	season := domain.NewSeason("season-1", domain.SeasonStateActive)
+	media, err := domain.NewMediaURI("evidence/contract-1/u1", "contract-1")
+	require.NoError(t, err)
+	_, err = contract.ConfirmWithMedia("objective-1", "u1", media, season)
+	require.NoError(t, err)
+	return contract
+}
+
 // pendingReviewContract returns a submitted contract with one staged credit.
 func pendingReviewContract(t *testing.T) *domain.MissionContract {
 	t.Helper()
@@ -56,7 +69,9 @@ func pendingReviewContract(t *testing.T) *domain.MissionContract {
 	member, _ := domain.NewCallerIdentity("player-1", nil, nil)
 	_ = contract.Start(member)
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	_, err := contract.Confirm("objective-1", "unit-1", season)
+	media, err := domain.NewMediaURI("evidence/contract-1/unit-1", "contract-1")
+	require.NoError(t, err)
+	_, err = contract.ConfirmWithMedia("objective-1", "unit-1", media, season)
 	require.NoError(t, err)
 	err = contract.Submit(member)
 	require.NoError(t, err)
@@ -64,7 +79,7 @@ func pendingReviewContract(t *testing.T) *domain.MissionContract {
 }
 
 func TestContractReview_SubmitEndpointMovesToPending(t *testing.T) {
-	store := &reviewContractStore{contract: inProgressReviewContract()}
+	store := &reviewContractStore{contract: inProgressReviewContractWithEvidence(t)}
 	server := reviewServer(boundarySession{playerID: "player-1"}, store)
 	defer server.Close()
 
@@ -73,6 +88,27 @@ func TestContractReview_SubmitEndpointMovesToPending(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, resp.StatusCode)
 	require.False(t, store.saved == nil || store.saved.State != domain.ContractPendingValidation)
+}
+
+// TEST-0063-HTTP-002: an in-progress contract with no media-backed staged
+// credit cannot enter review — 422 EVIDENCE_REQUIRED, nothing persisted.
+func TestContractReview_SubmitEndpointRejectsWithoutEvidence(t *testing.T) {
+	// Arrange
+	store := &reviewContractStore{contract: inProgressReviewContract()}
+	server := reviewServer(boundarySession{playerID: "player-1"}, store)
+	defer server.Close()
+
+	// Act
+	resp := postLifecycle(t, server, "submit")
+	defer resp.Body.Close()
+
+	// Assert
+	require.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+	var body map[string]string
+	err := json.NewDecoder(resp.Body).Decode(&body)
+	require.NoError(t, err)
+	require.Equal(t, "EVIDENCE_REQUIRED", body["code"])
+	require.False(t, store.saved != nil || store.contract.State != domain.ContractInProgress)
 }
 
 func TestContractReview_SubmitEndpointRejectsOutsider(t *testing.T) {

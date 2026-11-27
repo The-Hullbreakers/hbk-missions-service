@@ -42,6 +42,7 @@ func TestTeamLeaveJourney_SurvivorCompletesAfterDeparture(t *testing.T) {
 		TableName:   table,
 		DynamoDB:    client,
 		UserSession: tokenSession{},
+		Evidence:    &blobStoreFake{stored: map[string]bool{"evidence/contract-1/e1": true}},
 	})
 	require.NoError(t, err)
 	ts := httptest.NewServer(server)
@@ -73,7 +74,7 @@ func TestTeamLeaveJourney_SurvivorCompletesAfterDeparture(t *testing.T) {
 
 	// Survivor confirms the objective against frozen terms.
 	if status := post(survivor, "/api/v1/missions/contracts/contract-1/evidence",
-		`{"objective_id":"objective-1","unit_id":"unit-1","season_id":"season-1"}`); status != http.StatusCreated {
+		`{"objective_id":"objective-1","unit_id":"unit-1","season_id":"season-1","media_uri":"evidence/contract-1/e1"}`); status != http.StatusCreated {
 		require.Failf(t, "unexpected failure", "survivor evidence: expected 201, got %d", status)
 	}
 

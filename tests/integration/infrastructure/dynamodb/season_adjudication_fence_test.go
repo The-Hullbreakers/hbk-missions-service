@@ -48,10 +48,10 @@ func TestAdjudicationFence_LockedSeasonCannotStageContractCredit(t *testing.T) {
 	require.NoError(t, err)
 	_, err = missiondynamo.NewAdjudicationLock(client, table).Acquire(seasonID)
 	require.NoError(t, err)
-	handler := application.NewConfirmObjectiveHandler(contractStore, contractStore, seasonStore)
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(contractStore, contractStore, seasonStore, stubEvidenceReader{})
 
 	// Act
-	_, err = handler.Handle(member, contractID, "objective-1", "unit-1", seasonID)
+	_, err = handler.HandleWithMedia(member, contractID, "objective-1", "unit-1", "evidence/"+contractID+"/e1", seasonID)
 
 	// Assert
 	assert.ErrorIs(t, err, domain.ErrSeasonAdjudicating)

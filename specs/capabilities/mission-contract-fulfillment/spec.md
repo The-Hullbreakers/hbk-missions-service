@@ -2,8 +2,8 @@
 capability_id: CAP-MISSION-CONTRACT-FULFILLMENT
 title: Mission Contract Fulfillment
 status: current
-last_consolidated_change: CHG-0055-local-season-preview-scenarios
-updated: 2026-11-23
+last_consolidated_change: CHG-0063-required-mission-evidence
+updated: 2026-11-27
 ---
 
 # Mission Contract Fulfillment
@@ -87,7 +87,7 @@ Given phase 1 has an optional objective unmet and all mandatory objectives acros
 
 ### REQ-MCF-003 — Confirm countable units
 
-A unit is valid only when the contract was active, the objective was eligible, it occurred inside the window, the recipient was entitled, the evidence or source was accepted, and the supplied season matches the contract's bound season. When `media_uri` is supplied, it must reference the contract's `evidence/{contract_id}/` prefix and resolve to an existing stored object; the reference is persisted on the resulting `MeritCredit`. The confirmation returns the computed `MeritCredit` projection but does **not** persist it to the ledger — the credit stays staged on the contract until a reviewer approves it (`REQ-MCF-020`).
+A unit is valid only when the contract was active, the objective was eligible, it occurred inside the window, the recipient was entitled, the evidence or source was accepted, and the supplied season matches the contract's bound season. For a public confirmation, `media_uri` is required and must reference the contract's `evidence/{contract_id}/` prefix and resolve to an existing stored object; the reference is persisted on the resulting `MeritCredit`. The confirmation returns the computed `MeritCredit` projection but does **not** persist it to the ledger — the credit stays staged on the contract until a reviewer approves it (`REQ-MCF-020`).
 
 #### SCN-MCF-001 — Credit each confirmed bounty
 
@@ -100,6 +100,10 @@ Given a contract is bound to `season-2026-q4` and a request supplies `season-202
 #### SCN-MCF-EVIDENCE-MEDIA — Confirmation carries the media reference
 
 Given `player-1` uploaded an object under `evidence/contract-1/{object_id}`, when they confirm `unit_id` with that `media_uri`, then the credit records `media_uri` and the `201` response echoes it.
+
+#### SCN-MCF-MEDIA-REQUIRED — Confirming without stored evidence is rejected
+
+Given an authorized member of an in-progress contract, when they confirm a unit with `media_uri` omitted or empty, then the service returns `422` `EVIDENCE_REQUIRED` and stages no credit.
 
 #### SCN-MCF-EVIDENCE-MEDIA-PHANTOM — Phantom object rejected
 
@@ -310,7 +314,7 @@ Given a member requests an upload grant with `content_type: application/x-msdown
 
 ### REQ-MCF-015 — Attach media to an evidence confirmation
 
-`POST /api/v1/missions/contracts/{contract_id}/evidence` accepts an optional `media_uri`. When present, it must reference this contract's prefix (`evidence/{contract_id}/`) and the object must exist in storage; otherwise the response is `422` with `EVIDENCE_MEDIA_INVALID`. On success the `media_uri` is stored on the recorded `MeritCredit` and echoed in the `201` response. Evidence without `media_uri` is unchanged.
+`POST /api/v1/missions/contracts/{contract_id}/evidence` requires a `media_uri` referencing an object already stored through this contract's existing upload-grant flow under `evidence/{contract_id}/`. An omitted or empty `media_uri` resolves `422` with `EVIDENCE_REQUIRED`; a foreign or unknown object resolves `422` with `EVIDENCE_MEDIA_INVALID`. On success the `media_uri` is stored on the recorded `MeritCredit` and echoed in the `201` response.
 
 ### REQ-MCF-016 — Read grant for stored evidence media
 
@@ -338,7 +342,11 @@ Given an origin not in the CORS allowlist, when a page on that origin attempts t
 
 ### REQ-MCF-019 — Submit a contract for review
 
-`POST /api/v1/missions/contracts/{contract_id}/submit` transitions an `IN_PROGRESS` contract to `PENDING_VALIDATION` for a roster member still active on it (`403 FORBIDDEN` outsider/departed; `422` `CONTRACT_STATE_INVALID` or `CONTRACT_NOT_IN_PROGRESS` otherwise). No minimum confirmation threshold — partial fulfillment is administrable. Submitting releases the member's active-contract slot while the template stays hidden (`REQ-MB-008`).
+`POST /api/v1/missions/contracts/{contract_id}/submit` transitions an `IN_PROGRESS` contract to `PENDING_VALIDATION` for a roster member still active on it (`403 FORBIDDEN` outsider/departed; `422` `CONTRACT_STATE_INVALID` or `CONTRACT_NOT_IN_PROGRESS` otherwise). At least one staged credit must carry a stored media reference; otherwise the service returns `422` `EVIDENCE_REQUIRED` and the contract remains `IN_PROGRESS`. Partial fulfillment remains eligible, and contracts already pending review are unchanged. Submitting releases the member's active-contract slot while the template stays hidden (`REQ-MB-008`).
+
+#### SCN-MCF-SUBMIT-EVIDENCE — Review requires media-backed evidence
+
+Given an `IN_PROGRESS` contract with no staged credit, or only staged credits without a media reference, when a member submits, then the response is `422` `EVIDENCE_REQUIRED` and the contract stays `IN_PROGRESS`. Given at least one staged credit with a stored media reference and unconfirmed objectives remaining, when a member submits, then the contract transitions to `PENDING_VALIDATION`.
 
 #### SCN-MCF-SUBMIT-OUTSIDER — Outsider cannot submit
 
@@ -530,11 +538,11 @@ Given the reviewer selects the local mid-season dataset, when a participating me
 
 - `GET /api/v1/missions/contracts` returns the caller's contracts (filters: `season_id`, `status`; `401` without a valid token, `400` `INVALID_QUERY_PARAMETER` for unknown filters, `200` with the contract list including frozen `Terms` and an embedded `Offer` whose `objectives`/`merit_summary` are derived from those terms).
 - `POST /api/v1/missions/contracts/{contract_id}/evidence`
-- Request body: `objective_id`, `unit_id`, `season_id`, optional `media_uri`.
+- Request body: `objective_id`, `unit_id`, `season_id`, required `media_uri`.
 - `POST /api/v1/missions/contracts/{contract_id}/evidence/upload-url` — `201 {upload_url, media_uri}`; `400` disallowed type/oversize; `403` outsider; `422` not-in-progress.
 - `POST /api/v1/missions/contracts/{contract_id}/evidence/media-url` — `200 {download_url}`; `403` non-reviewer; `422` `EVIDENCE_MEDIA_INVALID`.
 - `POST /api/v1/missions/contracts/{contract_id}/start` — roster member transitions `ACCEPTED` to `IN_PROGRESS`.
-- `POST /api/v1/missions/contracts/{contract_id}/submit` — roster member transitions `IN_PROGRESS` to `PENDING_VALIDATION`; the active slot is released.
+- `POST /api/v1/missions/contracts/{contract_id}/submit` — roster member transitions `IN_PROGRESS` to `PENDING_VALIDATION` when at least one staged credit is media-backed; otherwise `422` `EVIDENCE_REQUIRED`; the active slot is released.
 - `POST /api/v1/missions/contracts/{contract_id}/approve` — `admin`/`moderator` transitions `PENDING_VALIDATION` to `COMPLETED`; one atomic write materializes the staged credits plus the frozen `completion_reward` credit (`objective_id` `COMPLETION`) when non-zero and fully confirmed; `200` returns the written credits.
 - `POST /api/v1/missions/contracts/{contract_id}/reject` — `admin`/`moderator` transitions `PENDING_VALIDATION` to terminal `DISQUALIFIED` with zero credits.
 - `GET /api/v1/missions/review-queue` — `admin`/`moderator` lists `PENDING_VALIDATION` contracts; entries carry the contract summary plus `confirmed_count`/`pending_credits`; `403` non-reviewer, `200` `[]` when empty.
@@ -544,7 +552,7 @@ Given the reviewer selects the local mid-season dataset, when a participating me
 - `400 Bad Request` for invalid JSON.
 - `401 Unauthorized` for missing or invalid token.
 - `403 Forbidden` for caller without required role.
-- `422 Unprocessable Entity` for domain errors with a stable `code` (`CONTRACT_NOT_FOUND`, `CONTRACT_NOT_IN_PROGRESS`, `CONTRACT_NOT_PENDING_VALIDATION`, `CONTRACT_STATE_INVALID`, `CONTRACT_TERMINAL`, `OBJECTIVE_NOT_IN_CONTRACT`, `UNIT_LIMIT_EXCEEDED`, `CONTRACT_EXPIRED`, `SEASON_NOT_ACTIVE`, `SEASON_MISMATCH`, `CATEGORY_MISMATCH`, `ROSTER_EMPTY`, `DUPLICATE_CONFIRMATION`, `INVALID_REQUEST`).
+- `422 Unprocessable Entity` for domain errors with a stable `code` (`CONTRACT_NOT_FOUND`, `CONTRACT_NOT_IN_PROGRESS`, `CONTRACT_NOT_PENDING_VALIDATION`, `CONTRACT_STATE_INVALID`, `CONTRACT_TERMINAL`, `OBJECTIVE_NOT_IN_CONTRACT`, `UNIT_LIMIT_EXCEEDED`, `CONTRACT_EXPIRED`, `SEASON_NOT_ACTIVE`, `SEASON_MISMATCH`, `CATEGORY_MISMATCH`, `ROSTER_EMPTY`, `DUPLICATE_CONFIRMATION`, `INVALID_REQUEST`, `EVIDENCE_REQUIRED`, `EVIDENCE_MEDIA_INVALID`).
 - `503 Service Unavailable` with `MEMBERSHIP_UNAVAILABLE` when the Party Manager membership source cannot answer a teammate check; acceptance always fails closed.
 
 ## Stable Production Files

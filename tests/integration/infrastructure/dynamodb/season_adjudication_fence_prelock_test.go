@@ -35,10 +35,10 @@ func TestAdjudicationFence_FreezingBeforeLockAllowsInProgressCredit(t *testing.T
 	require.NoError(t, err)
 	require.NoError(t, contract.Start(member))
 	require.NoError(t, contracts.Save(contract))
-	handler := application.NewConfirmObjectiveHandler(contracts, contracts, seasons)
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(contracts, contracts, seasons, stubEvidenceReader{})
 
 	// Act
-	credit, err := handler.Handle(member, contractID, "objective-1", "unit-1", seasonID)
+	credit, err := handler.HandleWithMedia(member, contractID, "objective-1", "unit-1", "evidence/"+contractID+"/e1", seasonID)
 
 	// Assert
 	require.NoError(t, err)

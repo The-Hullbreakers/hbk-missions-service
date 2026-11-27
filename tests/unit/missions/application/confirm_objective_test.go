@@ -43,28 +43,33 @@ func (s failingSeasonStore) Get(string) (domain.Season, error) {
 }
 
 func TestConfirmObjectiveHandler_ReturnsContractStoreError(t *testing.T) {
-	handler := application.NewConfirmObjectiveHandler(
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(
 		failingContractStore{}, fixedContractWriter{},
 		fixedSeasonStore{season: domain.NewSeason("season-1", domain.SeasonStateActive)},
+		&fakeEvidenceStore{},
 	)
-	_, err := handler.Handle(testIdentity(t, "player-1", nil), "contract-1", "objective-1", "target-1", "season-1")
+	_, err := handler.HandleWithMedia(testIdentity(t, "player-1", nil), "contract-1", "objective-1", "target-1", "evidence/contract-1/x", "season-1")
 	require.Error(t, err)
 }
 
 func TestConfirmObjectiveHandler_ReturnsSeasonStoreError(t *testing.T) {
-	handler := application.NewConfirmObjectiveHandler(
-		fixedContractStore{contract: confirmableContract(t)}, fixedContractWriter{}, failingSeasonStore{},
+	contract := confirmableContract(t)
+	store, uris := storedEvidence(contract.ContractID, "e1")
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(
+		fixedContractStore{contract: contract}, fixedContractWriter{}, failingSeasonStore{}, store,
 	)
-	_, err := handler.Handle(lifecycleMember(t), "contract-1", "obj-a", "unit-1", "season-1")
+	_, err := handler.HandleWithMedia(lifecycleMember(t), "contract-1", "obj-a", "unit-1", uris[0], "season-1")
 	require.Error(t, err)
 }
 
 func TestConfirmObjectiveHandler_ReturnsContractWriterError(t *testing.T) {
+	contract := confirmableContract(t)
+	store, uris := storedEvidence(contract.ContractID, "e1")
 	writer := &atomicWriter{err: errors.New("contract writer unavailable")}
-	handler := application.NewConfirmObjectiveHandler(
-		fixedContractStore{contract: confirmableContract(t)}, writer,
-		fixedSeasonStore{season: domain.NewSeason("season-1", domain.SeasonStateActive)},
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(
+		fixedContractStore{contract: contract}, writer,
+		fixedSeasonStore{season: domain.NewSeason("season-1", domain.SeasonStateActive)}, store,
 	)
-	_, err := handler.Handle(lifecycleMember(t), "contract-1", "obj-a", "unit-1", "season-1")
+	_, err := handler.HandleWithMedia(lifecycleMember(t), "contract-1", "obj-a", "unit-1", uris[0], "season-1")
 	require.Error(t, err)
 }
