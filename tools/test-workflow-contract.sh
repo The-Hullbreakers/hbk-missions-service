@@ -72,6 +72,13 @@ grep -Fxq '    Type: AWS::ApiGatewayV2::Route' <<< "$statistics_route" &&
   grep -Fxq '      RouteKey: GET /api/v1/missions/seasons/{season_id}/statistics' <<< "$statistics_route" ||
   fail 'template missing season statistics GET route or shared integration'
 
+# TEST-STG-OFFER-FACETS-ROUTE-001: Gateway exposes the authenticated offer facets route.
+facets_route=$(sed -n '/^  MissionsOfferFacetsRoute:$/,+4p' "$TEMPLATE")
+grep -Fxq '    Type: AWS::ApiGatewayV2::Route' <<< "$facets_route" &&
+  grep -Fxq '      <<: *RouteProps' <<< "$facets_route" &&
+  grep -Fxq '      RouteKey: GET /api/v1/missions/offers/facets' <<< "$facets_route" ||
+  fail 'template missing offer facets GET route or shared integration'
+
 # No deploy secrets on pull requests is enforced by if-conditions on push/dispatch
 require "github.ref == 'refs/heads/staging'"
 require "github.ref == 'refs/heads/main'"

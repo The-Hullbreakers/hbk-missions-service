@@ -275,6 +275,12 @@ Resources:
       <<: *RouteProps
       RouteKey: GET /api/v1/missions/offers
 
+  MissionsOfferFacetsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: GET /api/v1/missions/offers/facets
+
   MissionsListContractsRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
