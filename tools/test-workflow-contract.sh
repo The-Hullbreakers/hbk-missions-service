@@ -65,6 +65,13 @@ grep -q 'AWS::ApiGatewayV2::Route' "$TEMPLATE" || fail "template missing ApiGate
 sed -n '/^  MissionsCurrentSeasonRoute:$/,+4p' "$TEMPLATE" |
   grep -Fxq '      RouteKey: GET /api/v1/missions/seasons/current' || fail 'template missing current-season GET route'
 
+# TEST-STG-SEASON-STATISTICS-ROUTE-001: Gateway exposes the authenticated season statistics route.
+statistics_route=$(sed -n '/^  MissionsSeasonStatisticsRoute:$/,+4p' "$TEMPLATE")
+grep -Fxq '    Type: AWS::ApiGatewayV2::Route' <<< "$statistics_route" &&
+  grep -Fxq '      <<: *RouteProps' <<< "$statistics_route" &&
+  grep -Fxq '      RouteKey: GET /api/v1/missions/seasons/{season_id}/statistics' <<< "$statistics_route" ||
+  fail 'template missing season statistics GET route or shared integration'
+
 # No deploy secrets on pull requests is enforced by if-conditions on push/dispatch
 require "github.ref == 'refs/heads/staging'"
 require "github.ref == 'refs/heads/main'"

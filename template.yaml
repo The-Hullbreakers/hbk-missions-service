@@ -311,6 +311,12 @@ Resources:
       <<: *RouteProps
       RouteKey: GET /api/v1/missions/seasons/{season_id}/standings/overall
 
+  MissionsSeasonStatisticsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      <<: *RouteProps
+      RouteKey: GET /api/v1/missions/seasons/{season_id}/statistics
+
   MissionsFreezeSeasonRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
