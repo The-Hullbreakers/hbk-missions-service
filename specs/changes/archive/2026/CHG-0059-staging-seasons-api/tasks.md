@@ -41,4 +41,9 @@ updated: 2026-11-26
       no-Docker scope.
 - [x] BLUE — no refactor needed; security/cost noted: existing route auth
       reused, no IAM changes, one fewer unauthorized init call.
-- [ ] Final gate / consolidation — not claimed; pending lead approval.
+- [x] Final gate / consolidation — explicit user approval received
+      2026-11-26; verified deployed commit `212088d` with CI run
+      45893405142 all green (SDD, unit, integration, SAM build, staging
+      deploy; prod skipped); archived at
+      `specs/changes/archive/2026/CHG-0059-staging-seasons-api/`; no
+      canonical spec change (`canonical_action: not_affected`).

@@ -20,6 +20,7 @@
 | Change | Canonical action | Risk | Archived |
 | --- | --- | --- | --- |
 | [CHG-0058-competitive-live-catalog](./changes/archive/2026/CHG-0058-competitive-live-catalog/change.md) | Not affected — local bilingual catalog only | L1 | 2026-11-26 |
+| [CHG-0059-staging-seasons-api](./changes/archive/2026/CHG-0059-staging-seasons-api/change.md) | Not affected — restore staging wiring for the existing current-season contract | L2 | 2026-11-26 |
 | [CHG-0056-season-overall-standings](./changes/archive/2026/CHG-0056-season-overall-standings/change.md) | Modify `seasonal-category-competition` | L3 | 2026-11-26 |
 | [CHG-0055-local-season-preview-scenarios](./changes/archive/2026/CHG-0055-local-season-preview-scenarios/change.md) | Modify `seasonal-category-competition`, `mission-board`, `mission-contract-fulfillment` | L3 | 2026-11-23 |
 | [CHG-0054-localize-mission-content](./changes/archive/2026/CHG-0054-localize-mission-content/change.md) | Modify `mission-board`, `mission-contract-fulfillment` | L3 | 2026-11-16 |
