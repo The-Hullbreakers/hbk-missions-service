@@ -21,7 +21,9 @@ func pendingTeamFixture(t *testing.T, store *missiondynamo.ContractStore) {
 	require.NoError(t, err)
 	contract.Terms = terms
 	require.NoError(t, contract.Start(caller(t, "player-1")))
-	_, err = contract.Confirm("objective-1", "unit-1", domain.NewSeason("season-1", domain.SeasonStateActive))
+	media, err := domain.NewMediaURI("evidence/contract-1/unit-1", "contract-1")
+	require.NoError(t, err)
+	_, err = contract.ConfirmWithMedia("objective-1", "unit-1", media, domain.NewSeason("season-1", domain.SeasonStateActive))
 	require.NoError(t, err)
 	require.NoError(t, contract.Submit(caller(t, "player-1")))
 	require.NoError(t, store.Save(contract))

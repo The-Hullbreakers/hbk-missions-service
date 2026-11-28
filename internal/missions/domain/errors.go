@@ -60,6 +60,7 @@ var (
 	ErrNotInvited                     = errors.New("caller is not a pending invitee")
 	ErrInvitationNotPending           = errors.New("invitation is not pending")
 	ErrUnitNotStaged                  = errors.New("unit is not staged for review")
+	ErrContractEvidenceRequired       = errors.New("mission evidence is required")
 	ErrPlacementFactInvalid           = errors.New("placement fact is invalid")
 	ErrTeamFactRequiresMembers        = errors.New("team placement fact requires frozen member ids")
 )

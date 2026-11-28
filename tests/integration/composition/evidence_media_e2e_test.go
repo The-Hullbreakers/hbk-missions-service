@@ -92,6 +92,12 @@ func TestEvidenceMediaJourney_EndToEnd(t *testing.T) {
 		require.Failf(t, "unexpected failure", "start: expected 200, got %d %v", status, body)
 	}
 
+	// A confirmation without a media reference is rejected before staging.
+	if status, body := post(player, "/api/v1/missions/contracts/"+contractID+"/evidence",
+		`{"objective_id":"objective-1","unit_id":"unit-0","season_id":"season-1"}`); status != http.StatusUnprocessableEntity || body["code"] != "EVIDENCE_REQUIRED" {
+		require.Failf(t, "unexpected failure", "missing media: expected 422 EVIDENCE_REQUIRED, got %d %v", status, body)
+	}
+
 	// Request an upload grant.
 	status, body = post(player, "/api/v1/missions/contracts/"+contractID+"/evidence/upload-url",
 		`{"content_type":"video/mp4","content_length":1048576}`)
@@ -126,5 +132,13 @@ func TestEvidenceMediaJourney_EndToEnd(t *testing.T) {
 	if status, _ := post(player, "/api/v1/missions/contracts/"+contractID+"/evidence/media-url",
 		`{"media_uri":"`+mediaURI+`"}`); status != http.StatusForbidden {
 		require.Failf(t, "unexpected failure", "media-url member: expected 403, got %d", status)
+	}
+
+	// The media-backed contract enters review and is adjudicated.
+	if status, body := post(player, "/api/v1/missions/contracts/"+contractID+"/submit", `{}`); status != http.StatusOK {
+		require.Failf(t, "unexpected failure", "submit: expected 200, got %d %v", status, body)
+	}
+	if status, body := post(reviewer, "/api/v1/missions/contracts/"+contractID+"/approve", `{}`); status != http.StatusOK {
+		require.Failf(t, "unexpected failure", "approve: expected 200, got %d %v", status, body)
 	}
 }

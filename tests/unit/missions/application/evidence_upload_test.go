@@ -34,6 +34,19 @@ func (f *fakeEvidenceStore) Exists(uri domain.MediaURI) (bool, error) {
 	return f.exists[string(uri)], nil
 }
 
+// storedEvidence returns a fake evidence store where the given contract's
+// object keys are already uploaded, plus the matching media URIs.
+func storedEvidence(contractID string, objects ...string) (*fakeEvidenceStore, []string) {
+	store := &fakeEvidenceStore{exists: map[string]bool{}}
+	uris := make([]string, 0, len(objects))
+	for _, object := range objects {
+		uri := "evidence/" + contractID + "/" + object
+		store.exists[uri] = true
+		uris = append(uris, uri)
+	}
+	return store, uris
+}
+
 func (f *fakeEvidenceStore) PresignRead(uri domain.MediaURI) (application.ReadGrant, error) {
 	f.readURI = uri
 	return application.ReadGrant{URL: "https://signed.example/read"}, f.readErr

@@ -97,6 +97,7 @@ func TestCompositionServer_HealthAndConfirm(t *testing.T) {
 		TableName:   "hbk-missions-composition",
 		DynamoDB:    client,
 		UserSession: fakeUserSession{},
+		Evidence:    &blobStoreFake{stored: map[string]bool{"evidence/contract-1/e1": true}},
 	})
 	if err != nil {
 		t.Fatalf("could not create server: %v", err)
@@ -114,7 +115,7 @@ func TestCompositionServer_HealthAndConfirm(t *testing.T) {
 		t.Fatalf("expected 200 from healthz, got %d", resp.StatusCode)
 	}
 
-	body := `{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1","tenant_id":"tenant-1"}`
+	body := `{"objective_id":"objective-1","unit_id":"target-1","season_id":"season-1","media_uri":"evidence/contract-1/e1","tenant_id":"tenant-1"}`
 	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/v1/missions/contracts/contract-1/evidence", strings.NewReader(body))
 	if err != nil {
 		t.Fatalf("could not create request: %v", err)

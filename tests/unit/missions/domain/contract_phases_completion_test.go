@@ -36,7 +36,9 @@ func TestContractApprove_PhasedMandatoryCompletionGrantsReward(t *testing.T) {
 	contract := phasedRewardFixture(t)
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
 	for _, objectiveID := range []string{"obj-a", "obj-b"} {
-		_, err := contract.Confirm(objectiveID, "u1", season)
+		media, err := domain.NewMediaURI("evidence/"+contract.ContractID+"/"+objectiveID, contract.ContractID)
+		require.NoError(t, err)
+		_, err = contract.ConfirmWithMedia(objectiveID, "u1", media, season)
 		require.NoError(t, err)
 	}
 	member := contractMember(t, "player-1")

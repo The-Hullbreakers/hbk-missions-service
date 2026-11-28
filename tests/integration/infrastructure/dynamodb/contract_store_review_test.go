@@ -22,7 +22,9 @@ func pendingStoreFixture(t *testing.T, store *missiondynamo.ContractStore) *doma
 	contract.Terms = terms
 	member, _ := domain.NewCallerIdentity("player-1", nil, nil)
 	_ = contract.Start(member)
-	_, err := contract.Confirm("objective-1", "unit-1", domain.NewSeason("season-1", domain.SeasonStateActive))
+	media, err := domain.NewMediaURI("evidence/contract-1/unit-1", "contract-1")
+	require.NoError(t, err)
+	_, err = contract.ConfirmWithMedia("objective-1", "unit-1", media, domain.NewSeason("season-1", domain.SeasonStateActive))
 	require.NoError(t, err)
 	err = contract.Submit(member)
 	require.NoError(t, err)

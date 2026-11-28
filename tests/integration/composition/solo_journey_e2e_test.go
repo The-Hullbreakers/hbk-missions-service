@@ -24,10 +24,12 @@ func TestSoloContractJourney_FrozenTermsEndToEnd(t *testing.T) {
 	require.NoError(t, err)
 	clearMissionsTable(t, ctx, client, "hbk-missions-composition")
 
+	blobs := &blobStoreFake{stored: map[string]bool{}}
 	server, err := missioncomposition.NewServer(missioncomposition.Config{
 		TableName:   "hbk-missions-composition",
 		DynamoDB:    client,
 		UserSession: tokenSession{},
+		Evidence:    blobs,
 	})
 	require.NoError(t, err)
 	ts := httptest.NewServer(server)
@@ -81,22 +83,25 @@ func TestSoloContractJourney_FrozenTermsEndToEnd(t *testing.T) {
 		require.Failf(t, "unexpected failure", "start: expected 200, got %d %v", status, body)
 	}
 
-	// Evidence pays merit_per_unit + bonus from frozen terms.
+	// Evidence pays merit_per_unit + bonus from frozen terms; a stored media
+	// reference is required for every confirmation.
+	mediaURI := "evidence/" + contractID + "/e1"
+	blobs.stored[mediaURI] = true
 	status, body = post(player, "/api/v1/missions/contracts/"+contractID+"/evidence",
-		`{"objective_id":"objective-1","unit_id":"unit-1","season_id":"season-1"}`)
+		`{"objective_id":"objective-1","unit_id":"unit-1","season_id":"season-1","media_uri":"`+mediaURI+`"}`)
 	require.Equal(t, http.StatusCreated, status)
 	amount, _ := body["Amount"].(float64)
 	require.False(t, amount != 125)
 
 	// An objective outside the frozen terms is rejected.
 	if status, body := post(player, "/api/v1/missions/contracts/"+contractID+"/evidence",
-		`{"objective_id":"not-in-terms","unit_id":"unit-9","season_id":"season-1"}`); status != http.StatusUnprocessableEntity {
+		`{"objective_id":"not-in-terms","unit_id":"unit-9","season_id":"season-1","media_uri":"`+mediaURI+`"}`); status != http.StatusUnprocessableEntity {
 		require.Failf(t, "unexpected failure", "foreign objective: expected 422, got %d %v", status, body)
 	}
 
 	// The objective's unit_limit is two: the second unit completes the terms.
 	status, body = post(player, "/api/v1/missions/contracts/"+contractID+"/evidence",
-		`{"objective_id":"objective-1","unit_id":"unit-2","season_id":"season-1"}`)
+		`{"objective_id":"objective-1","unit_id":"unit-2","season_id":"season-1","media_uri":"`+mediaURI+`"}`)
 	require.Equal(t, http.StatusCreated, status)
 
 	// All terms confirmed → the member submits for review and the admin approves.

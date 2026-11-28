@@ -38,12 +38,7 @@ func ConfirmEvidenceHandler(app *application.ConfirmObjectiveHandler) nethttp.Ha
 			return
 		}
 
-		var credit domain.MeritCredit
-		if req.MediaURI != "" {
-			credit, err = app.HandleWithMedia(identity, contractID, req.ObjectiveID, req.UnitID, req.MediaURI, req.SeasonID)
-		} else {
-			credit, err = app.Handle(identity, contractID, req.ObjectiveID, req.UnitID, req.SeasonID)
-		}
+		credit, err := app.HandleWithMedia(identity, contractID, req.ObjectiveID, req.UnitID, req.MediaURI, req.SeasonID)
 		if err != nil {
 			status := nethttp.StatusUnprocessableEntity
 			if errors.Is(err, domain.ErrCallerNotAuthorized) {

@@ -37,7 +37,9 @@ func confirmUnits(t *testing.T, contract *domain.MissionContract, units ...strin
 	t.Helper()
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
 	for _, unit := range units {
-		_, err := contract.Confirm("obj-a", unit, season)
+		media, err := domain.NewMediaURI("evidence/"+contract.ContractID+"/"+unit, contract.ContractID)
+		require.NoError(t, err)
+		_, err = contract.ConfirmWithMedia("obj-a", unit, media, season)
 		require.NoError(t, err)
 	}
 }

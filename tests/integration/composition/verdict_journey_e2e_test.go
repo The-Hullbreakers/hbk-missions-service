@@ -3,6 +3,7 @@ package composition_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -44,6 +45,7 @@ func TestVerdictJourney_PartialApprovalPaysAcceptedUnitsOnly(t *testing.T) {
 		TableName:   "hbk-missions-composition",
 		DynamoDB:    client,
 		UserSession: tokenSession{},
+		Evidence:    &blobStoreFake{stored: map[string]bool{"evidence/contract-1/e1": true, "evidence/contract-1/e2": true}},
 	})
 	require.NoError(t, err)
 	ts := httptest.NewServer(server)
@@ -62,9 +64,10 @@ func TestVerdictJourney_PartialApprovalPaysAcceptedUnitsOnly(t *testing.T) {
 	player := token("player-1")
 	moderator := token("mod-1", "moderator")
 
-	for _, unit := range []string{"unit-1", "unit-2"} {
+	for i, unit := range []string{"unit-1", "unit-2"} {
+		media := fmt.Sprintf("evidence/contract-1/e%d", i+1)
 		if status := post(player, "/api/v1/missions/contracts/contract-1/evidence",
-			`{"objective_id":"objective-1","unit_id":"`+unit+`","season_id":"season-1"}`); status != http.StatusCreated {
+			`{"objective_id":"objective-1","unit_id":"`+unit+`","season_id":"season-1","media_uri":"`+media+`"}`); status != http.StatusCreated {
 			require.Failf(t, "unexpected failure", "evidence %s: expected 201, got %d", unit, status)
 		}
 	}

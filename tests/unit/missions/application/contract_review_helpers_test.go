@@ -47,6 +47,19 @@ func inProgressContract(t *testing.T) *domain.MissionContract {
 	return contract
 }
 
+// inProgressContractWithEvidence starts the lifecycle fixture and stages one
+// media-backed credit so Submit satisfies the evidence requirement.
+func inProgressContractWithEvidence(t *testing.T) *domain.MissionContract {
+	t.Helper()
+	contract := inProgressContract(t)
+	season := domain.NewSeason("season-1", domain.SeasonStateActive)
+	media, err := domain.NewMediaURI("evidence/"+contract.ContractID+"/u1", contract.ContractID)
+	require.NoError(t, err)
+	_, err = contract.ConfirmWithMedia("obj-a", "u1", media, season)
+	require.NoError(t, err)
+	return contract
+}
+
 // pendingContract submits an in-progress contract with one confirmed unit.
 func pendingContract(t *testing.T, reward int) *domain.MissionContract {
 	t.Helper()
@@ -55,7 +68,9 @@ func pendingContract(t *testing.T, reward int) *domain.MissionContract {
 	err := contract.Start(member)
 	require.NoError(t, err)
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	_, err = contract.Confirm("obj-a", "u1", season)
+	media, err := domain.NewMediaURI("evidence/"+contract.ContractID+"/u1", contract.ContractID)
+	require.NoError(t, err)
+	_, err = contract.ConfirmWithMedia("obj-a", "u1", media, season)
 	require.NoError(t, err)
 	err = contract.Submit(member)
 	require.NoError(t, err)

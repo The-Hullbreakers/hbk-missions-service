@@ -22,13 +22,14 @@ func TestConfirmObjectiveHandler_RosterMemberConfirms(t *testing.T) {
 	// Arrange
 	contract := newInProgressContract()
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	handler := application.NewConfirmObjectiveHandler(
+	store, uris := storedEvidence(contract.ContractID, "e1")
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(
 		fixedContractStore{contract: contract}, &atomicWriter{},
-		fixedSeasonStore{season: season})
+		fixedSeasonStore{season: season}, store)
 	identity := testIdentity(t, "player-1", nil)
 
 	// Act
-	credit, err := handler.Handle(identity, "contract-1", "objective-1", "target-1", "season-1")
+	credit, err := handler.HandleWithMedia(identity, "contract-1", "objective-1", "target-1", uris[0], "season-1")
 
 	// Assert
 	require.NoError(t, err)
@@ -40,13 +41,14 @@ func TestConfirmObjectiveHandler_RejectsOutsider(t *testing.T) {
 	contract := newInProgressContract()
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
 	writer := &atomicWriter{}
-	handler := application.NewConfirmObjectiveHandler(
+	store, uris := storedEvidence(contract.ContractID, "e1")
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(
 		fixedContractStore{contract: contract}, writer,
-		fixedSeasonStore{season: season})
+		fixedSeasonStore{season: season}, store)
 	identity := testIdentity(t, "player-2", nil)
 
 	// Act
-	_, err := handler.Handle(identity, "contract-1", "objective-1", "target-1", "season-1")
+	_, err := handler.HandleWithMedia(identity, "contract-1", "objective-1", "target-1", uris[0], "season-1")
 
 	// Assert
 	require.ErrorIs(t, err, domain.ErrCallerNotAuthorized)
@@ -57,14 +59,15 @@ func TestConfirmObjectiveHandler_PrivilegedCallerConfirms(t *testing.T) {
 	// Arrange
 	contract := newInProgressContract()
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
-	handler := application.NewConfirmObjectiveHandler(
+	store, uris := storedEvidence(contract.ContractID, "e1")
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(
 		fixedContractStore{contract: contract}, &atomicWriter{},
-		fixedSeasonStore{season: season})
+		fixedSeasonStore{season: season}, store)
 	identity, err := domain.NewCallerIdentity("ops-1", []string{"admin"}, nil)
 	require.NoError(t, err)
 
 	// Act
-	credit, err := handler.Handle(identity, "contract-1", "objective-1", "target-1", "season-1")
+	credit, err := handler.HandleWithMedia(identity, "contract-1", "objective-1", "target-1", uris[0], "season-1")
 
 	// Assert
 	require.NoError(t, err)

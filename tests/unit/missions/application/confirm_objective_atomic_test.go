@@ -38,10 +38,14 @@ func confirmableContract(t *testing.T) *domain.MissionContract {
 	return contract
 }
 
+// atomicMediaURI is the stored evidence reference seeded into confirmHandler.
+const atomicMediaURI = "evidence/c-1/e1"
+
 func confirmHandler(store application.ContractReader, writer *atomicWriter) *application.ConfirmObjectiveHandler {
-	return application.NewConfirmObjectiveHandler(
+	return application.NewConfirmObjectiveHandlerWithEvidence(
 		store, writer,
 		fixedSeasonStore{season: domain.NewSeason("season-1", domain.SeasonStateActive)},
+		&fakeEvidenceStore{exists: map[string]bool{atomicMediaURI: true}},
 	)
 }
 
@@ -71,7 +75,7 @@ func TestConfirmObjective_CommitsContractAndCreditAtomically(t *testing.T) {
 	writer := &atomicWriter{}
 	handler := confirmHandler(fixedContractStore{contract: contract}, writer)
 
-	credit, err := handler.Handle(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", "season-1")
+	credit, err := handler.HandleWithMedia(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", atomicMediaURI, "season-1")
 
 	require.NoError(t, err)
 	require.False(t, writer.calls != 1 || writer.contract == nil)
@@ -84,7 +88,7 @@ func TestConfirmObjective_FailedCommitLeavesNoPartialState(t *testing.T) {
 	writer := &atomicWriter{err: errors.New("ledger unavailable")}
 	handler := confirmHandler(fixedContractStore{contract: contract}, writer)
 
-	_, err := handler.Handle(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", "season-1")
+	_, err := handler.HandleWithMedia(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", atomicMediaURI, "season-1")
 
 	require.Error(t, err)
 	require.False(t, writer.contract != nil || writer.credit.Amount != 0)
@@ -95,9 +99,9 @@ func TestConfirmObjective_RetryAfterFailureIsIdempotent(t *testing.T) {
 	writer := &atomicWriter{err: errors.New("transient")}
 	handler := confirmHandler(reloadingContractStore{contract: contract}, writer)
 
-	_, _ = handler.Handle(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", "season-1")
+	_, _ = handler.HandleWithMedia(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", atomicMediaURI, "season-1")
 	writer.err = nil
-	credit, err := handler.Handle(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", "season-1")
+	credit, err := handler.HandleWithMedia(lifecycleMember(t), contract.ContractID, "obj-a", "unit-1", atomicMediaURI, "season-1")
 
 	require.NoError(t, err)
 	require.False(t, writer.calls != 2 || writer.credit.ConfirmationID != credit.ConfirmationID)
@@ -108,7 +112,7 @@ func TestConfirmObjective_RejectsObjectiveOutsideFrozenTerms(t *testing.T) {
 	writer := &atomicWriter{}
 	handler := confirmHandler(fixedContractStore{contract: contract}, writer)
 
-	_, err := handler.Handle(lifecycleMember(t), contract.ContractID, "obj-z", "unit-1", "season-1")
+	_, err := handler.HandleWithMedia(lifecycleMember(t), contract.ContractID, "obj-z", "unit-1", atomicMediaURI, "season-1")
 
 	require.ErrorIs(t, err, domain.ErrObjectiveNotInContract)
 	require.Equal(t, 0, writer.calls)

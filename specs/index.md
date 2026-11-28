@@ -5,7 +5,7 @@
 | Capability | Path | Last consolidated change | Status |
 | --- | --- | --- | --- |
 | Mission Board | [specs/capabilities/mission-board/spec.md](./capabilities/mission-board/spec.md) | [CHG-0055-local-season-preview-scenarios](./changes/archive/2026/CHG-0055-local-season-preview-scenarios/change.md) | current |
-| Mission Contract Fulfillment | [specs/capabilities/mission-contract-fulfillment/spec.md](./capabilities/mission-contract-fulfillment/spec.md) | [CHG-0055-local-season-preview-scenarios](./changes/archive/2026/CHG-0055-local-season-preview-scenarios/change.md) | current |
+| Mission Contract Fulfillment | [specs/capabilities/mission-contract-fulfillment/spec.md](./capabilities/mission-contract-fulfillment/spec.md) | [CHG-0063-required-mission-evidence](./changes/archive/2026/CHG-0063-required-mission-evidence/change.md) | current |
 | Seasonal Category Competition | [specs/capabilities/seasonal-category-competition/spec.md](./capabilities/seasonal-category-competition/spec.md) | [CHG-0056-season-overall-standings](./changes/archive/2026/CHG-0056-season-overall-standings/change.md) | current |
 
 ## Active Changes
@@ -19,6 +19,7 @@
 
 | Change | Canonical action | Risk | Archived |
 | --- | --- | --- | --- |
+| [CHG-0063-required-mission-evidence](./changes/archive/2026/CHG-0063-required-mission-evidence/change.md) | Modify `mission-contract-fulfillment` | L2 | 2026-11-27 |
 | [CHG-0056-season-overall-standings](./changes/archive/2026/CHG-0056-season-overall-standings/change.md) | Modify `seasonal-category-competition` | L3 | 2026-11-26 |
 | [CHG-0055-local-season-preview-scenarios](./changes/archive/2026/CHG-0055-local-season-preview-scenarios/change.md) | Modify `seasonal-category-competition`, `mission-board`, `mission-contract-fulfillment` | L3 | 2026-11-23 |
 | [CHG-0054-localize-mission-content](./changes/archive/2026/CHG-0054-localize-mission-content/change.md) | Modify `mission-board`, `mission-contract-fulfillment` | L3 | 2026-11-16 |

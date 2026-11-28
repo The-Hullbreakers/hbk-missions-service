@@ -8,6 +8,27 @@ import (
 	"github.com/hbk/hbk-missions-service/internal/missions/domain"
 )
 
+// TEST-0063-APP-001: an empty media reference is rejected before any media
+// validation or persistence — evidence is required for every confirmation.
+func TestConfirmObjectiveHandler_WithMedia_RequiresMedia(t *testing.T) {
+	// Arrange
+	contract := newInProgressContract()
+	season := domain.NewSeason("season-1", domain.SeasonStateActive)
+	writer := &atomicWriter{}
+	store := &fakeEvidenceStore{exists: map[string]bool{"evidence/contract-1/abc-123": true}}
+	handler := application.NewConfirmObjectiveHandlerWithEvidence(
+		fixedContractStore{contract: contract}, writer,
+		fixedSeasonStore{season: season}, store)
+
+	// Act
+	_, err := handler.HandleWithMedia(testIdentity(t, "player-1", nil),
+		"contract-1", "objective-1", "unit-1", "", "season-1")
+
+	// Assert
+	require.ErrorIs(t, err, domain.ErrContractEvidenceRequired)
+	require.Equal(t, 0, writer.calls)
+}
+
 func TestConfirmObjectiveHandler_WithMedia_StoresReference(t *testing.T) {
 	contract := newInProgressContract()
 	season := domain.NewSeason("season-1", domain.SeasonStateActive)
